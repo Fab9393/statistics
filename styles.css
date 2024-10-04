@@ -22,7 +22,7 @@ body {
 /* Titolo principale */
 h2 {
     text-align: center; /* Centra il titolo */
-    color: #007BFF; /* Colore blu per il titolo */
+    color: #333; /* Colore blu per il titolo */
     margin-bottom: 20px; /* Spazio sotto il titolo */
 }
 
