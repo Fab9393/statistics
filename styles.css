@@ -94,8 +94,8 @@ body {
 
 header {
     width: 100%; /* Assicura che l'header occupi tutta la larghezza */
-    background-color: #333; /* Colore scuro per la navbar */
-    color: white;
+    background-color: transparent;; /* Colore scuro per la navbar */
+    color: #333;
     text-align: center;
     padding: 10px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -150,8 +150,8 @@ main h2 {
 /* Stili per il footer */
 footer {
     width: 100%; /* Assicura che il footer occupi tutta la larghezza */
-    background-color: #333; /* Colore scuro per il footer */
-    color: white;
+    background-color: transparent; /* Colore scuro per il footer */
+    color: #333;
     text-align: center;
     padding: 10px 0;
     margin-top: auto; /* Fa sì che il footer resti sempre in fondo */
