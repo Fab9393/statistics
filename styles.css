@@ -1,12 +1,13 @@
-/* Stile generale per il corpo della pagina */
 body {
     font-family: 'Arial', sans-serif; /* Font moderno */
-    background-color: #f4f4f4; /* Colore di sfondo chiaro */
-    color: #333; /* Colore del testo */
     margin: 0; /* Rimuovi margini */
     padding: 20px; /* Padding interno */
+    display: flex; /* Rende il body un contenitore flessibile */
+    flex-direction: column; /* Dispone gli elementi in colonna */
+    min-height: 100vh; /* Altezza minima del body */
+    background: linear-gradient(to right, #00aaff, #ff7e00); /* Gradiente da azzurro a arancione */
+    color: #333; /* Colore del testo */
 }
-
 /* Titolo principale */
 h2 {
     text-align: center; /* Centra il titolo */
