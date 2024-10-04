@@ -7,6 +7,7 @@ function sommaCompensata(somma, valore, compensazione) {
     return { somma, compensazione };
 }
 
+
 // Funzione per simulare gli attacchi sui server
 function simulazioneHackingServer(N, M, p, T) {
     let successiPerHacker = Array.from({ length: M }, () => Array(T).fill(0)); 
@@ -39,23 +40,28 @@ function simulazioneHackingServer(N, M, p, T) {
     // Calcolo del totale dei server bucati per ciascun hacker alla fine di tutti i tentativi
     let totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[T - 1]);
 
-    // Calcolo del totale complessivo di successi su tutti gli hacker usando somma compensata
+    // Applichiamo la somma compensata di Knuth per calcolare la somma complessiva
     let somma = 0;
     let compensazione = 0;
+    
     for (let successi of totaleSuccessiPerHacker) {
+        // Usare somma compensata per migliorare la precisione
         let risultato = sommaCompensata(somma, successi, compensazione);
         somma = risultato.somma;
         compensazione = risultato.compensazione;
     }
-    let totaleSuccessi = somma;
+
+    let totaleSuccessi = somma; // Totale dei server bucati complessivamente
 
     // Calcolo della distribuzione empirica per ciascun hacker
     let distribuzioneEmpirica = totaleSuccessiPerHacker.map(successi => {
         return successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
     });
 
+    // Restituiamo anche successiPerHacker per disegnare il grafico correttamente
     return { successiPerHacker, totaleSuccessi, distribuzioneEmpirica };
 }
+
 
 // Funzione per generare colori casuali per ogni linea (hacker)
 function getRandomColor() {
