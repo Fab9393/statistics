@@ -1,4 +1,4 @@
-body {
+main body {
     font-family: 'Arial', sans-serif; /* Font moderno */
     margin: 0; /* Rimuovi margini */
     padding: 20px; /* Padding interno */
@@ -6,6 +6,17 @@ body {
     flex-direction: column; /* Dispone gli elementi in colonna */
     min-height: 100vh; /* Altezza minima del body */
     background: linear-gradient(to right, #00aaff, #ff7e00); /* Gradiente da azzurro a arancione */
+    color: #333; /* Colore del testo */
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Font moderno */
+    margin: 0; /* Rimuovi margini */
+    padding: 20px; /* Padding interno */
+    display: flex; /* Rende il body un contenitore flessibile */
+    flex-direction: column; /* Dispone gli elementi in colonna */
+    min-height: 100vh; /* Altezza minima del body */
+    background: #ffffff;
     color: #333; /* Colore del testo */
 }
 /* Titolo principale */
@@ -79,7 +90,7 @@ body {
 
 /* Stili per l'header */
 header {
-    background-color: #4CAF50;
+    background-color: #333;
     color: white;
     padding: 20px 0;
     text-align: center;
