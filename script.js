@@ -54,7 +54,7 @@ function simulazioneHackingServer(N, M, p, T) {
         return successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
     });
 
-    return { totaleSuccessi, distribuzioneEmpirica };
+    return { successiPerHacker, totaleSuccessi, distribuzioneEmpirica };
 }
 
 // Funzione per generare colori casuali per ogni linea (hacker)
