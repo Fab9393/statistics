@@ -84,8 +84,8 @@ main {
     padding: 20px;
 }
 
-.homework-preview {
-    margin-bottom: 20px;
+.homework-content {
+    text-align: center; /* Centra il contenuto della sezione homework */
 }
 
 .homework-image {
@@ -97,10 +97,10 @@ main {
 
 footer {
     text-align: center;
-    padding: 10px 0;
+    padding: 5px 0; /* Riduce l'altezza del footer */
     background: #333;
     color: #fff;
-    position: fixed;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
