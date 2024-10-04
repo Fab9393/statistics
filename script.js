@@ -125,7 +125,7 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     const T = parseInt(document.getElementById('t').value); // Numero di simulazioni
 
     // Esegui la simulazione e ottieni i risultati
-    const { successiPerHacker, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p, T);
+    const { successiPerHacker, totaleSuccessi, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p, T);
     
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
