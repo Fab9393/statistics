@@ -7,6 +7,7 @@ function sommaCompensata(somma, valore, compensazione) {
     return { somma, compensazione };
 }
 
+
 // Funzione per simulare gli attacchi sui server
 function simulazioneHackingServer(N, M, p, T) {
     let successiPerHacker = Array.from({ length: M }, () => Array(T).fill(0)); 
@@ -21,9 +22,8 @@ function simulazioneHackingServer(N, M, p, T) {
                 // Controlla se il server j è già stato bucato da i
                 if (!serverBucati[i].has(j)) { 
                     let r = Math.random(); // Genera un numero casuale tra 0 e 1
-                    console.log(`Attempt: ${t}, Hacker: ${i}, Server: ${j}, r: ${r}, p: ${p}`);
 
-                    // Se r <= p, l'hacker riesce a bucare il server (inverte la logica)
+                    // Se r <= p, l'hacker riesce a bucare il server
                     if (r <= p) {
                         serverBucati[i].add(j); // Aggiungi il server bucato al set
                     }
@@ -37,13 +37,20 @@ function simulazioneHackingServer(N, M, p, T) {
         }
     }
 
-    // Calcola la distribuzione empirica per ciascun hacker
-    let distribuzioneEmpirica = successiPerHacker.map(successi => {
-        return successi[T - 1] / N; // Numero totale di successi al tempo finale diviso per N
+    // Calcolo del totale dei server bucati per ciascun hacker alla fine di tutti i tentativi
+    let totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[T - 1]);
+
+    // Calcolo del totale complessivo di successi su tutti gli hacker
+    let totaleSuccessi = totaleSuccessiPerHacker.reduce((a, b) => a + b, 0);
+
+    // Calcolo della distribuzione empirica per ciascun hacker
+    let distribuzioneEmpirica = totaleSuccessiPerHacker.map(successi => {
+        return successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
     });
 
     return { successiPerHacker, distribuzioneEmpirica }; 
 }
+
 
 // Funzione per generare colori casuali per ogni linea (hacker)
 function getRandomColor() {
