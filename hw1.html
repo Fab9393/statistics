@@ -13,25 +13,29 @@
             <li><a href="index.html">Home</a></li>
         </ul>
     </nav>
-    <h2>Simulazione Attacchi Hacker - Grafico - HW1</h2>
+    <h2>Simulation of Hacker Attacks - HW1</h2>
     
     <div id="mod">
-        <label for="n">Numero di server (N):</label>
+        <label for="n">Number of Servers (N):</label>
         <input type="number" id="n" value="10" required>
         
-        <label for="m">Numero di hacker (M):</label>
+        <label for="m">Number of Hackers (M):</label>
         <input type="number" id="m" value="5" required>
         
-        <label for="p">Probabilità di successo (p):</label>
+        <label for="p">Success Probability (p):</label>
         <input type="number" id="p" step="0.01" value="0.11" required>
         
-        <label for="t">Numero di simulazioni (T):</label>
+        <label for="t">Number of attempts (T):</label>
         <input type="number" id="t" value="10" required>
         
-        <button id="simulateButton">Esegui Simulazione</button> <!-- Pulsante per avviare la simulazione -->
+        <button id="simulateButton">Execute Simulation</button> <!-- Pulsante per avviare la simulazione -->
     </div>
     
     <canvas id="attacchiGrafico"></canvas> <!-- Contenitore del grafico -->
+
+    <footer>
+        <p>&copy; ©2024 Fabio Figara - Statistics Blog - Homework 1</p>
+    </footer>
 
     <script src="script.js"></script> <!-- Link al file JavaScript -->
 </body>

@@ -21,7 +21,7 @@ function simulazioneHackingServer(N, M, p, T) {
                 // Controlla se il server j è già stato bucato da i
                 if (!serverBucati[i].has(j)) { 
                     let r = Math.random(); // Genera un numero casuale tra 0 e 1
-                    console.log(`Tentativo: ${t}, Hacker: ${i}, Server: ${j}, r: ${r}, p: ${p}`);
+                    console.log(`Attempt: ${t}, Hacker: ${i}, Server: ${j}, r: ${r}, p: ${p}`);
 
                     // Se r <= p, l'hacker riesce a bucare il server (inverte la logica)
                     if (r <= p) {
@@ -61,7 +61,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, T, N) {
     let hackersData = [];
     for (let i = 0; i < successiPerHacker.length; i++) {
         hackersData.push({
-            label: `Hacker ${i + 1}: - server bucati: ${successiPerHacker[i][T - 1]}, - distribuzione empirica: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: - server broken: ${successiPerHacker[i][T - 1]}, - Empirical Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i],
             borderColor: getRandomColor(),
             fill: false
@@ -81,13 +81,13 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, T, N) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Tempo (t)'
+                        text: 'Attempts (t)'
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero totale di Server Bucati'
+                        text: 'Total Number of Broken Servers'
                     },
                     beginAtZero: true,
                     max: N // Imposta il valore massimo dell'asse y
