@@ -1,0 +1,106 @@
+/* Stile generale per il corpo della pagina */
+body {
+    font-family: 'Arial', sans-serif; /* Font moderno */
+    background-color: #f4f4f4; /* Colore di sfondo chiaro */
+    color: #333; /* Colore del testo */
+    margin: 0; /* Rimuovi margini */
+    padding: 20px; /* Padding interno */
+}
+
+/* Titolo principale */
+h2 {
+    text-align: center; /* Centra il titolo */
+    color: #007BFF; /* Colore blu per il titolo */
+    margin-bottom: 20px; /* Spazio sotto il titolo */
+}
+
+/* Stile per il contenitore dei moduli */
+#mod {
+    background-color: white; /* Sfondo bianco per il contenitore */
+    padding: 20px; /* Padding interno */
+    border-radius: 8px; /* Angoli arrotondati */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra per profondità */
+    max-width: 400px; /* Larghezza massima del contenitore */
+    margin: 0 auto; /* Centra il contenitore */
+}
+
+/* Stile per le etichette */
+label {
+    display: block; /* Ogni etichetta su una nuova riga */
+    margin-bottom: 5px; /* Spazio sotto le etichette */
+    font-weight: bold; /* Testo in grassetto */
+}
+
+/* Stile per gli input */
+input[type="number"] {
+    width: 100%; /* Larghezza completa */
+    padding: 10px; /* Padding interno */
+    margin-bottom: 15px; /* Spazio sotto gli input */
+    border: 1px solid #ccc; /* Bordo grigio chiaro */
+    border-radius: 4px; /* Angoli arrotondati */
+    box-sizing: border-box; /* Include padding e bordo nella larghezza */
+    transition: border-color 0.3s ease; /* Transizione per il cambio di colore */
+}
+
+/* Stile per gli input al focus */
+input[type="number"]:focus {
+    border-color: #007BFF; /* Colore blu al focus */
+    outline: none; /* Rimuovi contorno predefinito */
+}
+
+/* Stile per il pulsante */
+button {
+    width: 100%; /* Larghezza completa */
+    padding: 10px; /* Padding interno */
+    background-color: #007BFF; /* Colore blu per il pulsante */
+    color: white; /* Testo bianco */
+    border: none; /* Rimuovi bordo predefinito */
+    border-radius: 4px; /* Angoli arrotondati */
+    cursor: pointer; /* Cambia il cursore su hover */
+    transition: background-color 0.3s ease; /* Transizione per il cambio di colore */
+}
+
+/* Stile per il pulsante al hover */
+button:hover {
+    background-color: #0056b3; /* Colore blu scuro al hover */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+.homework-preview {
+    margin-bottom: 20px;
+}
+
+.homework-image {
+    max-width: 100%; /* Rende l'immagine responsiva */
+    height: auto;
+    display: block;
+    margin: 10px auto; /* Centra l'immagine */
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
