@@ -53,7 +53,7 @@ button {
     width: 100%; /* Larghezza completa */
     padding: 10px; /* Padding interno */
     background-color: #007BFF; /* Colore blu per il pulsante */
-    color: #007BFF; /* Testo bianco */
+    color: #ffffff; /* Testo bianco */
     border: none; /* Rimuovi bordo predefinito */
     border-radius: 4px; /* Angoli arrotondati */
     cursor: pointer; /* Cambia il cursore su hover */
