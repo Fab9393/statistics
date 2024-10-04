@@ -140,3 +140,33 @@ footer {
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     margin-top: auto;
 }
+
+nav {
+    background-color: #333; /* Colore di sfondo della nav */
+    padding: 10px; /* Padding per dare spazio intorno agli elementi */
+}
+
+nav ul {
+    list-style: none; /* Rimuove i punti dall'elenco */
+    padding: 0; /* Rimuove il padding di default */
+    margin: 0; /* Rimuove il margine di default */
+}
+
+nav ul li {
+    display: inline; /* Rende gli elementi dell'elenco in linea */
+}
+
+nav a {
+    display: inline-block; /* Rende il link un blocco in linea */
+    color: white; /* Colore del testo */
+    background-color: #007bff; /* Colore di sfondo del bottone */
+    padding: 10px 15px; /* Padding per il bottone */
+    text-decoration: none; /* Rimuove la sottolineatura */
+    border-radius: 5px; /* Angoli arrotondati */
+    transition: background-color 0.3s; /* Transizione per il colore di sfondo */
+}
+
+nav a:hover {
+    background-color: #0056b3; /* Colore di sfondo al passaggio del mouse */
+}
+
