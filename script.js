@@ -7,48 +7,45 @@ function sommaCompensata(somma, valore, compensazione) {
     return { somma, compensazione };
 }
 
-
 // Funzione per simulare gli attacchi sui server
 function simulazioneHackingServer(N, M, p, T) {
     let successiPerHacker = Array.from({ length: M }, () => Array(T).fill(0)); 
     let serverBucati = Array.from({ length: M }, () => new Set()); 
 
-    // Per ogni simulazione t
     for (let t = 0; t < T; t++) {
-        // Per ogni server j
         for (let j = 0; j < N; j++) {
-            // Per ciascun hacker i
             for (let i = 0; i < M; i++) {
-                // Controlla se il server j è già stato bucato da i
                 if (!serverBucati[i].has(j)) { 
-                    let r = Math.random(); // Genera un numero casuale tra 0 e 1
-
-                    // Se r <= p, l'hacker riesce a bucare il server
+                    let r = Math.random(); 
                     if (r <= p) {
-                        serverBucati[i].add(j); // Aggiungi il server bucato al set
+                        serverBucati[i].add(j); 
                     }
                 }
             }
         }
 
-        // Dopo tutti i tentativi per t, calcola i successi
         for (let i = 0; i < M; i++) {
-            successiPerHacker[i][t] = serverBucati[i].size; // Aggiorna i successi per l'hacker
+            successiPerHacker[i][t] = serverBucati[i].size; 
         }
     }
 
-    // Calcolo del totale dei server bucati per ciascun hacker alla fine di tutti i tentativi
     let totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[T - 1]);
 
-    // Calcolo del totale complessivo di successi su tutti gli hacker
-    let totaleSuccessi = totaleSuccessiPerHacker.reduce((a, b) => a + b, 0);
+    // Utilizzo della somma compensata per calcolare il totale dei successi
+    let somma = 0;
+    let compensazione = 0;
+    for (let successi of totaleSuccessiPerHacker) {
+        let risultato = sommaCompensata(somma, successi, compensazione);
+        somma = risultato.somma;
+        compensazione = risultato.compensazione;
+    }
+    let totaleSuccessi = somma;
 
-    // Calcolo della distribuzione empirica per ciascun hacker
     let distribuzioneEmpirica = totaleSuccessiPerHacker.map(successi => {
-        return successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
+        return (successi / totaleSuccessi * 100).toFixed(2); // Percentuale di attacchi riusciti per ogni hacker
     });
 
-    return { successiPerHacker, distribuzioneEmpirica }; 
+    return { successiPerHacker, distribuzioneEmpirica };
 }
 
 
