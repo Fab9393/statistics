@@ -84,11 +84,11 @@ function getRandomColor() {
 
 let myChart;
 // Funzione per disegnare il grafico
-function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, T, N) {
+function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, T, N) {
     let hackersData = [];
     for (let i = 0; i < successiPerHacker.length; i++) {
         hackersData.push({
-            label: `Hacker ${i + 1}: - server broken: ${successiPerHacker[i][T - 1]}, - Empirical Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: - server broken: ${successiPerHacker[i][T - 1]} / ${totaleSuccessi}, - Empirical Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i],
             borderColor: getRandomColor(),
             fill: false
@@ -144,5 +144,5 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
-    disegnaGrafico(successiPerHacker, distribuzioneEmpirica, T, N);
+    disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, T, N);
 });
