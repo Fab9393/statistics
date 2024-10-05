@@ -7,7 +7,6 @@ function sommaCompensata(somma, valore, compensazione) {
     return { somma, compensazione };
 }
 
-
 // Funzione per simulare gli attacchi sui server
 function simulazioneHackingServer(N, M, p, T) {
     let successiPerHacker = Array.from({ length: M }, () => Array(T).fill(0)); 
@@ -41,26 +40,36 @@ function simulazioneHackingServer(N, M, p, T) {
     let totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[T - 1]);
 
     // Applichiamo la somma compensata di Knuth per calcolare la somma complessiva
-    let somma = 0;
-    let compensazione = 0;
+    let sommaTotale = 0;
+    let compensazioneTotale = 0;
     
     for (let successi of totaleSuccessiPerHacker) {
-        // Usare somma compensata per migliorare la precisione
-        let risultato = sommaCompensata(somma, successi, compensazione);
-        somma = risultato.somma;
-        compensazione = risultato.compensazione;
+        let risultato = sommaCompensata(sommaTotale, successi, compensazioneTotale);
+        sommaTotale = risultato.somma;
+        compensazioneTotale = risultato.compensazione;
     }
 
-    let totaleSuccessi = somma; // Totale dei server bucati complessivamente
+    let totaleSuccessi = sommaTotale; // Totale dei server bucati complessivamente
 
-    // Calcolo della distribuzione empirica per ciascun hacker
-    let distribuzioneEmpirica = totaleSuccessiPerHacker.map(successi => {
-        return successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
-    });
+    // Calcolo della distribuzione empirica per ciascun hacker con somma compensata
+    let distribuzioneEmpirica = [];
+    let sommaDistribuzione = 0;
+    let compensazioneDistribuzione = 0;
+
+    for (let successi of totaleSuccessiPerHacker) {
+        let percentuale = successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
+        distribuzioneEmpirica.push(percentuale);
+
+        // Usare la somma compensata per calcolare la somma delle distribuzioni
+        let risultato = sommaCompensata(sommaDistribuzione, percentuale, compensazioneDistribuzione);
+        sommaDistribuzione = risultato.somma;
+        compensazioneDistribuzione = risultato.compensazione;
+    }
 
     // Restituiamo anche successiPerHacker per disegnare il grafico correttamente
     return { successiPerHacker, totaleSuccessi, distribuzioneEmpirica };
 }
+
 
 
 // Funzione per generare colori casuali per ogni linea (hacker)
