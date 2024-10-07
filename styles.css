@@ -204,7 +204,6 @@ nav a:hover {
     margin-bottom: 5px; /* Space between title and description */
 }
 .code-image {
-    width: 100%; /* Make the image responsive */
     max-width: 600px; /* Set a max width for the image */
     height: auto; /* Maintain aspect ratio */
     margin-top: 20px; /* Space above the image */
