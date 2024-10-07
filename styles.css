@@ -136,6 +136,18 @@ main h2 {
     width: 100%;
 }
 
+.desc-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping to the next line */
+    gap: 20px; /* Space between the panels */
+    width: 100%;
+}
+
 .homework-content h3 {
     margin-top: 0;
 }
@@ -204,6 +216,7 @@ nav a:hover {
     font-size: 1.2em; /* Slightly larger font size for titles */
     margin-bottom: 5px; /* Space between title and description */
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
