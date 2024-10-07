@@ -140,8 +140,7 @@ main h2 {
 }
 
 .homework-content img {
-    margin-top: 10px;
-    max-width: 600px;
+    max-width: 100%;
     height: auto;
     border-radius: 8px;
     margin: 20px 0;
@@ -205,9 +204,10 @@ nav a:hover {
     margin-bottom: 5px; /* Space between title and description */
 }
 .code-image {
+    width: 100%; /* Make the image responsive */
     max-width: 600px; /* Set a max width for the image */
     height: auto; /* Maintain aspect ratio */
-    margin-top: 30px; /* Space above the image */
+    margin-top: 20px; /* Space above the image */
 }
 
 /* Responsive adjustments */
