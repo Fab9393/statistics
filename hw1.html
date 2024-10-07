@@ -34,23 +34,55 @@
     <canvas id="attacchiGrafico"></canvas> <!-- Contenitore del grafico -->
 
     <div class="homework-content">
-        <h2> Significative Notions </h2>
-        <p>Population, Statistical Units, and Distribution:
-            Population is this
-            Statistical unit is thi
-        </p>
-        <p>Avarage and the Floating point Problem:
-            sds
-            sd
-        </p>
+        <div class="concept-panel">
+            <div class="concept-title">Population</div>
+            <p>In statistics, the population is the complete set of elements (people, objects, events, etc.) that we want to study or gather information about. These elements share one or more common characteristics.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Statistical Units</div>
+            <p>Statistical units are the individual elements that make up the population. Each statistical unit represents a single object, individual, or event from which data can be collected.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Distribution</div>
+            <p>The distribution describes how the values of the data are spread out within the population or a sample. There are various types of distribution, such as normal distribution, binomial distribution, uniform distribution, etc.</p>
+        </div>
+    </div>
+    
+    <div class="homework-content">
+        <div class="concept-panel">
+            <div class="concept-title">Mean</div>
+            <p>The mean is a statistical measure that represents the average value of a set of data. It is calculated by summing all the values and dividing by the total number of values. The mean gives us an idea of the "central value" of a dataset.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Floating Point Representation Calculation Issues</div>
+            <p>Computers represent real numbers using floating point notation, but this representation is limited by precision. This can cause approximation errors or rounding errors when performing very large or very small calculations.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Catastrophic Cancellation Error</div>
+            <p>This error occurs when subtracting two numbers that are very close in value. The result of the subtraction can lose a lot of precision due to floating point rounding.</p>
+        </div>
     </div>
 
     <div class="homework-content">
-        <h2> Significative Code Fragments </h2>
-        <p>
-        </p>
+        <div class="concept-panel">
+            <div class="concept-title">Numerical Solutions (e.g., Knuth's Method)</div>
+            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Knuth's Contributions</div>
+            <p>Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Practical Applications</div>
+            <p>Understanding these statistical concepts is essential for analyzing data accurately, especially in fields like computer science, economics, and social sciences.</p>
+        </div>
     </div>
 
+    <div class="homework-content">
+        <h2>Significative Code Fragments</h2>
+        <img src="code.png" alt="Code Example" class="code-image">
+        <p>This code snippet demonstrates a function called <code>sommaCompensata</code> which performs a compensated sum calculation, and another function <code>simulazioneHackingServer</code> that simulates hacker attacks on servers. The compensated sum helps to minimize rounding errors during calculations, especially when working with potentially large numbers or results with significant decimal places.</p>
+    </div>
     <footer>
         <p>&copy; ©2024 Fabio Figara - Statistics Blog - Homework 1</p>
     </footer>
