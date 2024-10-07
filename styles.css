@@ -124,6 +124,7 @@ main h2 {
 }
 
 .homework-content {
+    display: flex;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -131,6 +132,8 @@ main h2 {
     text-align: center;
     max-width: 600px;
     width: 100%;
+    flex-wrap: wrap; /* Allows wrapping to the next line */
+    gap: 20px; /* Space between the panels */
 }
 
 .homework-content h3 {
@@ -187,5 +190,37 @@ nav a {
 
 nav a:hover {
     background-color: #0056b3; /* Colore di sfondo al passaggio del mouse */
+}
+
+.concept-panel {
+    border: 1px solid #ccc; /* Add a border to each panel */
+    padding: 15px; /* Add some padding */
+    width: calc(33.33% - 20px); /* Three panels in a row with gap */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    box-sizing: border-box; /* Includes padding and border in width */
+}
+.concept-title {
+    font-weight: bold; /* Make the title bold */
+    font-size: 1.2em; /* Slightly larger font size for titles */
+    margin-bottom: 5px; /* Space between title and description */
+}
+.code-image {
+    width: 100%; /* Make the image responsive */
+    max-width: 600px; /* Set a max width for the image */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 20px; /* Space above the image */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .concept-panel {
+        width: calc(50% - 20px); /* Two panels in a row on medium screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .concept-panel {
+        width: 100%; /* One panel per row on small screens */
+    }
 }
 
