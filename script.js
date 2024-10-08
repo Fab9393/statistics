@@ -168,9 +168,6 @@ function disegnaIstogramma(successiPerHacker, N, M) {
 
     // Conta i successi per ogni hacker
     for (let i = 0; i < M; i++) {
-        console.log(iterazione + " " + i);
-        console.log(distribuzioneSuccessi[successiHacker]);
-        console.log(successiPerHacker[i][N - 1]);
         const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'hacker i-esimo
         distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio del numero di hacker con questo successo
     }
@@ -182,7 +179,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (y)
+            labels: labels, // Etichette dei successi (x)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
@@ -195,22 +192,19 @@ function disegnaIstogramma(successiPerHacker, N, M) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Successi'
                     },
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1 //incrementa di 1
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Successi'
+                        text: 'Numero di Hacker'
                     },
-                    beginAtZero: true, // Inizia da 0
-                    ticks: {
-                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
-                    }
+                    beginAtZero: true // Inizia da 0
                 }
             },
             plugins: {
