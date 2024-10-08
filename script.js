@@ -173,9 +173,6 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     }
 
-    // Etichette per ogni livello di successo (da 0 a N)
-    const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
-
     // Costruire il grafico istogramma con barre orizzontali allineate
     histogramChart = new Chart(ctx, {
         type: 'bar', // Tipo di grafico a barre
