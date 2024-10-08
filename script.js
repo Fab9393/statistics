@@ -73,8 +73,10 @@ function getRandomColor() {
 
 let myChart;
 // Funzione per disegnare il grafico
+// Funzione per disegnare il grafico
 function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     const ctx = document.getElementById('attacchiGrafico').getContext('2d');
+    
     // Check if myChart already exists and destroy it
     if (myChart) {
         myChart.destroy();
@@ -89,8 +91,19 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     // Creare i dataset per ogni hacker
     let hackersData = [];
     for (let i = 0; i < M; i++) {
+        // Calcolare il numero di successi per l'hacker corrente
+        const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'ultimo server
+        let frazioneHackerati = ""; // Inizializzazione variabile per la frazione
+
+        // Mostra la frazione solo se successiHacker > 0
+        if (successiHacker > 0) {
+            frazioneHackerati = `${successiHacker} / ${totaleSuccessi}`; // Costruzione della frazione
+        } else {
+            frazioneHackerati = "0"; // Messaggio se non ci sono successi
+        }
+
         hackersData.push({
-            label: `Hacker ${i + 1}: Successi Totali: ${successiPerHacker[i][N - 1]} - Server Hackerati: ${successiPerHacker[i][N-1]} / ${totaleSuccessi} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: Successi Totali: ${successiHacker} - Server Hackerati: ${frazioneHackerati} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
             fill: false
@@ -133,6 +146,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         }
     });
 }
+
 
 // Aggiungi evento al pulsante
 document.getElementById('simulateButton').addEventListener('click', () => {
