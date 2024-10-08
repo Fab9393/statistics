@@ -37,51 +37,163 @@
         </div>
     </div>
 
+    <div class="homework-content">
+        <h2>Mean of Total Success Across all Hackers</h2>
+    </div>
+
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Population</div>
-            <p>In statistics, the population is the complete set of elements (people, objects, events, etc.) that we want to study or gather information about. These elements share one or more common characteristics.</p>
+            <p>In statistics, the term population refers to the entire group or set of individuals, objects, events, or data points that a study is focused on. The population is the complete collection of elements that share common characteristics and that researchers are interested in understanding, analyzing, or making conclusions about. For example:
+
+                In a medical study, the population might include all patients with a certain condition.
+                In a survey, the population could refer to all voters in a country. Researchers often collect data from a sample of this population because it may not be practical to study the entire population due to time, cost, or logistical constraints.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Statistical Units</div>
-            <p>Statistical units are the individual elements that make up the population. Each statistical unit represents a single object, individual, or event from which data can be collected.</p>
+            <p>A statistical unit is the basic element from which data is collected in a statistical study. Each statistical unit represents one member of the population, be it an individual person, a single object, or an event. It serves as the smallest entity of observation. In any dataset, these units are the primary objects that give rise to the data points being analyzed. For instance:
+
+                In a survey about household income, the statistical unit might be an individual household.
+                In a clinical trial, the unit could be a patient or participant.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Distribution</div>
-            <p>The distribution describes how the values of the data are spread out within the population or a sample. There are various types of distribution, such as normal distribution, binomial distribution, uniform distribution, etc.</p>
+            <p>A distribution refers to the way in which the values of a dataset or variable are spread across a population or sample. Distributions describe how often each possible value (or a range of values) occurs, and they provide a summary of the frequency of different outcomes. There are various types of distributions, including:
+
+                Normal distribution: Bell-shaped and symmetrical around the mean, common in many natural phenomena.
+                Binomial distribution: Describes the probability of a specific number of successes in a fixed number of independent yes/no trials.
+                Uniform distribution: All outcomes are equally likely. Understanding the distribution helps in predicting future values and in making informed decisions about the data.</p>
         </div>
     </div>
     
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Mean</div>
-            <p>The mean is a statistical measure that represents the average value of a set of data. It is calculated by summing all the values and dividing by the total number of values. The mean gives us an idea of the "central value" of a dataset.</p>
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:
+
+                If the values are close together, the mean gives a good indication of a central point.
+                However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Floating Point Representation Calculation Issues</div>
-            <p>Computers represent real numbers using floating point notation, but this representation is limited by precision. This can cause approximation errors or rounding errors when performing very large or very small calculations.</p>
+            <p>Computers represent numbers using floating-point notation, but this representation comes with limitations due to the finite precision of digital storage. 
+                Floating-point numbers can only represent a subset of real numbers, which introduces potential rounding errors or approximation errors. 
+                These issues are more pronounced when performing calculations involving very large or very small numbers or when many operations are chained together. 
+                Errors can accumulate, making certain calculations inaccurate, especially in high-precision applications like scientific computing or financial modeling.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Catastrophic Cancellation Error</div>
-            <p>This error occurs when subtracting two numbers that are very close in value. The result of the subtraction can lose a lot of precision due to floating point rounding.</p>
+            <p>This error occurs during subtraction when two numbers that are very close in value are subtracted from each other. Because of the way floating-point arithmetic works, small differences between large, similar numbers can result in a loss of precision. 
+                The relative error introduced by rounding can be significant when the difference between the two numbers is very small compared to their actual values. This is often called catastrophic cancellation because the resulting loss of accuracy can be substantial. 
+                For example, in scientific computations, such errors can significantly distort results if not managed correctly. Using techniques like compensated summation algorithms (e.g., Kahan summation) can help mitigate this error.</p>
         </div>
     </div>
 
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Numerical Solutions (e.g., Knuth's Method)</div>
-            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.</p>
-        </div>
-        <div class="concept-panel">
-            <div class="concept-title">Knuth's Contributions</div>
-            <p>Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.</p>
+            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.
+
+                <code>Knuth's Contributions</code>
+
+                Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.
+            </p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Significative Code Fragment</div>
-            <img src="code.png" alt="Code Example" class="code-image">
-            <p>This code snippet demonstrates a function called <code>sommaCompensata</code> which performs a compensated sum calculation, and another function <code>simulazioneHackingServer</code> that simulates hacker attacks on servers. The compensated sum helps to minimize rounding errors during calculations, especially when working with potentially large numbers or results with significant decimal places.</p>
+            <img src="knuth.png" alt="Code Example" class="code-image">
+            <p>sommaCompensata function (Compensated Sum - Knuth Algorithm)
+                This function implements a compensated sum algorithm (also known as Kahan summation algorithm). It improves the precision of floating-point arithmetic by compensating for small errors that accumulate when summing multiple floating-point numbers.
+                
+                Parameters:
+                somma: The current sum.
+                valore: The new value to be added to the sum.
+                compensazione: The compensation factor that adjusts for rounding errors.
+
+                Returns:
+                An object containing the updated sum (somma) and the updated compensation (compensazione).
+
+                Process:
+                Subtracts the compensation from the value.
+                Adds the adjusted value to the sum.
+                Updates the compensation for rounding errors in the sum.
+                Returns the updated sum and compensation.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Significative Code Fragment</div>
+            <img src="simulation.png" alt="Code Example" class="code-image">
+            <p>simulazioneHackingServer function (Server Hacking Simulation)
+                This function simulates attacks on N servers by M hackers, where each hacker has a probability p of successfully hacking a server.
+                
+                Parameters:
+                N: Number of servers.
+                M: Number of hackers.
+                p: Probability of a successful hack.
+
+                Returns:
+                successiPerHacker: A matrix that records the number of successful hacks for each hacker across servers.
+                distribuzioneEmpirica: The empirical distribution of successful hacks for each hacker as a percentage of the total.
+
+                Process:
+                Creates a matrix to store successful hacks for each hacker on each server.
+                Loops through each server, where each hacker tries to hack the server with a success rate of p.
+                Updates the number of successful hacks for each hacker after each server.
+                At the end, applies the Knuth compensated summation algorithm to calculate the total number of successes for all hackers.
+                Returns the results in a matrix (successiPerHacker) and computes the empirical distribution of successes.</p>
         </div>
     </div>
+
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Significative Code Fragment</div>
+            <img src="random_color.png" alt="Code Example" class="code-image">
+            <p>getRandomColor function
+                This function generates a random color in hexadecimal format to be used in the chart lines or bars.
+                
+                Returns:
+                A string representing a random color in the format #RRGGBB.
+
+                Process:
+                It iterates over 6 hexadecimal digits, randomly generating each digit.
+                Returns the final color string.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Significative Code Fragment</div>
+            <img src="draw_chart.png" alt="Code Example" class="code-image">
+            <p>disegnaGrafico function (Draw Main Chart)
+                This function draws the main line chart that visualizes the successful hacks across multiple servers for each hacker.
+                
+                Parameters:
+                successiPerHacker: The matrix of successful hacks for each hacker on each server.
+                distribuzioneEmpirica: The empirical distribution of successes for each hacker.
+                N: Number of servers.
+                M: Number of hackers.
+
+                Process:
+                It calculates the total successes for all hackers.
+                For each hacker, it creates a dataset to be displayed on the chart, showing the number of successful hacks per server.
+                It then uses the Chart.js library to create a line chart with the data.
+                The chart is responsive and labeled with each hacker's success rate and empirical distribution.
+                Finally, it calls the disegnaIstogramma function to draw the histogram on the right.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Significative Code Fragment</div>
+            <img src="draw_histogram.png" alt="Code Example" class="code-image">
+            <p>disegnaIstogramma function (Draw Histogram)
+                This function creates a horizontal bar chart (histogram) showing the distribution of successful hacks among hackers.
+                
+                Parameters:
+                successiPerHacker: The matrix of successful hacks for each hacker.
+
+                Process:
+                It extracts the total successes of each hacker from the last server.
+                It counts how many hackers achieved each success level.
+                It builds a bar chart (using Chart.js) where the x-axis represents the number of successful hacks and the y-axis represents the number of hackers.
+                The histogram is displayed beside the main chart.</p>
+        </div>
+    </div>
+
     <footer>
         <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
     </footer>

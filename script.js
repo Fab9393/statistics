@@ -225,6 +225,10 @@ function disegnaIstogramma(successiPerHacker) {
 }
 
 
+function calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker) {
+    let sommaTotale = totaleSuccessiPerHacker.reduce((acc, val) => acc + val, 0); // Somma totale di successi per tutti gli hacker
+    return sommaTotale / totaleSuccessiPerHacker.length; // Media dei successi totali
+}
 
 
 // Aggiungi evento al pulsante
@@ -236,8 +240,18 @@ document.getElementById('simulateButton').addEventListener('click', () => {
 
     // Esegui la simulazione e ottieni i risultati
     const { successiPerHacker, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p);
+
     
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
     disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M);
+
+    // Calculate total successes for each hacker
+    const totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[N - 1]);
+
+    // Calculate the mean of total successes across all hackers
+    const mediaSuccessiTotali = calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker);
+
+    // Inject the result into the HTML
+    document.querySelector('.homework-content').innerHTML += `<p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>`;
 });
