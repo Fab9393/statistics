@@ -103,7 +103,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         }
 
         hackersData.push({
-            label: `Hacker ${i + 1}: Server Hackerati: ${frazioneHackerati} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: Hacked Server: ${frazioneHackerati} - Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
             fill: false
@@ -133,7 +133,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Successi'
+                        text: 'Number of Success'
                     },
                     beginAtZero: true,
                     max: N // Imposta il valore massimo dell'asse y
@@ -185,7 +185,7 @@ function disegnaIstogramma(successiPerHacker) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Numero di Hacker',
+                label: 'Success Distribution',
                 data: data,
                 backgroundColor: data.map(() => getRandomColor())
             }]
@@ -196,7 +196,7 @@ function disegnaIstogramma(successiPerHacker) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Numero di Successi'
+                        text: 'Number of Success'
                     },
                     beginAtZero: true,
                     ticks: {
@@ -206,7 +206,7 @@ function disegnaIstogramma(successiPerHacker) {
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Number of Hackers'
                     },
                     beginAtZero: true,
                     ticks: {
