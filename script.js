@@ -168,9 +168,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     // Conta i successi finali per ogni hacker
     for (let i = 0; i < M; i++) {
         const successiHacker = successiPerHacker[i][N - 1]; // Numero di successi dell'hacker i-esimo
-        if (successiHacker >= 0 && successiHacker <= N) {
-            distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio dei successi
-        }
+        console.log(successiHacker);
     }
 
     // Costruire il grafico istogramma
