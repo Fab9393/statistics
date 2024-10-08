@@ -232,15 +232,17 @@ nav a:hover {
     }
 }
 
-/* Contenitore per centrare il canvas */
-#canvasContainer {
+ /* Contenitore per centrare il canvas */
+ #canvasContainer {
     width: 50%; /* Imposta la larghezza al 50% */
     margin: 0 auto; /* Centra il contenitore */
+    position: relative; /* Aggiungi posizione relativa */
+    overflow: hidden; /* Nascondi eventuali overflow */
 }
 
 /* Imposta il canvas per adattarsi al contenitore */
 #attacchiGrafico {
     width: 100% !important; /* Larghezza del canvas al 100% del contenitore */
     height: auto; /* Altezza automatica per mantenere le proporzioni */
+    max-height: 400px; /* Imposta un'altezza massima per evitare il ridimensionamento */
 }
-
