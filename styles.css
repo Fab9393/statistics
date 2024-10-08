@@ -232,19 +232,6 @@ nav a:hover {
     }
 }
 
-/* Contenitore principale per i grafici */
-#chartContainer {
-    display: flex; /* Usa il layout flessibile per affiancare i grafici */
-    justify-content: space-between; /* Spaziatura tra i grafici */
-    align-items: flex-start; /* Allinea i grafici in alto */
-}
-
-/* Contenitore per centrare il canvas */
-#canvasContainer {
-    width: 50%; /* Imposta la larghezza al 50% */
-    margin: 0; /* Centra il contenitore */
-}
-
 /* Imposta il canvas per adattarsi al contenitore */
 #attacchiGrafico {
     width: 100% !important; /* Larghezza del canvas al 100% del contenitore */
@@ -252,8 +239,20 @@ nav a:hover {
     max-height: 400px; /* Imposta un'altezza massima per evitare il ridimensionamento */
 }
 
+#chartContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%; /* Usa tutta la larghezza disponibile */
+}
+
+/* Contenitore per il grafico a linee */
+#canvasContainer {
+    width: 60%; /* Larghezza per il grafico a linee */
+}
+
 /* Stili per l'istogramma */
 #istogrammaGrafico {
-    width: 40%; /* Larghezza dell'istogramma */
-    height: 400px; /* Altezza fissa per l'istogramma */
+    width: 40%; /* Larghezza per l'istogramma */
+    height: auto; /* Adatta l'altezza in base al contenuto */
 }
