@@ -153,7 +153,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
 }
 
 // Funzione per disegnare l'istogramma della distribuzione
-function disegnaIstogramma(successiPerHacker, N, M) {
+function disegnaIstogramma(successiPerHacker, M, N) {
     const ctx = document.getElementById('istogrammaGrafico').getContext('2d');
 
     // Verifica se histogramChart esiste e distruggilo prima di crearne uno nuovo
@@ -162,58 +162,54 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     }
 
     // Conta quanti hacker hanno raggiunto ciascun livello di successi
-    let distribuzioneSuccessi = Array(N + 1).fill(0); // Array per contare successi da 0 a N
+    let distribuzioneSuccessi = {}; // Dizionario per contare successi
+
+    // Inizializza il dizionario per successi da 0 a N
+    for (let i = 1; i <= N; i++) {
+        distribuzioneSuccessi[i] = 0; // Imposta inizialmente a zero
+    }
 
     // Conta i successi finali per ogni hacker
     for (let i = 0; i < M; i++) {
         const successiHacker = successiPerHacker[i][N - 1]; // Numero di successi dell'hacker i-esimo
+
+        // Controlla se il numero di successi è valido
         distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio dei successi
     }
-    console.log(distribuzioneSuccessi);
 
-    // Etichette per ogni livello di successo (da 0 a N)
-    const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
+    // Estrai i dati dall'oggetto distribuzioneSuccessi per il grafico
+    const successiTotali = Object.keys(distribuzioneSuccessi).map(key => distribuzioneSuccessi[key]);
+    const labels = Object.keys(distribuzioneSuccessi); // Usa le chiavi come etichette
 
-    // Controllo per vedere se i dati vengono popolati correttamente
-    console.log('Distribuzione Successi:', distribuzioneSuccessi);
-
-    // Costruire il grafico istogramma con barre orizzontali allineate
+    // Costruire il grafico istogramma
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (asse Y)
+            labels: labels, // Utilizza le chiavi come etichette
             datasets: [{
-                label: 'Numero di Hacker',
-                data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
-                backgroundColor: distribuzioneSuccessi.map(successo => getRandomColor()) // Colori casuali per ogni barra
+                label: 'Distribuzione Successi',
+                data: successiTotali,
+                backgroundColor: successiTotali.map(successo => {
+                    // Imposta il colore in base ai successi
+                    return successo > 0 ? getRandomColor() : 'rgba(0, 0, 0, 0.2)';
+                })
             }]
         },
         options: {
-            indexAxis: 'y', // Imposta l'asse delle x come orizzontale per avere le barre orizzontali
+            indexAxis: 'y', // Imposta l'asse delle x come orizzontale
             responsive: true,
-            maintainAspectRatio: false, // Evita che l'istogramma si ridimensioni in modo diverso dal grafico a linee
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Numero di Successi'
                     },
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1 // Allinea bene i numeri degli hacker
-                    }
+                    beginAtZero: true
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Successi'
-                    },
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1, // Allinea i livelli di successo con il grafico a linee
-                        callback: function(value) {
-                            return `Successi: ${value}`;
-                        }
+                        text: 'Hacker'
                     }
                 }
             },
@@ -226,6 +222,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
+
 
 
 // Aggiungi evento al pulsante
