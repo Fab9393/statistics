@@ -168,6 +168,9 @@ function disegnaIstogramma(successiPerHacker, N, M) {
 
     // Conta i successi per ogni hacker
     for (let i = 0; i < M; i++) {
+        console.log(iterazione + " " + i);
+        console.log(distribuzioneSuccessi[successiHacker]);
+        console.log(successiPerHacker[i][N - 1]);
         const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'hacker i-esimo
         distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio del numero di hacker con questo successo
     }
@@ -194,7 +197,10 @@ function disegnaIstogramma(successiPerHacker, N, M) {
                         display: true,
                         text: 'Numero di Hacker'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1 //incrementa di 1
+                    }
                 },
                 y: {
                     title: {
