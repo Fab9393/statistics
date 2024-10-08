@@ -80,11 +80,17 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         myChart.destroy();
     }
 
+    // Calcolo della somma totale dei successi
+    let totaleSuccessi = 0; // Inizializzazione
+    for (let i = 0; i < M; i++) {
+        totaleSuccessi += successiPerHacker[i][N - 1]; // Somma successi per ogni hacker
+    }
+
     // Creare i dataset per ogni hacker
     let hackersData = [];
     for (let i = 0; i < M; i++) {
         hackersData.push({
-            label: `Hacker ${i + 1}: Successi Totali: ${successiPerHacker[i][N - 1]} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: Successi Totali: ${successiPerHacker[i][N - 1]} - Server Hackerati: ${successiPerHacker[i][N-1]} / ${totaleSuccessi} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
             fill: false
