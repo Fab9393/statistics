@@ -198,14 +198,20 @@ function disegnaIstogramma(successiPerHacker) {
                         display: true,
                         text: 'Numero di Successi'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
+                    }
                 },
                 y: {
                     title: {
                         display: true,
                         text: 'Numero di Hacker'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
+                    }
                 }
             },
             plugins: {
