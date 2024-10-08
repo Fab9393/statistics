@@ -164,14 +164,17 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     // Conta quanti hacker hanno raggiunto ciascun livello di successi
     let distribuzioneSuccessi = Array(N + 1).fill(0); // Array per contare successi da 0 a N
 
-    // Conta i successi per ogni hacker
+    // Conta i successi finali per ogni hacker
     for (let i = 0; i < M; i++) {
-        const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'hacker i-esimo
-        distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio del numero di hacker con questo successo
+        const successiHacker = successiPerHacker[i][N - 1]; // Numero di successi dell'hacker i-esimo
+        distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio dei successi
     }
 
-    // Crea le etichette per l'istogramma, una per ogni livello di successo (asse Y)
+    // Etichette per ogni livello di successo (da 0 a N)
     const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
+
+    // Controllo per vedere se i dati vengono popolati correttamente
+    console.log('Distribuzione Successi:', distribuzioneSuccessi);
 
     // Costruire il grafico istogramma con barre orizzontali allineate
     histogramChart = new Chart(ctx, {
@@ -204,9 +207,9 @@ function disegnaIstogramma(successiPerHacker, N, M) {
                         display: true,
                         text: 'Successi'
                     },
+                    beginAtZero: true,
                     ticks: {
-                        // Allinea i livelli di successo con il grafico a linee
-                        stepSize: 1,
+                        stepSize: 1, // Allinea i livelli di successo con il grafico a linee
                         callback: function(value) {
                             return `Successi: ${value}`;
                         }
@@ -222,6 +225,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
+
 
 // Aggiungi evento al pulsante
 document.getElementById('simulateButton').addEventListener('click', () => {
