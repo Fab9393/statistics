@@ -72,17 +72,18 @@ function getRandomColor() {
 }
 
 let myChart;
-// Funzione per disegnare il grafico
-// Funzione per disegnare il grafico
+let histogramChart;
+
+// Funzione per disegnare il grafico principale
 function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     const ctx = document.getElementById('attacchiGrafico').getContext('2d');
-    
-    // Check if myChart already exists and destroy it
+
+    // Verifica se myChart esiste e distruggilo prima di crearne uno nuovo
     if (myChart) {
         myChart.destroy();
     }
 
-    // Calcolo della somma totale dei successi
+    // Calcola la somma totale dei successi
     let totaleSuccessi = 0; // Inizializzazione
     for (let i = 0; i < M; i++) {
         totaleSuccessi += successiPerHacker[i][N - 1]; // Somma successi per ogni hacker
@@ -91,7 +92,6 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     // Creare i dataset per ogni hacker
     let hackersData = [];
     for (let i = 0; i < M; i++) {
-        // Calcolare il numero di successi per l'hacker corrente
         const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'ultimo server
         let frazioneHackerati = ""; // Inizializzazione variabile per la frazione
 
@@ -110,7 +110,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         });
     }
 
-    // Costruire il grafico
+    // Costruire il grafico principale
     myChart = new Chart(ctx, {
         type: 'line', // Grafico a linee
         data: {
@@ -118,6 +118,8 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
             datasets: hackersData
         },
         options: {
+            responsive: true, // Abilita il ridimensionamento responsivo
+            maintainAspectRatio: false, // Non mantenere il rapporto di aspetto
             scales: {
                 x: {
                     title: {
@@ -141,6 +143,64 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
                 legend: {
                     display: true,
                     position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Disegna l'istogramma della distribuzione dopo aver creato il grafico principale
+    disegnaIstogramma(successiPerHacker, M);
+}
+
+// Funzione per disegnare l'istogramma della distribuzione
+function disegnaIstogramma(successiPerHacker, M) {
+    const ctx = document.getElementById('istogrammaGrafico').getContext('2d');
+
+    // Verifica se histogramChart esiste e distruggilo prima di crearne uno nuovo
+    if (histogramChart) {
+        histogramChart.destroy();
+    }
+
+    // Estrai i successi totali per ciascun hacker
+    const successiTotali = successiPerHacker.map(successi => successi[successi.length - 1]);
+    const labels = Array.from({ length: M }, (_, i) => `Hacker ${i + 1}`);
+
+    // Costruire il grafico istogramma
+    histogramChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Distribuzione Successi',
+                data: successiTotali,
+                backgroundColor: successiTotali.map(successo => {
+                    // Imposta il colore in base ai successi
+                    return successo > 0 ? getRandomColor() : 'rgba(0, 0, 0, 0.2)';
+                })
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Imposta l'asse delle x come orizzontale
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Numero di Successi'
+                    },
+                    beginAtZero: true
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Hacker'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
                 }
             }
         }
