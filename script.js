@@ -152,6 +152,8 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     disegnaIstogramma(successiPerHacker, M);
 }
 
+
+
 // Funzione per disegnare l'istogramma della distribuzione
 function disegnaIstogramma(successiPerHacker, N, M) {
     const ctx = document.getElementById('istogrammaGrafico').getContext('2d');
@@ -177,7 +179,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (x)
+            labels: labels, // Etichette dei successi (y)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
@@ -190,19 +192,19 @@ function disegnaIstogramma(successiPerHacker, N, M) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Successi'
+                        text: 'Numero di Hacker'
                     },
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
-                    }
+                    beginAtZero: true
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Successi'
                     },
-                    beginAtZero: true // Inizia da 0
+                    beginAtZero: true, // Inizia da 0
+                    ticks: {
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
+                    }
                 }
             },
             plugins: {
@@ -214,6 +216,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
+
 
 
 
