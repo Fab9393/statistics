@@ -152,6 +152,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     disegnaIstogramma(successiPerHacker, M);
 }
 
+// Funzione per disegnare l'istogramma della distribuzione
 function disegnaIstogramma(successiPerHacker, N, M) {
     const ctx = document.getElementById('istogrammaGrafico').getContext('2d');
 
@@ -163,22 +164,20 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     // Conta quanti hacker hanno raggiunto ciascun livello di successi
     let distribuzioneSuccessi = Array(N + 1).fill(0); // Array per contare successi da 0 a N
 
-    // Conta i successi finali per ogni hacker
+    // Conta i successi per ogni hacker
     for (let i = 0; i < M; i++) {
-        const successiHacker = successiPerHacker[i][N - 1]; // Numero di successi dell'hacker i-esimo
-        if (successiHacker >= 0 && successiHacker <= N) {
-            distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio dei successi
-        }
+        const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'hacker i-esimo
+        distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio del numero di hacker con questo successo
     }
 
-    // Etichette per ogni livello di successo (da 0 a N)
+    // Crea le etichette per l'istogramma, una per ogni livello di successo
     const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
 
     // Costruire il grafico istogramma
     histogramChart = new Chart(ctx, {
-        type: 'bar', // Tipo di grafico a barre
+        type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (asse X)
+            labels: labels, // Etichette dei successi (y)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
@@ -186,28 +185,20 @@ function disegnaIstogramma(successiPerHacker, N, M) {
             }]
         },
         options: {
+            indexAxis: 'y', // Imposta l'asse delle x come orizzontale per avere le barre orizzontali
             responsive: true,
-            maintainAspectRatio: false, // Evita che l'istogramma si ridimensioni in modo diverso dal grafico a linee
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Successi' // Titolo asse X
+                        text: 'Numero di Hacker'
                     },
-                    beginAtZero: true, // Inizia da zero
-                    ticks: {
-                        stepSize: 1 // Passo di incremento per le etichette
-                    }
+                    beginAtZero: true
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker' // Titolo asse Y
-                    },
-                    beginAtZero: true, // Inizia da zero
-                    max: M, // Imposta il valore massimo dell'asse Y a M
-                    ticks: {
-                        stepSize: 1 // Passo di incremento per le etichette
+                        text: 'Successi'
                     }
                 }
             },
@@ -220,8 +211,6 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
-
-
 
 
 // Aggiungi evento al pulsante
