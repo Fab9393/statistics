@@ -19,7 +19,7 @@ function simulazioneHackingServer(N, M, p) {
             
             // Se r <= p, l'hacker riesce a bucare il server
             if (r <= p) {
-                successiPerHacker[i][j]++; // Incrementa il numero di successi dell'hacker sul server j
+                successiPerHacker[i][j]++; // Incrementa il numero di successi dell'hacker i sul server j
             }
         }
     }
@@ -68,15 +68,17 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi
     for (let i = 0; i < M; i++) {
         hackersData.push({
             label: `Hacker ${i + 1} - Successi Totali: ${totaleSuccessi[i]}`,
-            data: successiPerHacker[i].map((successi, index) => ({ x: index + 1, y: successi })), // Assegnazione x = server, y = successi
+            data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
             fill: false
         });
     }
 
+    // Costruire il grafico
     myChart = new Chart(ctx, {
         type: 'line', // Grafico a linee
         data: {
+            labels: Array.from({ length: N }, (_, index) => `Server ${index + 1}`), // Server come etichette
             datasets: hackersData
         },
         options: {
