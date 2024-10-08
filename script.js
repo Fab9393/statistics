@@ -170,14 +170,14 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio del numero di hacker con questo successo
     }
 
-    // Crea le etichette per l'istogramma, una per ogni livello di successo
+    // Crea le etichette per l'istogramma, una per ogni livello di successo (asse Y)
     const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
 
-    // Costruire il grafico istogramma
+    // Costruire il grafico istogramma con barre orizzontali allineate
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (y)
+            labels: labels, // Etichette dei successi (asse Y)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
@@ -187,18 +187,29 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         options: {
             indexAxis: 'y', // Imposta l'asse delle x come orizzontale per avere le barre orizzontali
             responsive: true,
+            maintainAspectRatio: false, // Evita che l'istogramma si ridimensioni in modo diverso dal grafico a linee
             scales: {
                 x: {
                     title: {
                         display: true,
                         text: 'Numero di Hacker'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1 // Allinea bene i numeri degli hacker
+                    }
                 },
                 y: {
                     title: {
                         display: true,
                         text: 'Successi'
+                    },
+                    ticks: {
+                        // Allinea i livelli di successo con il grafico a linee
+                        stepSize: 1,
+                        callback: function(value) {
+                            return `Successi: ${value}`;
+                        }
                     }
                 }
             },
@@ -211,8 +222,6 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
-
-
 
 // Aggiungi evento al pulsante
 document.getElementById('simulateButton').addEventListener('click', () => {

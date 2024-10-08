@@ -238,21 +238,23 @@ nav a:hover {
     height: auto; /* Altezza automatica per mantenere le proporzioni */
     max-height: 400px; /* Imposta un'altezza massima per evitare il ridimensionamento */
 }
-
 #chartContainer {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    width: 100%; /* Usa tutta la larghezza disponibile */
+    width: 100%;
+    height: 400px; /* Imposta un'altezza fissa per entrambi i grafici */
 }
 
 /* Contenitore per il grafico a linee */
 #canvasContainer {
-    width: 60%; /* Larghezza per il grafico a linee */
+    width: 60%;
+    height: 100%; /* Assicurati che il contenitore occupi tutta l'altezza */
 }
 
 /* Stili per l'istogramma */
 #istogrammaGrafico {
-    width: 40%; /* Larghezza per l'istogramma */
-    height: auto; /* Adatta l'altezza in base al contenuto */
+    width: 40%;
+    height: 100%; /* Stessa altezza del grafico a linee */
 }
+
