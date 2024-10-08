@@ -173,14 +173,10 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     }
 
-    // Etichette per ogni livello di successo (da 0 a N)
-    const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
-
     // Costruire il grafico istogramma
     histogramChart = new Chart(ctx, {
         type: 'bar', // Tipo di grafico a barre
         data: {
-            labels: labels, // Etichette dei successi (asse X)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
