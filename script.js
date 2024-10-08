@@ -176,11 +176,11 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     // Etichette per ogni livello di successo (da 0 a N)
     const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
 
-    // Costruire il grafico istogramma
+    // Costruire il grafico istogramma con barre orizzontali allineate
     histogramChart = new Chart(ctx, {
         type: 'bar', // Tipo di grafico a barre
         data: {
-            labels: labels, // Etichette dei successi (asse X)
+            labels: labels, // Etichette dei successi (asse Y)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
@@ -188,28 +188,31 @@ function disegnaIstogramma(successiPerHacker, N, M) {
             }]
         },
         options: {
+            indexAxis: 'y', // Imposta l'asse delle x come orizzontale
             responsive: true,
             maintainAspectRatio: false, // Evita che l'istogramma si ridimensioni in modo diverso dal grafico a linee
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Successi' // Titolo asse X
+                        text: 'Numero di Hacker' // Titolo asse X
                     },
                     beginAtZero: true, // Inizia da zero
                     ticks: {
-                        stepSize: 1 // Passo di incremento per le etichette
+                        stepSize: 1 // Allinea bene i numeri degli hacker
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker' // Titolo asse Y
+                        text: 'Successi' // Titolo asse Y
                     },
                     beginAtZero: true, // Inizia da zero
-                    max: M, // Imposta il valore massimo dell'asse Y a M
                     ticks: {
-                        stepSize: 1 // Passo di incremento per le etichette
+                        stepSize: 1, // Allinea i livelli di successo con il grafico a barre
+                        callback: function(value) {
+                            return `Successi: ${value}`; // Aggiunge "Successi: " alle etichette
+                        }
                     }
                 }
             },
@@ -222,6 +225,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
+
 
 
 
