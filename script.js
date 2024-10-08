@@ -177,29 +177,32 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Etichette dei successi (y)
+            labels: labels, // Etichette dei successi (x)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
-                backgroundColor: distribuzioneSuccessi.map(successo => getRandomColor()) // Colori casuali per ogni barra
+                backgroundColor: distribuzioneSuccessi.map(() => getRandomColor()) // Colori casuali per ogni barra
             }]
         },
         options: {
-            indexAxis: 'y', // Imposta l'asse delle x come orizzontale per avere le barre orizzontali
             responsive: true,
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Successi'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
+                    }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Successi'
-                    }
+                        text: 'Numero di Hacker'
+                    },
+                    beginAtZero: true // Inizia da 0
                 }
             },
             plugins: {
@@ -211,6 +214,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         }
     });
 }
+
 
 
 // Aggiungi evento al pulsante
