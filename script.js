@@ -154,8 +154,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
 
 
 
- // Funzione per disegnare l'istogramma della distribuzione
- function disegnaIstogramma(successiPerHacker, M) {
+function disegnaIstogramma(successiPerHacker) {
     const ctx = document.getElementById('istogrammaGrafico').getContext('2d');
 
     // Verifica se histogramChart esiste e distruggilo prima di crearne uno nuovo
@@ -165,7 +164,20 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
 
     // Estrai i successi totali per ciascun hacker
     const successiTotali = successiPerHacker.map(successi => successi[successi.length - 1]);
-    const labels = Array.from({ length: M }, (_, i) => `Hacker ${i + 1}`);
+
+    // Calcola la distribuzione dei successi
+    const distribuzioneSuccessi = {};
+    successiTotali.forEach(successo => {
+        if (distribuzioneSuccessi[successo]) {
+            distribuzioneSuccessi[successo]++;
+        } else {
+            distribuzioneSuccessi[successo] = 1;
+        }
+    });
+
+    // Crea le etichette e i dati per il grafico
+    const labels = Object.keys(distribuzioneSuccessi).sort((a, b) => a - b);
+    const data = labels.map(label => distribuzioneSuccessi[label]);
 
     // Costruire il grafico istogramma
     histogramChart = new Chart(ctx, {
@@ -173,16 +185,12 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Distribuzione Successi',
-                data: successiTotali,
-                backgroundColor: successiTotali.map(successo => {
-                    // Imposta il colore in base ai successi
-                    return successo > 0 ? getRandomColor() : 'rgba(0, 0, 0, 0.2)';
-                })
+                label: 'Numero di Hacker',
+                data: data,
+                backgroundColor: data.map(() => getRandomColor())
             }]
         },
         options: {
-            indexAxis: 'y', // Imposta l'asse delle x come orizzontale
             responsive: true,
             scales: {
                 x: {
@@ -195,8 +203,9 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
                 y: {
                     title: {
                         display: true,
-                        text: 'Hacker'
-                    }
+                        text: 'Numero di Hacker'
+                    },
+                    beginAtZero: true
                 }
             },
             plugins: {
@@ -208,6 +217,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         }
     });
 }
+
 
 
 
