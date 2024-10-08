@@ -7,70 +7,42 @@ function sommaCompensata(somma, valore, compensazione) {
     return { somma, compensazione };
 }
 
-// Funzione per simulare gli attacchi sui server
-function simulazioneHackingServer(N, M, p, T) {
-    let successiPerHacker = Array.from({ length: M }, () => Array(T).fill(0)); 
-    let serverBucati = Array.from({ length: M }, () => new Set()); 
+// Funzione per simulare gli attacchi sugli n server da parte di m hacker con probabilità p
+function simulazioneHackingServer(N, M, p) {
+    let successiPerHacker = Array.from({ length: M }, () => Array(N).fill(0)); // Successi per ogni hacker su ogni server
 
-    // Per ogni simulazione t
-    for (let t = 0; t < T; t++) {
-        // Per ogni server j
-        for (let j = 0; j < N; j++) {
-            // Per ciascun hacker i
-            for (let i = 0; i < M; i++) {
-                // Controlla se il server j è già stato bucato da i
-                if (!serverBucati[i].has(j)) { 
-                    let r = Math.random(); // Genera un numero casuale tra 0 e 1
-
-                    // Se r <= p, l'hacker riesce a bucare il server
-                    if (r <= p) {
-                        serverBucati[i].add(j); // Aggiungi il server bucato al set
-                    }
-                }
+    // Ciclo esterno sui server
+    for (let j = 0; j < N; j++) {
+        // Ogni hacker prova ad attaccare il server j
+        for (let i = 0; i < M; i++) {
+            let r = Math.random(); // Genera un numero casuale tra 0 e 1
+            
+            // Se r <= p, l'hacker riesce a bucare il server
+            if (r <= p) {
+                successiPerHacker[i][j]++; // Incrementa il numero di successi dell'hacker sul server j
             }
         }
-
-        // Dopo tutti i tentativi per t, calcola i successi
-        for (let i = 0; i < M; i++) {
-            successiPerHacker[i][t] = serverBucati[i].size; // Aggiorna i successi per l'hacker
-        }
     }
 
-    // Calcolo del totale dei server bucati per ciascun hacker alla fine di tutti i tentativi
-    let totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[T - 1]);
+    // Somma totale dei successi per tutti gli hacker
+    let totaleSuccessi = successiPerHacker.map(successi => successi.reduce((acc, val) => acc + val, 0)); // Totale successi per ogni hacker
 
-    // Applichiamo la somma compensata di Knuth per calcolare la somma complessiva
-    let sommaTotale = 0;
-    let compensazioneTotale = 0;
-    
-    for (let successi of totaleSuccessiPerHacker) {
-        let risultato = sommaCompensata(sommaTotale, successi, compensazioneTotale);
-        sommaTotale = risultato.somma;
-        compensazioneTotale = risultato.compensazione;
-    }
-
-    let totaleSuccessi = sommaTotale; // Totale dei server bucati complessivamente
-
-    // Calcolo della distribuzione empirica per ciascun hacker con somma compensata
+    // Calcolo della distribuzione empirica per ciascun hacker
     let distribuzioneEmpirica = [];
     let sommaDistribuzione = 0;
     let compensazioneDistribuzione = 0;
 
-    for (let successi of totaleSuccessiPerHacker) {
-        let percentuale = successi / totaleSuccessi; // Percentuale di attacchi riusciti per ogni hacker
+    for (let successi of totaleSuccessi) {
+        let percentuale = successi / (N * M); // Percentuale di attacchi riusciti per ogni hacker
         distribuzioneEmpirica.push(percentuale);
 
-        // Usare la somma compensata per calcolare la somma delle distribuzioni
         let risultato = sommaCompensata(sommaDistribuzione, percentuale, compensazioneDistribuzione);
         sommaDistribuzione = risultato.somma;
         compensazioneDistribuzione = risultato.compensazione;
     }
 
-    // Restituiamo anche successiPerHacker per disegnare il grafico correttamente
     return { successiPerHacker, totaleSuccessi, distribuzioneEmpirica };
 }
-
-
 
 // Funzione per generare colori casuali per ogni linea (hacker)
 function getRandomColor() {
@@ -84,23 +56,27 @@ function getRandomColor() {
 
 let myChart;
 // Funzione per disegnare il grafico
-function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, T, N) {
+function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, N, M) {
+    const ctx = document.getElementById('attacchiGrafico').getContext('2d');
+    // Check if myChart already exists and destroy it
+    if (myChart) {
+        myChart.destroy();
+    }
+
+    // Creare i dataset per ogni hacker
     let hackersData = [];
-    for (let i = 0; i < successiPerHacker.length; i++) {
+    for (let i = 0; i < M; i++) {
         hackersData.push({
-            label: `Hacker ${i + 1}: - server broken: ${successiPerHacker[i][T - 1]} / ${totaleSuccessi}, - Empirical Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
-            data: successiPerHacker[i],
+            label: `Hacker ${i + 1} - Successi Totali: ${totaleSuccessi[i]}`,
+            data: successiPerHacker[i].map((successi, index) => ({ x: index + 1, y: successi })), // Assegnazione x = server, y = successi
             borderColor: getRandomColor(),
             fill: false
         });
     }
 
-    const ctx = document.getElementById('attacchiGrafico').getContext('2d');
-    // Check if myChart already exists and destroy it
     myChart = new Chart(ctx, {
-        type: 'line',
+        type: 'line', // Grafico a linee
         data: {
-            labels: Array.from({ length: T }, (_, i) => `t${i}`),
             datasets: hackersData
         },
         options: {
@@ -108,16 +84,18 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi
                 x: {
                     title: {
                         display: true,
-                        text: 'Attempts (t)'
+                        text: 'Server'
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Total Number of Broken Servers'
+                        text: 'Numero di Successi'
                     },
                     beginAtZero: true,
-                    max: N // Imposta il valore massimo dell'asse y
                 }
             },
             plugins: {
@@ -130,19 +108,17 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi
     });
 }
 
-
 // Aggiungi evento al pulsante
 document.getElementById('simulateButton').addEventListener('click', () => {
     // Leggi i valori dal modulo
     const N = parseInt(document.getElementById('n').value); // Numero di server
     const M = parseInt(document.getElementById('m').value); // Numero di hacker
     const p = parseFloat(document.getElementById('p').value); // Probabilità di successo
-    const T = parseInt(document.getElementById('t').value); // Numero di simulazioni
 
     // Esegui la simulazione e ottieni i risultati
-    const { successiPerHacker, totaleSuccessi, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p, T);
+    const { successiPerHacker, totaleSuccessi, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p);
     
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
-    disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, T, N);
+    disegnaGrafico(successiPerHacker, distribuzioneEmpirica, totaleSuccessi, N, M);
 });
