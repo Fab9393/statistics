@@ -196,14 +196,14 @@ function disegnaIstogramma(successiPerHacker) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Numero di Successi'
+                        text: 'Numero di Hacker'
                     },
                     beginAtZero: true
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Numero di Hacker'
+                        text: 'Numero di Successi'
                     },
                     beginAtZero: true
                 }
