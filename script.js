@@ -99,11 +99,11 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         if (successiHacker > 0) {
             frazioneHackerati = `${successiHacker} / ${totaleSuccessi}`; // Costruzione della frazione
         } else {
-            frazioneHackerati = "0"; // Messaggio se non ci sono successi
+            frazioneHackerati = '0'; // Messaggio se non ci sono successi
         }
 
         hackersData.push({
-            label: `Hacker ${i + 1}: Successi Totali: ${successiHacker} - Server Hackerati: ${frazioneHackerati} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
+            label: `Hacker ${i + 1}: Server Hackerati: ${frazioneHackerati} - Distribuzione: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
             fill: false
