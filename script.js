@@ -175,7 +175,6 @@ function disegnaIstogramma(successiPerHacker, N, M) {
     histogramChart = new Chart(ctx, {
         type: 'bar', // Tipo di grafico a barre
         data: {
-            labels: labels, // Etichette dei successi (asse Y)
             datasets: [{
                 label: 'Numero di Hacker',
                 data: distribuzioneSuccessi, // Numero di hacker per ciascun livello di successo
