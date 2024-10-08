@@ -148,8 +148,6 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
         }
     });
 
-    // Disegna l'istogramma della distribuzione dopo aver creato il grafico principale
-    disegnaIstogramma(successiPerHacker, M);
 }
 
 
@@ -239,4 +237,7 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
     disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M);
+    
+    // Disegna l'istogramma della distribuzione dopo aver creato il grafico principale
+    disegnaIstogramma(successiPerHacker, M);
 });
