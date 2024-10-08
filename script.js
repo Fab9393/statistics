@@ -169,6 +169,7 @@ function disegnaIstogramma(successiPerHacker, N, M) {
         const successiHacker = successiPerHacker[i][N - 1]; // Numero di successi dell'hacker i-esimo
         distribuzioneSuccessi[successiHacker]++; // Incrementa il conteggio dei successi
     }
+    console.log(distribuzioneSuccessi);
 
     // Etichette per ogni livello di successo (da 0 a N)
     const labels = distribuzioneSuccessi.map((_, index) => `Successi: ${index}`);
