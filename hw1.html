@@ -100,8 +100,8 @@
             
         </div>
         <div class="concept-panel">
-            <img src="knuth.png" alt="Code Example" class="code-image">
             <div class="concept-title">sommaCompensata function (Compensated Sum - Knuth Algorithm)</div>
+            <img src="knuth.png" alt="Code Example" class="code-image">
                <p>This function implements a compensated sum algorithm (also known as Kahan summation algorithm). It improves the precision of floating-point arithmetic by compensating for small errors that accumulate when summing multiple floating-point numbers.</p> 
                 
                <p>Parameters:<br>
@@ -120,77 +120,80 @@
             </p>
         </div>
         <div class="concept-panel">
-            <div class="concept-title">Significative Code Fragment</div>
+            <div class="concept-title">simulazioneHackingServer function (Server Hacking Simulation)</div>
             <img src="simulation.png" alt="Code Example" class="code-image">
-            <p>simulazioneHackingServer function (Server Hacking Simulation)
-                This function simulates attacks on N servers by M hackers, where each hacker has a probability p of successfully hacking a server.
-                
-                Parameters:
-                N: Number of servers.
-                M: Number of hackers.
-                p: Probability of a successful hack.
-
-                Returns:
-                successiPerHacker: A matrix that records the number of successful hacks for each hacker across servers.
-                distribuzioneEmpirica: The empirical distribution of successful hacks for each hacker as a percentage of the total.
-
-                Process:
-                Creates a matrix to store successful hacks for each hacker on each server.
-                Loops through each server, where each hacker tries to hack the server with a success rate of p.
-                Updates the number of successful hacks for each hacker after each server.
-                At the end, applies the Knuth compensated summation algorithm to calculate the total number of successes for all hackers.
-                Returns the results in a matrix (successiPerHacker) and computes the empirical distribution of successes.</p>
+                <p>This function simulates attacks on N servers by M hackers, where each hacker has a probability p of successfully hacking a server.</p>
+                <p>    
+                Parameters:<br>
+                N: Number of servers.<br>
+                M: Number of hackers.<br>
+                p: Probability of a successful hack.<br>
+            </p>
+            <p>Returns:<br>
+                successiPerHacker: A matrix that records the number of successful hacks for each hacker across servers.<br>
+                distribuzioneEmpirica: The empirical distribution of successful hacks for each hacker as a percentage of the total.<br>
+            </p>
+            <p>Process:<br>
+                Creates a matrix to store successful hacks for each hacker on each server.<br>
+                Loops through each server, where each hacker tries to hack the server with a success rate of p.<br>
+                Updates the number of successful hacks for each hacker after each server.<br>
+                At the end, applies the Knuth compensated summation algorithm to calculate the total number of successes for all hackers.<br>
+                Returns the results in a matrix (successiPerHacker) and computes the empirical distribution of successes.<br>
+            </p>
         </div>
     </div>
-
     
     <div class="desc-content">
         <div class="concept-panel">
-            <div class="concept-title">Significative Code Fragment</div>
+            <div class="concept-title">getRandomColor function</div>
             <img src="random_color.png" alt="Code Example" class="code-image">
-            <p>getRandomColor function
+            <p>
                 This function generates a random color in hexadecimal format to be used in the chart lines or bars.
-                
-                Returns:
-                A string representing a random color in the format #RRGGBB.
-
-                Process:
-                It iterates over 6 hexadecimal digits, randomly generating each digit.
-                Returns the final color string.</p>
+            </p>    
+            <p>Returns:<br>
+                A string representing a random color in the format #RRGGBB.<br>
+            </p>
+            <p>Process:<br>
+                It iterates over 6 hexadecimal digits, randomly generating each digit.<br>
+                Returns the final color string.<br>
+            </p>
         </div>
         <div class="concept-panel">
-            <div class="concept-title">Significative Code Fragment</div>
+            <div class="concept-title">disegnaGrafico function (Draw Main Chart)</div>
             <img src="draw_chart.png" alt="Code Example" class="code-image">
-            <p>disegnaGrafico function (Draw Main Chart)
+            <p>
                 This function draws the main line chart that visualizes the successful hacks across multiple servers for each hacker.
-                
-                Parameters:
-                successiPerHacker: The matrix of successful hacks for each hacker on each server.
-                distribuzioneEmpirica: The empirical distribution of successes for each hacker.
-                N: Number of servers.
-                M: Number of hackers.
-
-                Process:
-                It calculates the total successes for all hackers.
-                For each hacker, it creates a dataset to be displayed on the chart, showing the number of successful hacks per server.
-                It then uses the Chart.js library to create a line chart with the data.
-                The chart is responsive and labeled with each hacker's success rate and empirical distribution.
-                Finally, it calls the disegnaIstogramma function to draw the histogram on the right.</p>
+            </p>    
+            <p>Parameters:<br>
+                successiPerHacker: The matrix of successful hacks for each hacker on each server.<br>
+                distribuzioneEmpirica: The empirical distribution of successes for each hacker.<br>
+                N: Number of servers.<br>
+                M: Number of hackers.<br>
+            </p>
+            <p> Process:<br>
+                It calculates the total successes for all hackers.<br>
+                For each hacker, it creates a dataset to be displayed on the chart, showing the number of successful hacks per server.<br>
+                It then uses the Chart.js library to create a line chart with the data.<br>
+                The chart is responsive and labeled with each hacker's success rate and empirical distribution.<br>
+                Finally, it calls the disegnaIstogramma function to draw the histogram on the right.<br>
+            </p>
         </div>
         <div class="concept-panel">
-            <div class="concept-title">Significative Code Fragment</div>
+            <div class="concept-title">disegnaIstogramma function (Draw Histogram)</div>
             <img src="draw_histogram.png" alt="Code Example" class="code-image">
-            <p>disegnaIstogramma function (Draw Histogram)
+            <p>
                 This function creates a horizontal bar chart (histogram) showing the distribution of successful hacks among hackers.
-                
-                Parameters:
-                successiPerHacker: The matrix of successful hacks for each hacker.
-
-                Process:
-                It extracts the total successes of each hacker from the last server.
-                It counts how many hackers achieved each success level.
-                It builds a bar chart (using Chart.js) where the x-axis represents the number of successful hacks and the y-axis represents the number of hackers.
-                The histogram is displayed beside the main chart.</p>
+            </p>    
+            <p>Parameters:<br>
+                successiPerHacker: The matrix of successful hacks for each hacker.<br>
+            </p>
+            <p>
+                Process:<br>
+                It extracts the total successes of each hacker from the last server.<br>
+                It counts how many hackers achieved each success level.<br>
+                It builds a bar chart (using Chart.js) where the x-axis represents the number of successful hacks and the y-axis represents the number of hackers.<br>
+                The histogram is displayed beside the main chart.<br>
+            </p>
         </div>
     </div>
 
