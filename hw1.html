@@ -44,80 +44,80 @@
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Population</div>
-            <p>In statistics, the term population refers to the entire group or set of individuals, objects, events, or data points that a study is focused on. The population is the complete collection of elements that share common characteristics and that researchers are interested in understanding, analyzing, or making conclusions about. For example:
+            <p>In statistics, the term population refers to the entire group or set of individuals, objects, events, or data points that a study is focused on. The population is the complete collection of elements that share common characteristics and that researchers are interested in understanding, analyzing, or making conclusions about. For example:</p>
 
-                In a medical study, the population might include all patients with a certain condition.
-                In a survey, the population could refer to all voters in a country. Researchers often collect data from a sample of this population because it may not be practical to study the entire population due to time, cost, or logistical constraints.</p>
+                <p>In a medical study, the population might include all patients with a certain condition.</p>
+                <p>In a survey, the population could refer to all voters in a country. Researchers often collect data from a sample of this population because it may not be practical to study the entire population due to time, cost, or logistical constraints.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Statistical Units</div>
-            <p>A statistical unit is the basic element from which data is collected in a statistical study. Each statistical unit represents one member of the population, be it an individual person, a single object, or an event. It serves as the smallest entity of observation. In any dataset, these units are the primary objects that give rise to the data points being analyzed. For instance:
+            <p>A statistical unit is the basic element from which data is collected in a statistical study. Each statistical unit represents one member of the population, be it an individual person, a single object, or an event. It serves as the smallest entity of observation. In any dataset, these units are the primary objects that give rise to the data points being analyzed. For instance:</p>
 
-                In a survey about household income, the statistical unit might be an individual household.
-                In a clinical trial, the unit could be a patient or participant.</p>
+               <p>In a survey about household income, the statistical unit might be an individual household.</p> 
+                <p>In a clinical trial, the unit could be a patient or participant.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Distribution</div>
-            <p>A distribution refers to the way in which the values of a dataset or variable are spread across a population or sample. Distributions describe how often each possible value (or a range of values) occurs, and they provide a summary of the frequency of different outcomes. There are various types of distributions, including:
+            <p>A distribution refers to the way in which the values of a dataset or variable are spread across a population or sample. Distributions describe how often each possible value (or a range of values) occurs, and they provide a summary of the frequency of different outcomes. There are various types of distributions, including:</p>
 
-                Normal distribution: Bell-shaped and symmetrical around the mean, common in many natural phenomena.
-                Binomial distribution: Describes the probability of a specific number of successes in a fixed number of independent yes/no trials.
-                Uniform distribution: All outcomes are equally likely. Understanding the distribution helps in predicting future values and in making informed decisions about the data.</p>
+                <p>Normal distribution: Bell-shaped and symmetrical around the mean, common in many natural phenomena.</p>
+                <p>Binomial distribution: Describes the probability of a specific number of successes in a fixed number of independent yes/no trials.</p>
+                <p>Uniform distribution: All outcomes are equally likely. Understanding the distribution helps in predicting future values and in making informed decisions about the data.</p>
         </div>
     </div>
     
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Mean</div>
-            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:</p>
 
-                If the values are close together, the mean gives a good indication of a central point.
-                However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
+                <p>If the values are close together, the mean gives a good indication of a central point.</p>
+                <p> However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Floating Point Representation Calculation Issues</div>
-            <p>Computers represent numbers using floating-point notation, but this representation comes with limitations due to the finite precision of digital storage. 
-                Floating-point numbers can only represent a subset of real numbers, which introduces potential rounding errors or approximation errors. 
-                These issues are more pronounced when performing calculations involving very large or very small numbers or when many operations are chained together. 
-                Errors can accumulate, making certain calculations inaccurate, especially in high-precision applications like scientific computing or financial modeling.</p>
+            <p>Computers represent numbers using floating-point notation, but this representation comes with limitations due to the finite precision of digital storage. </p>
+            <p> Floating-point numbers can only represent a subset of real numbers, which introduces potential rounding errors or approximation errors. </p>
+            <p> These issues are more pronounced when performing calculations involving very large or very small numbers or when many operations are chained together.</p> 
+            <p> Errors can accumulate, making certain calculations inaccurate, especially in high-precision applications like scientific computing or financial modeling.</p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Catastrophic Cancellation Error</div>
-            <p>This error occurs during subtraction when two numbers that are very close in value are subtracted from each other. Because of the way floating-point arithmetic works, small differences between large, similar numbers can result in a loss of precision. 
-                The relative error introduced by rounding can be significant when the difference between the two numbers is very small compared to their actual values. This is often called catastrophic cancellation because the resulting loss of accuracy can be substantial. 
-                For example, in scientific computations, such errors can significantly distort results if not managed correctly. Using techniques like compensated summation algorithms (e.g., Kahan summation) can help mitigate this error.</p>
+            <p>This error occurs during subtraction when two numbers that are very close in value are subtracted from each other. Because of the way floating-point arithmetic works, small differences between large, similar numbers can result in a loss of precision. </p>
+            <p> The relative error introduced by rounding can be significant when the difference between the two numbers is very small compared to their actual values. This is often called catastrophic cancellation because the resulting loss of accuracy can be substantial. </p>
+            <p> For example, in scientific computations, such errors can significantly distort results if not managed correctly. Using techniques like compensated summation algorithms (e.g., Kahan summation) can help mitigate this error.</p>
         </div>
     </div>
 
     <div class="desc-content">
         <div class="concept-panel">
             <div class="concept-title">Numerical Solutions (e.g., Knuth's Method)</div>
-            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.
+            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.</p>
 
-                <code>Knuth's Contributions</code>
+               <p> <code>Knuth's Contributions</code> </p>
 
-                Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.
-            </p>
+               <p> Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.</p>
+            
         </div>
         <div class="concept-panel">
-            <div class="concept-title">Significative Code Fragment</div>
             <img src="knuth.png" alt="Code Example" class="code-image">
-            <p>sommaCompensata function (Compensated Sum - Knuth Algorithm)
-                This function implements a compensated sum algorithm (also known as Kahan summation algorithm). It improves the precision of floating-point arithmetic by compensating for small errors that accumulate when summing multiple floating-point numbers.
+            <div class="concept-title">sommaCompensata function (Compensated Sum - Knuth Algorithm)</div>
+               <p>This function implements a compensated sum algorithm (also known as Kahan summation algorithm). It improves the precision of floating-point arithmetic by compensating for small errors that accumulate when summing multiple floating-point numbers.</p> 
                 
-                Parameters:
-                somma: The current sum.
-                valore: The new value to be added to the sum.
-                compensazione: The compensation factor that adjusts for rounding errors.
-
-                Returns:
-                An object containing the updated sum (somma) and the updated compensation (compensazione).
-
-                Process:
-                Subtracts the compensation from the value.
-                Adds the adjusted value to the sum.
-                Updates the compensation for rounding errors in the sum.
-                Returns the updated sum and compensation.</p>
+               <p>Parameters:<br>
+                somma: The current sum.<br>
+                valore: The new value to be added to the sum.<br>
+                compensazione: The compensation factor that adjusts for rounding errors.<br>
+            </p> 
+            <p>Returns:<br>
+                An object containing the updated sum (somma) and the updated compensation (compensazione).<br>
+            </p> 
+            <p>Process:<br>
+                Subtracts the compensation from the value.<br>
+                Adds the adjusted value to the sum.<br>
+                Updates the compensation for rounding errors in the sum.<br>
+                Returns the updated sum and compensation.<br>
+            </p>
         </div>
         <div class="concept-panel">
             <div class="concept-title">Significative Code Fragment</div>
