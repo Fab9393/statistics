@@ -252,6 +252,8 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     // Calculate the mean of total successes across all hackers
     const mediaSuccessiTotali = calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker);
 
+    document.getElementById('meanContainer').style.display = 'flex'; // Nascondi la modale
     // Inject the result into the HTML
     document.querySelector('.homework-content').innerHTML += `<p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>`;
+    
 });
