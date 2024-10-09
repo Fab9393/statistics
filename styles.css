@@ -246,6 +246,15 @@ nav a:hover {
     height: 400px; /* Imposta un'altezza fissa per entrambi i grafici */
 }
 
+#meanContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: transparent;
+    width: 100%;
+    height: 400px; /* Imposta un'altezza fissa per entrambi i grafici */
+}
+
 /* Contenitore per il grafico a linee */
 #canvasContainer {
     width: 60%;
