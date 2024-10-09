@@ -248,7 +248,7 @@ nav a:hover {
 
 #meanContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Centro orizzontale */
     align-items: flex-start;
     background-color: transparent;
     width: 100%;
