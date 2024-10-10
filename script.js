@@ -84,29 +84,29 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     }
 
     // Calcola la somma totale dei successi
-    let totaleSuccessi = 0; // Inizializzazione
+    let totaleSuccessi = 0;
     for (let i = 0; i < M; i++) {
-        totaleSuccessi += successiPerHacker[i][N - 1]; // Somma successi per ogni hacker
+        totaleSuccessi += successiPerHacker[i][N - 1];
     }
 
     // Creare i dataset per ogni hacker
     let hackersData = [];
     for (let i = 0; i < M; i++) {
-        const successiHacker = successiPerHacker[i][N - 1]; // Successi dell'ultimo server
-        let frazioneHackerati = ""; // Inizializzazione variabile per la frazione
+        const successiHacker = successiPerHacker[i][N - 1];
+        let frazioneHackerati = "";
 
-        // Mostra la frazione solo se successiHacker > 0
         if (successiHacker > 0) {
-            frazioneHackerati = `${successiHacker} / ${totaleSuccessi}`; // Costruzione della frazione
+            frazioneHackerati = `${successiHacker} / ${totaleSuccessi}`;
         } else {
-            frazioneHackerati = '0'; // Messaggio se non ci sono successi
+            frazioneHackerati = '0';
         }
 
         hackersData.push({
             label: `Hacker ${i + 1}: Hacked Server: ${frazioneHackerati} - Distribution: ${distribuzioneEmpirica[i].toFixed(2)}`,
             data: successiPerHacker[i], // Assegnazione: y = successi, x = server (0, 1, ..., N-1)
             borderColor: getRandomColor(),
-            fill: false
+            fill: false,
+            stepped: true // Linea a gradini
         });
     }
 
@@ -118,8 +118,8 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
             datasets: hackersData
         },
         options: {
-            responsive: true, // Abilita il ridimensionamento responsivo
-            maintainAspectRatio: false, // Non mantenere il rapporto di aspetto
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
@@ -136,7 +136,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
                         text: 'Number of Success'
                     },
                     beginAtZero: true,
-                    max: N // Imposta il valore massimo dell'asse y
+                    max: N
                 }
             },
             plugins: {
@@ -151,6 +151,7 @@ function disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M) {
     // Disegna l'istogramma della distribuzione dopo aver creato il grafico principale
     disegnaIstogramma(successiPerHacker, M);
 }
+
 
 
 
