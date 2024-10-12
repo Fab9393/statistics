@@ -181,7 +181,7 @@
         };
 
         // Evento per far partire la simulazione
-        runSimulationButton.addEventListener('click', () => {
+        document.getElementById('simulateButton').addEventListener('click', () => {
             const steps = parseInt(document.getElementById('steps').value);
             const paths = parseInt(document.getElementById('paths').value);
             const dt = parseFloat(document.getElementById('time-step').value);
