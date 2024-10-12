@@ -4,31 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Walk Simulator</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-    <title>Random Walk Simulator - HW2</title>
+    <h1>Random Walk Simulator</h1>
 
     <div id="controls">
         <label>Steps: <input type="number" id="steps" value="100" /></label>
         <label>Paths: <input type="number" id="paths" value="5" /></label>
         <label>Time Step: <input type="number" step="0.01" id="time-step" value="0.1" /></label>
         <label>Jump Probability: <input type="number" step="0.1" id="jump-prob" value="0.1" /></label>
-        <button id="simulateButton">Execute Simulation</button>
+        <button id="run-simulation">Run Simulation</button>
+        <button id="downloadBtn" style="display: none;">Download Data</button>
     </div>
 
-    <h2>Walk Simulation</h2>
-    <div id="canvasContainer">
-        <canvas id="walk-canvas" width="800" height="400"></canvas>
-    </div>
-    <h2>Variance</h2>
-    <div id="canvasContainer">
-        <canvas id="variance-canvas" width="800" height="200"></canvas>
-    </div>
-    <h2>Mean</h2>
-    <div id="canvasContainer">
-        <canvas id="mean-canvas" width="800" height="200"></canvas>
-    </div>
+    <canvas id="walk-canvas" width="800" height="400"></canvas>
+    <canvas id="mean-canvas" width="800" height="200"></canvas>
+    <canvas id="variance-canvas" width="800" height="200"></canvas>
 
     <script>
         const walkCanvas = document.getElementById('walk-canvas');
@@ -37,7 +63,8 @@
         const walkCtx = walkCanvas.getContext('2d');
         const meanCtx = meanCanvas.getContext('2d');
         const varianceCtx = varianceCanvas.getContext('2d');
-        const executeSimulationButton = document.getElementById('run-simulation');
+        const runSimulationButton = document.getElementById('run-simulation');
+        const downloadButton = document.getElementById('downloadBtn');
 
         // Funzione per generare numeri casuali gaussiani (distribuzione normale)
         const getGaussianRandom = (mean = 0, stddev = 1) => {
@@ -50,7 +77,7 @@
         const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
 
         // Funzione principale di simulazione
-        const executeSimulation = (steps, dt, paths, jumpProb) => {
+        const runSimulation = (steps, dt, paths, jumpProb) => {
             let pathsData = [];
             let meanValues = Array(steps).fill(0);
             let varianceValues = Array(steps).fill(0);
@@ -112,12 +139,6 @@
                 });
                 ctx.stroke();
             });
-
-            // Etichette degli assi
-            ctx.fillStyle = '#000';
-            ctx.font = '14px Arial';
-            ctx.fillText('Steps', width / 2, height - 10); // Etichetta asse X
-            ctx.fillText('Position', 5, height / 2); // Etichetta asse Y
         };
 
         // Funzione per tracciare media e varianza
@@ -150,26 +171,27 @@
                 else ctx.lineTo(xPos, yPos);
             });
             ctx.stroke();
-
-            // Etichette degli assi
-            ctx.fillStyle = '#000';
-            ctx.font = '14px Arial';
-            ctx.fillText('Steps', width / 2, height - 10); // Etichetta asse X
-            ctx.fillText(label, 5, height / 2); // Etichetta asse Y (può essere 'Mean' o 'Variance')
         };
 
         // Evento per far partire la simulazione
-        document.getElementById('simulateButton').addEventListener('click', () => {
+        runSimulationButton.addEventListener('click', () => {
             const steps = parseInt(document.getElementById('steps').value);
             const paths = parseInt(document.getElementById('paths').value);
             const dt = parseFloat(document.getElementById('time-step').value);
             const jumpProb = parseFloat(document.getElementById('jump-prob').value);
 
-            const { pathsData, meanValues, varianceValues } = executeSimulation(steps, dt, paths, jumpProb);
+            const { pathsData, meanValues, varianceValues } = runSimulation(steps, dt, paths, jumpProb);
 
             plotPaths(walkCtx, pathsData, steps);
             plotMeanOrVariance(meanCtx, meanValues, steps, 'Mean');
             plotMeanOrVariance(varianceCtx, varianceValues, steps, 'Variance');
+
+            downloadButton.style.display = 'inline-block'; // Abilita pulsante download
+        });
+
+        // Funzione per il download (ancora da implementare)
+        downloadButton.addEventListener('click', () => {
+            alert('Download feature coming soon!');
         });
     </script>
 </body>
