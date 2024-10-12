@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Walk Simulator</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
 </head>
 <body>
     <title>Random Walk Simulator - HW2</title>
@@ -29,29 +30,6 @@
         <canvas id="mean-canvas" width="800" height="200"></canvas>
     </div>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            padding: 20px;
-        }
-
-        canvas {
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-        }
-
-        #controls {
-            margin-bottom: 20px;
-        }
-
-        input[type="number"] {
-            width: 50px;
-            padding: 5px;
-        }
-    </style>
-
     <script>
         const walkCanvas = document.getElementById('walk-canvas');
         const meanCanvas = document.getElementById('mean-canvas');
@@ -59,7 +37,7 @@
         const walkCtx = walkCanvas.getContext('2d');
         const meanCtx = meanCanvas.getContext('2d');
         const varianceCtx = varianceCanvas.getContext('2d');
-        const runSimulationButton = document.getElementById('run-simulation');
+        const executeSimulationButton = document.getElementById('run-simulation');
 
         // Funzione per generare numeri casuali gaussiani (distribuzione normale)
         const getGaussianRandom = (mean = 0, stddev = 1) => {
@@ -72,7 +50,7 @@
         const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
 
         // Funzione principale di simulazione
-        const runSimulation = (steps, dt, paths, jumpProb) => {
+        const executeSimulation = (steps, dt, paths, jumpProb) => {
             let pathsData = [];
             let meanValues = Array(steps).fill(0);
             let varianceValues = Array(steps).fill(0);
@@ -187,7 +165,7 @@
             const dt = parseFloat(document.getElementById('time-step').value);
             const jumpProb = parseFloat(document.getElementById('jump-prob').value);
 
-            const { pathsData, meanValues, varianceValues } = runSimulation(steps, dt, paths, jumpProb);
+            const { pathsData, meanValues, varianceValues } = executeSimulation(steps, dt, paths, jumpProb);
 
             plotPaths(walkCtx, pathsData, steps);
             plotMeanOrVariance(meanCtx, meanValues, steps, 'Mean');
