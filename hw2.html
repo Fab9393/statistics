@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Walk Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Random Walk Simulator</h1>
+
+    <div id="controls">
+        <label>Steps: <input type="number" id="steps" value="100" /></label>
+        <label>Paths: <input type="number" id="paths" value="5" /></label>
+        <label>Time Step: <input type="number" step="0.01" id="time-step" value="0.1" /></label>
+        <label>Jump Probability: <input type="number" step="0.1" id="jump-prob" value="0.1" /></label>
+        <button id="run-simulation">Run Simulation</button>
+        <button id="downloadBtn" style="display: none;">Download Data</button>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="walkChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="meanChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="varianceChart"></canvas>
+    </div>
+
+    <script>
+        let walkChart, meanChart, varianceChart;
+
+        // Funzione per generare numeri casuali gaussiani (distribuzione normale)
+        const getGaussianRandom = (mean = 0, stddev = 1) => {
+            let u = Math.random();
+            let v = Math.random();
+            return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        };
+
+        // Generazione dei salti casuali con probabilità p
+        const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
+
+        // Funzione principale di simulazione
+        const runSimulation = (steps, dt, paths, jumpProb) => {
+            let pathsData = [];
+            let meanValues = Array(steps).fill(0);
+            let varianceValues = Array(steps).fill(0);
+
+            for (let p = 0; p < paths; p++) {
+                let path = [];
+                let position = 0;
+
+                for (let i = 0; i < steps; i++) {
+                    let step = getGaussianRandom(0, Math.sqrt(dt));
+                    let jump = generateRandomJump(jumpProb);
+                    position += step + jump;
+                    path.push(position);
+
+                    // Aggiornamento di media e varianza
+                    let delta = position - meanValues[i];
+                    meanValues[i] += delta / (p + 1);
+                    varianceValues[i] += delta * (position - meanValues[i]);
+                }
+                pathsData.push(path);
+            }
+
+            // Calcolo finale della varianza
+            varianceValues = varianceValues.map((v, i) => v / paths);
+
+            return { pathsData, meanValues, varianceValues };
+        };
+
+        // Funzione per tracciare i grafici usando Chart.js
+        const plotCharts = (paths, meanValues, varianceValues, steps) => {
+            const labels = Array.from({ length: steps }, (_, i) => i + 1);
+
+            // Distruggi i grafici esistenti
+            if (walkChart) walkChart.destroy();
+            if (meanChart) meanChart.destroy();
+            if (varianceChart) varianceChart.destroy();
+
+            // Grafico delle traiettorie
+            const walkDatasets = paths.map((path, i) => ({
+                label: `Path ${i + 1}`,
+                data: path,
+                borderColor: getRandomColor(),
+                fill: false,
+                stepped: true
+            }));
+
+            walkChart = new Chart(document.getElementById('walkChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: walkDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Step' } },
+                        y: { title: { display: true, text: 'Position' } }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'bottom' }
+                    }
+                }
+            });
+
+            // Grafico della media
+            meanChart = new Chart(document.getElementById('meanChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Mean',
+                        data: meanValues,
+                        borderColor: 'red',
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Step' } },
+                        y: { title: { display: true, text: 'Mean Value' } }
+                    }
+                }
+            });
+
+            // Grafico della varianza
+            varianceChart = new Chart(document.getElementById('varianceChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Variance',
+                        data: varianceValues,
+                        borderColor: 'green',
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Step' } },
+                        y: { title: { display: true, text: 'Variance Value' } }
+                    }
+                }
+            });
+        };
+
+        // Funzione per ottenere un colore casuale
+        const getRandomColor = () => {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        };
+
+        // Evento per far partire la simulazione
+        document.getElementById('run-simulation').addEventListener('click', () => {
+            const steps = parseInt(document.getElementById('steps').value);
+            const paths = parseInt(document.getElementById('paths').value);
+            const dt = parseFloat(document.getElementById('time-step').value);
+            const jumpProb = parseFloat(document.getElementById('jump-prob').value);
+
+            const { pathsData, meanValues, varianceValues } = runSimulation(steps, dt, paths, jumpProb);
+
+            plotCharts(pathsData, meanValues, varianceValues, steps);
+            document.getElementById('downloadBtn').style.display = 'inline-block'; // Abilita pulsante download
+        });
+
+        // Funzione per il download (ancora da implementare)
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            alert('Download feature coming soon!');
+        });
+    </script>
+</body>
+</html>
