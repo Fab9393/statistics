@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Walk Simulator</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,19 +15,6 @@
 
         #controls {
             margin-bottom: 20px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        button:hover {
-            background-color: #45a049;
         }
 
         input[type="number"] {
@@ -42,7 +30,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Random Walk Simulator</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+    <h2>Random Walk Simulator</h2>
 
     <div id="controls">
         <label>Steps: <input type="number" id="steps" value="100" /></label>
