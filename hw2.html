@@ -17,6 +17,21 @@
             margin-bottom: 20px;
         }
 
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px; /* Angoli arrotondati */
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease; /* Transizione per il cambio di colore */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         input[type="number"] {
             width: 50px;
             padding: 5px;
@@ -49,8 +64,18 @@
     <div class="chart-container">
         <canvas id="walkChart"></canvas>
     </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
     <div class="chart-container">
         <canvas id="meanChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
     </div>
     <div class="chart-container">
         <canvas id="varianceChart"></canvas>
