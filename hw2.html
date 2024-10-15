@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Walk Simulator</title>
     <style>
+        /* Stili per l'header e il layout */
         header {
-            width: 100%; /* Assicura che l'header occupi tutta la larghezza */
-            background-color: #333; /* Colore scuro per la navbar */
+            width: 100%;
+            background-color: #333;
             color: #ffffff;
             text-align: center;
             padding: 0;
@@ -30,32 +31,32 @@
         }
 
         nav {
-            background-color: #333; /* Colore di sfondo della nav */
-            padding: 10px; /* Padding per dare spazio intorno agli elementi */
+            background-color: #333;
+            padding: 10px;
         }
 
         nav ul {
-            list-style: none; /* Rimuove i punti dall'elenco */
-            padding: 0; /* Rimuove il padding di default */
-            margin: 0; /* Rimuove il margine di default */
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         nav ul li {
-            display: inline; /* Rende gli elementi dell'elenco in linea */
+            display: inline;
         }
 
         nav a {
-            display: inline-block; /* Rende il link un blocco in linea */
-            color: white; /* Colore del testo */
-            background-color: #007bff; /* Colore di sfondo del bottone */
-            padding: 10px 15px; /* Padding per il bottone */
-            text-decoration: none; /* Rimuove la sottolineatura */
-            border-radius: 5px; /* Angoli arrotondati */
-            transition: background-color 0.3s; /* Transizione per il colore di sfondo */
+            display: inline-block;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         nav a:hover {
-            background-color: #0056b3; /* Colore di sfondo al passaggio del mouse */
+            background-color: #0056b3;
         }
 
         body {
@@ -74,10 +75,10 @@
             color: white;
             padding: 10px;
             border: none;
-            border-radius: 4px; /* Angoli arrotondati */
+            border-radius: 4px;
             cursor: pointer;
             margin-right: 10px;
-            transition: background-color 0.3s ease; /* Transizione per il cambio di colore */
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
@@ -102,35 +103,34 @@
             text-align: center;
             max-width: 100%;
             display: flex;
-            flex-wrap: wrap; /* Allows wrapping to the next line */
-            gap: 20px; /* Space between the panels */
+            flex-wrap: wrap;
+            gap: 20px;
             width: 100%;
         }
 
         .concept-panel {
-        border: 1px solid #ccc; /* Add a border to each panel */
-        padding: 15px; /* Add some padding */
-        width: calc(33.33% - 20px); /* Three panels in a row with gap */
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-        box-sizing: border-box; /* Includes padding and border in width */
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
         }
+
         .concept-title {
-            font-weight: bold; /* Make the title bold */
-            font-size: 1.2em; /* Slightly larger font size for titles */
-            margin-bottom: 5px; /* Space between title and description */
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
         }
 
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .concept-panel {
-                width: calc(50% - 20px); /* Two panels in a row on medium screens */
+                width: calc(50% - 20px);
             }
         }
 
         @media (max-width: 480px) {
             .concept-panel {
-                width: 100%; /* One panel per row on small screens */
+                width: 100%;
             }
         }
     </style>
@@ -158,7 +158,6 @@
     <div>
         <p>
             <br>
-            <br>
         </p>
     </div>
     <div class="chart-container">
@@ -166,7 +165,6 @@
     </div>
     <div>
         <p>
-            <br>
             <br>
         </p>
     </div>
@@ -178,7 +176,14 @@
             <br>
         </p>
     </div>
-
+    <div class="chart-container">
+        <canvas id="distributionChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
     <h2>Statistic Notions</h2>
 
     <div class="desc-content">
@@ -227,25 +232,22 @@
         </div>
     </div>
 
-
     <script>
-        let walkChart, meanChart, varianceChart;
+        let walkChart, meanChart, varianceChart, distributionChart;
 
-        // Funzione per generare numeri casuali gaussiani (distribuzione normale)
         const getGaussianRandom = (mean = 0, stddev = 1) => {
             let u = Math.random();
             let v = Math.random();
             return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         };
 
-        // Generazione dei salti casuali con probabilità p
         const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
 
-        // Funzione principale di simulazione
         const runSimulation = (steps, dt, paths, jumpProb) => {
             let pathsData = [];
             let meanValues = Array(steps).fill(0);
             let varianceValues = Array(steps).fill(0);
+            let finalPositions = [];
 
             for (let p = 0; p < paths; p++) {
                 let path = [];
@@ -257,30 +259,46 @@
                     position += step + jump;
                     path.push(position);
 
-                    // Aggiornamento di media e varianza
                     let delta = position - meanValues[i];
                     meanValues[i] += delta / (p + 1);
                     varianceValues[i] += delta * (position - meanValues[i]);
                 }
+
                 pathsData.push(path);
+                finalPositions.push(position); // Salva la posizione finale
             }
 
-            // Calcolo finale della varianza
             varianceValues = varianceValues.map((v, i) => v / paths);
 
-            return { pathsData, meanValues, varianceValues };
+            return { pathsData, meanValues, varianceValues, finalPositions };
         };
 
-        // Funzione per tracciare i grafici usando Chart.js
-        const plotCharts = (paths, meanValues, varianceValues, steps) => {
+        const calculateFrequencyDistribution = (positions) => {
+            let frequencyMap = {};
+            positions.forEach(pos => {
+                let roundedPos = Math.round(pos);
+                frequencyMap[roundedPos] = (frequencyMap[roundedPos] || 0) + 1;
+            });
+
+            let absoluteFrequencies = [];
+            let relativeFrequencies = [];
+
+            for (let position in frequencyMap) {
+                absoluteFrequencies.push({ position: position, count: frequencyMap[position] });
+                relativeFrequencies.push({ position: position, count: frequencyMap[position] / positions.length });
+            }
+
+            return { absoluteFrequencies, relativeFrequencies };
+        };
+
+        const plotCharts = (paths, meanValues, varianceValues, steps, finalPositions) => {
             const labels = Array.from({ length: steps }, (_, i) => i + 1);
 
-            // Distruggi i grafici esistenti
             if (walkChart) walkChart.destroy();
             if (meanChart) meanChart.destroy();
             if (varianceChart) varianceChart.destroy();
+            if (distributionChart) distributionChart.destroy();
 
-            // Grafico delle traiettorie
             const walkDatasets = paths.map((path, i) => ({
                 label: `Path ${i + 1}`,
                 data: path,
@@ -291,89 +309,88 @@
 
             walkChart = new Chart(document.getElementById('walkChart'), {
                 type: 'line',
-                data: {
-                    labels,
-                    datasets: walkDatasets
-                },
+                data: { labels, datasets: walkDatasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'Step' } },
-                        y: { title: { display: true, text: 'Position' } }
-                    },
-                    plugins: {
-                        legend: { display: true, position: 'bottom' }
-                    }
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Position' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
                 }
             });
 
-            // Grafico della media
             meanChart = new Chart(document.getElementById('meanChart'), {
                 type: 'line',
                 data: {
                     labels,
-                    datasets: [{
-                        label: 'Mean',
-                        data: meanValues,
-                        borderColor: 'red',
-                        fill: false,
-                    }]
+                    datasets: [{ label: 'Mean', data: meanValues, borderColor: 'red', fill: false }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'Step' } },
-                        y: { title: { display: true, text: 'Mean Value' } }
-                    }
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Mean Value' } } }
                 }
             });
 
-            // Grafico della varianza
             varianceChart = new Chart(document.getElementById('varianceChart'), {
                 type: 'line',
                 data: {
                     labels,
-                    datasets: [{
-                        label: 'Variance',
-                        data: varianceValues,
-                        borderColor: 'green',
-                        fill: false,
-                    }]
+                    datasets: [{ label: 'Variance', data: varianceValues, borderColor: 'blue', fill: false }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: 'Step' } },
-                        y: { title: { display: true, text: 'Variance Value' } }
-                    }
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Variance Value' } } }
+                }
+            });
+
+            const { absoluteFrequencies, relativeFrequencies } = calculateFrequencyDistribution(finalPositions);
+
+            distributionChart = new Chart(document.getElementById('distributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: absoluteFrequencies.map(f => f.position),
+                    datasets: [
+                        {
+                            label: 'Absolute Frequency',
+                            data: absoluteFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Relative Frequency',
+                            data: relativeFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Position' } }, y: { title: { display: true, text: 'Frequency' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
                 }
             });
         };
 
-        // Funzione per ottenere un colore casuale
         const getRandomColor = () => {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgb(${r},${g},${b})`;
         };
 
-        // Evento per far partire la simulazione
         document.getElementById('run-simulation').addEventListener('click', () => {
             const steps = parseInt(document.getElementById('steps').value);
             const paths = parseInt(document.getElementById('paths').value);
             const dt = parseFloat(document.getElementById('time-step').value);
             const jumpProb = parseFloat(document.getElementById('jump-prob').value);
 
-            const { pathsData, meanValues, varianceValues } = runSimulation(steps, dt, paths, jumpProb);
-
-            plotCharts(pathsData, meanValues, varianceValues, steps);
-            document.getElementById('downloadBtn').style.display = 'inline-block'; // Abilita pulsante download
+            const { pathsData, meanValues, varianceValues, finalPositions } = runSimulation(steps, dt, paths, jumpProb);
+            plotCharts(pathsData, meanValues, varianceValues, steps, finalPositions);
         });
     </script>
 </body>
