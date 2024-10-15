@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Walk Simulator</title>
     <style>
-        /* Styles for header and layout */
+        /* Stili per l'header e il layout */
         header {
             width: 100%;
             background-color: #333;
@@ -93,7 +93,6 @@
         .chart-container {
             position: relative;
             height: 300px;
-            margin-bottom: 20px;
         }
 
         .desc-content {
@@ -148,24 +147,43 @@
     <div id="controls">
         <label>Steps: <input type="number" id="steps" value="100" /></label>
         <label>Paths: <input type="number" id="paths" value="5" /></label>
+        <label>Time Step: <input type="number" step="0.01" id="time-step" value="0.1" /></label>
         <label>Jump Probability: <input type="number" step="0.1" id="jump-prob" value="0.1" /></label>
-        <label>Time Step to Visualize: <input type="number" id="time-step" value="10" /></label>
         <button id="run-simulation">Run Simulation</button>
     </div>
 
     <div class="chart-container">
         <canvas id="walkChart"></canvas>
     </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
     <div class="chart-container">
         <canvas id="meanChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
     </div>
     <div class="chart-container">
         <canvas id="varianceChart"></canvas>
     </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
     <div class="chart-container">
         <canvas id="distributionChart"></canvas>
     </div>
-
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
     <h2>Statistic Notions</h2>
 
     <div class="desc-content">
@@ -175,12 +193,14 @@
             <p>A small standard deviation means that the data points tend to be close to the mean, while a large standard deviation indicates that the data points are spread out over a larger range of values.</p>
             <p>Standard deviation is widely used in statistics to understand the variability or dispersion in data.</p>
         </div>
+    
         <div class="concept-panel">
             <div class="concept-title">Variance</div>
             <p>Variance measures how far a set of numbers are spread out from their mean. It is calculated as the average of the squared differences from the mean.</p>
             <p>Variance helps in understanding the distribution of data points and is the square of the standard deviation.</p>
             <p>Like standard deviation, higher variance indicates greater dispersion, while lower variance indicates that data points are closer to the mean.</p>
         </div>
+    
         <div class="concept-panel">
             <div class="concept-title">Normal Distribution</div>
             <p>Normal distribution, also known as Gaussian distribution, is a probability distribution where most of the values cluster around the central peak. The distribution is symmetric, meaning values are equally likely to be above or below the mean.</p>
@@ -189,177 +209,188 @@
         </div>
     </div>
 
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Random Walk</div>
+            <p>A random walk is a mathematical concept that describes a path consisting of a series of random steps. It is used to model various phenomena in physics, economics, biology, and other fields.</p>
+            <p>In a random walk, each step is determined randomly, and the position of the walker at each step depends on both the random step and the previous position. The walk can occur in one dimension, two dimensions, or more, and may involve fixed-size steps or variable steps.</p>
+            <p>This model is widely used to describe unpredictable processes, such as stock market fluctuations, diffusion of particles, or genetic drift in populations. In statistics, it is also important in the study of stochastic processes.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Mean</div>
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:</p>
+            <p>If the values are close together, the mean gives a good indication of a central point.</p>
+            <p>However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Central Limit Theorem</div>
+            <p>The Central Limit Theorem states that the distribution of the sample mean of a large number of independent, identically distributed variables will tend to follow a normal distribution, regardless of the original distribution of the variables.</p>
+            <p>This theorem is foundational in statistics and justifies using normal distribution in many types of analysis, especially when working with large datasets.</p>
+            <p>The Central Limit Theorem allows for simplifying the analysis of complex datasets by assuming that the sample mean will be approximately normally distributed.</p>
+        </div>
+    </div>
+
     <script>
-        // Setting up variables
         let walkChart, meanChart, varianceChart, distributionChart;
 
-        // Function to calculate the mean and variance using Welford's method
-        function calculateMeanVariance(values) {
-            let n = 0;
-            let mean = 0;
-            let M2 = 0;
+        const getGaussianRandom = (mean = 0, stddev = 1) => {
+            let u = Math.random();
+            let v = Math.random();
+            return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        };
 
-            for (let x of values) {
-                n += 1;
-                let delta = x - mean;
-                mean += delta / n;
-                let delta2 = x - mean;
-                M2 += delta * delta2;
-            }
+        const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
 
-            return { mean: mean, variance: M2 / n };
-        }
-
-        // Function to generate random walk with jump feature
-        function randomWalk(steps, paths, jumpProb) {
-            let positions = [];
+        const runSimulation = (steps, dt, paths, jumpProb) => {
+            let pathsData = [];
+            let meanValues = Array(steps).fill(0);
+            let varianceValues = Array(steps).fill(0);
             let finalPositions = [];
-            let intermediatePositions = [];
 
             for (let p = 0; p < paths; p++) {
-                let pos = 0;
-                let path = [pos];
+                let path = [];
+                let position = 0;
 
-                for (let s = 0; s < steps; s++) {
-                    let step = Math.random() < 0.5 ? -1 : 1;
+                for (let i = 0; i < steps; i++) {
+                    let step = getGaussianRandom(0, Math.sqrt(dt));
+                    let jump = generateRandomJump(jumpProb);
+                    position += step + jump;
+                    path.push(position);
 
-                    // Implementing the jump feature
-                    if (Math.random() < jumpProb) {
-                        step = Math.random() < 0.5 ? -10 : 10; // Jumping either -10 or +10
-                    }
-
-                    pos += step;
-                    path.push(pos);
-
-                    // Save intermediate position for visualization
-                    if (s === parseInt(document.getElementById('time-step').value)) {
-                        intermediatePositions.push(pos);
-                    }
+                    let delta = position - meanValues[i];
+                    meanValues[i] += delta / (p + 1);
+                    varianceValues[i] += delta * (position - meanValues[i]);
                 }
 
-                positions.push(path);
-                finalPositions.push(pos);
+                pathsData.push(path);
+                finalPositions.push(position); // Salva la posizione finale
             }
 
-            return { positions, finalPositions, intermediatePositions };
-        }
+            varianceValues = varianceValues.map((v, i) => v / paths);
 
-        // Function to calculate frequency distribution
-        function calculateDistribution(finalPositions) {
-            const distribution = {};
-            for (let pos of finalPositions) {
-                distribution[pos] = (distribution[pos] || 0) + 1;
+            return { pathsData, meanValues, varianceValues, finalPositions };
+        };
+
+        const calculateFrequencyDistribution = (positions) => {
+            let frequencyMap = {};
+            positions.forEach(pos => {
+                let roundedPos = Math.round(pos);
+                frequencyMap[roundedPos] = (frequencyMap[roundedPos] || 0) + 1;
+            });
+
+            let absoluteFrequencies = [];
+            let relativeFrequencies = [];
+
+            for (let position in frequencyMap) {
+                absoluteFrequencies.push({ position: position, count: frequencyMap[position] });
+                relativeFrequencies.push({ position: position, count: frequencyMap[position] / positions.length });
             }
-            return distribution;
-        }
 
-        // Function to plot charts
-        function plotCharts(positions, finalPositions, intermediatePositions) {
-            const { mean, variance } = calculateMeanVariance(finalPositions);
-            const distribution = calculateDistribution(finalPositions);
-            const distributionLabels = Object.keys(distribution);
-            const distributionValues = Object.values(distribution);
+            return { absoluteFrequencies, relativeFrequencies };
+        };
 
-            // Clear previous charts if they exist
+        const plotCharts = (paths, meanValues, varianceValues, steps, finalPositions) => {
+            const labels = Array.from({ length: steps }, (_, i) => i + 1);
+
             if (walkChart) walkChart.destroy();
             if (meanChart) meanChart.destroy();
             if (varianceChart) varianceChart.destroy();
             if (distributionChart) distributionChart.destroy();
 
-            // Create walk chart
-            const ctxWalk = document.getElementById('walkChart').getContext('2d');
-            walkChart = new Chart(ctxWalk, {
+            const walkDatasets = paths.map((path, i) => ({
+                label: `Path ${i + 1}`,
+                data: path,
+                borderColor: getRandomColor(),
+                fill: false,
+                stepped: true
+            }));
+
+            walkChart = new Chart(document.getElementById('walkChart'), {
+                type: 'line',
+                data: { labels, datasets: walkDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Position' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
+                }
+            });
+
+            meanChart = new Chart(document.getElementById('meanChart'), {
                 type: 'line',
                 data: {
-                    labels: positions[0].map((_, index) => index),
-                    datasets: positions.map((position, index) => ({
-                        label: `Path ${index + 1}`,
-                        data: position,
-                        fill: false,
-                        borderColor: `hsl(${index * 360 / positions.length}, 100%, 50%)`,
-                    })),
+                    labels,
+                    datasets: [{ label: 'Mean', data: meanValues, borderColor: 'red', fill: false }]
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: { title: { display: true, text: 'Position' } },
-                        x: { title: { display: true, text: 'Steps' } }
-                    },
-                },
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Mean Value' } } }
+                }
             });
 
-            // Create mean chart
-            const ctxMean = document.getElementById('meanChart').getContext('2d');
-            meanChart = new Chart(ctxMean, {
-                type: 'bar',
+            varianceChart = new Chart(document.getElementById('varianceChart'), {
+                type: 'line',
                 data: {
-                    labels: ['Mean'],
-                    datasets: [{
-                        label: 'Mean Position',
-                        data: [mean],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    }],
+                    labels,
+                    datasets: [{ label: 'Variance', data: varianceValues, borderColor: 'blue', fill: false }]
                 },
                 options: {
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Mean Position' } }
-                    },
-                },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Variance Value' } } }
+                }
             });
 
-            // Create variance chart
-            const ctxVariance = document.getElementById('varianceChart').getContext('2d');
-            varianceChart = new Chart(ctxVariance, {
+            const { absoluteFrequencies, relativeFrequencies } = calculateFrequencyDistribution(finalPositions);
+
+            distributionChart = new Chart(document.getElementById('distributionChart'), {
                 type: 'bar',
                 data: {
-                    labels: ['Variance'],
-                    datasets: [{
-                        label: 'Variance of Positions',
-                        data: [variance],
-                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 1,
-                    }],
+                    labels: absoluteFrequencies.map(f => f.position),
+                    datasets: [
+                        {
+                            label: 'Absolute Frequency',
+                            data: absoluteFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Relative Frequency',
+                            data: relativeFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }
+                    ]
                 },
                 options: {
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Variance' } }
-                    },
-                },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Position' } }, y: { title: { display: true, text: 'Frequency' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
+                }
             });
+        };
 
-            // Create distribution chart
-            const ctxDistribution = document.getElementById('distributionChart').getContext('2d');
-            distributionChart = new Chart(ctxDistribution, {
-                type: 'bar',
-                data: {
-                    labels: distributionLabels,
-                    datasets: [{
-                        label: 'Frequency Distribution',
-                        data: distributionValues,
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
-                    }],
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Frequency' } }
-                    },
-                },
-            });
-        }
+        const getRandomColor = () => {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgb(${r},${g},${b})`;
+        };
 
-        // Run simulation on button click
-        document.getElementById('run-simulation').addEventListener('click', function() {
+        document.getElementById('run-simulation').addEventListener('click', () => {
             const steps = parseInt(document.getElementById('steps').value);
             const paths = parseInt(document.getElementById('paths').value);
+            const dt = parseFloat(document.getElementById('time-step').value);
             const jumpProb = parseFloat(document.getElementById('jump-prob').value);
 
-            const { positions, finalPositions, intermediatePositions } = randomWalk(steps, paths, jumpProb);
-            plotCharts(positions, finalPositions, intermediatePositions);
+            const { pathsData, meanValues, varianceValues, finalPositions } = runSimulation(steps, dt, paths, jumpProb);
+            plotCharts(pathsData, meanValues, varianceValues, steps, finalPositions);
         });
     </script>
 </body>
