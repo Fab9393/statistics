@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk Simulator</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
+    <title>Random Walk Simulator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,11 +45,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-        </ul>
-    </nav>
     <h2>Random Walk Simulator</h2>
 
     <div id="controls">
@@ -66,6 +61,7 @@
     <div>
         <p>
             <br>
+            <br>
         </p>
     </div>
     <div class="chart-container">
@@ -73,6 +69,7 @@
     </div>
     <div>
         <p>
+            <br>
             <br>
         </p>
     </div>
@@ -226,11 +223,6 @@
 
             plotCharts(pathsData, meanValues, varianceValues, steps);
             document.getElementById('downloadBtn').style.display = 'inline-block'; // Abilita pulsante download
-        });
-
-        // Funzione per il download (ancora da implementare)
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            alert('Download feature coming soon!');
         });
     </script>
 </body>
