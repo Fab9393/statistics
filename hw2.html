@@ -232,6 +232,42 @@
         </div>
     </div>
 
+    <h2>Code Fragments View</h2>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">getGaussianRandom(mean, stddev)</div>
+            <p>This function generates a random number following a Gaussian distribution with a specified mean and standard deviation.</p>
+            <p>It utilizes the Box-Muller transform method to convert uniformly distributed random numbers into a normally distributed random number.</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">generateRandomJump(prob)</div>
+            <p>This function determines whether to make a jump in the random walk based on a given probability.</p>
+            <p>If the random condition is met, it returns +1 or -1 (representing a jump), otherwise it returns 0 (indicating no jump).</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">runSimulation(steps, dt, paths, jumpProb)</div>
+            <p>This function executes the random walk simulation over a specified number of steps and paths.</p>
+            <p>It calculates the positions of the walker at each step, updating the mean and variance dynamically using the Welford method, and returns the path data, mean values, and variance values.</p>
+        </div>
+    </div>
+
+    <div class="desc-content">  
+        <div class="concept-panel">
+            <div class="concept-title">calculateFrequencyDistribution(positions)</div>
+            <p>This function calculates the absolute and relative frequency distributions of the final positions after running the simulation.</p>
+            <p>It returns a frequency map that shows how many times each position was reached and their corresponding relative frequencies based on the total number of paths.</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">plotCharts(paths, meanValues, varianceValues, steps, finalPositions)</div>
+            <p>This function visualizes the results of the simulation using charts, including the paths taken, mean values, variance values, and frequency distributions.</p>
+            <p>It uses Chart.js to create line charts for the paths, mean, and variance, as well as a bar chart for the absolute and relative frequency distributions.</p>
+        </div>
+    </div>
+
     <script>
         let walkChart, meanChart, varianceChart, distributionChart;
 
