@@ -93,6 +93,46 @@
             position: relative;
             height: 300px;
         }
+
+        .desc-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 100%;
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping to the next line */
+            gap: 20px; /* Space between the panels */
+            width: 100%;
+        }
+
+        .concept-panel {
+        border: 1px solid #ccc; /* Add a border to each panel */
+        padding: 15px; /* Add some padding */
+        width: calc(33.33% - 20px); /* Three panels in a row with gap */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        box-sizing: border-box; /* Includes padding and border in width */
+        }
+        .concept-title {
+            font-weight: bold; /* Make the title bold */
+            font-size: 1.2em; /* Slightly larger font size for titles */
+            margin-bottom: 5px; /* Space between title and description */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .concept-panel {
+                width: calc(50% - 20px); /* Two panels in a row on medium screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .concept-panel {
+                width: 100%; /* One panel per row on small screens */
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -133,6 +173,53 @@
     <div class="chart-container">
         <canvas id="varianceChart"></canvas>
     </div>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Standard Deviation</div>
+            <p>Standard deviation is a measure of how spread out the values in a dataset are. It indicates the typical distance between the individual values and the mean of the dataset.</p>
+            <p>A small standard deviation means that the data points tend to be close to the mean, while a large standard deviation indicates that the data points are spread out over a larger range of values.</p>
+            <p>Standard deviation is widely used in statistics to understand the variability or dispersion in data.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Variance</div>
+            <p>Variance measures how far a set of numbers are spread out from their mean. It is calculated as the average of the squared differences from the mean.</p>
+            <p>Variance helps in understanding the distribution of data points and is the square of the standard deviation.</p>
+            <p>Like standard deviation, higher variance indicates greater dispersion, while lower variance indicates that data points are closer to the mean.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Normal Distribution</div>
+            <p>Normal distribution, also known as Gaussian distribution, is a probability distribution where most of the values cluster around the central peak. The distribution is symmetric, meaning values are equally likely to be above or below the mean.</p>
+            <p>The mean, median, and mode of a normal distribution are all equal, and the spread of values is described by the standard deviation.</p>
+            <p>This distribution is important in statistics because many real-world phenomena tend to follow a normal distribution.</p>
+        </div>
+    </div>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Random Walk</div>
+            <p>A random walk is a mathematical concept that describes a path consisting of a series of random steps. It is used to model various phenomena in physics, economics, biology, and other fields.</p>
+            <p>In a random walk, each step is determined randomly, and the position of the walker at each step depends on both the random step and the previous position. The walk can occur in one dimension, two dimensions, or more, and may involve fixed-size steps or variable steps.</p>
+            <p>This model is widely used to describe unpredictable processes, such as stock market fluctuations, diffusion of particles, or genetic drift in populations. In statistics, it is also important in the study of stochastic processes.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Mean</div>
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:</p>
+            <p>If the values are close together, the mean gives a good indication of a central point.</p>
+            <p>However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Central Limit Theorem</div>
+            <p>The Central Limit Theorem states that the distribution of the sample mean of a large number of independent, identically distributed variables will tend to follow a normal distribution, regardless of the original distribution of the variables.</p>
+            <p>This theorem is foundational in statistics and justifies using normal distribution in many types of analysis, especially when working with large datasets.</p>
+            <p>The Central Limit Theorem allows for simplifying the analysis of complex datasets by assuming that the sample mean will be approximately normally distributed.</p>
+        </div>
+    </div>
+
 
     <script>
         let walkChart, meanChart, varianceChart;
