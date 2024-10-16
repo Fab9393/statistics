@@ -3,225 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk Simulation</title>
+    <title>Simulation</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         body {
-    font-family: Arial, sans-serif;
-    background-color: #e7f0f7;
-    margin: 0;
-    padding: 20px;
-    }
+            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+        }
 
-    .main-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
 
-    h1 {
-        text-align: center;
-        color: #333;
-    }
+        .hw {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            width: 80%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 60px;
+        }
 
-    .input-section {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
+        h1 {
+            font-size: 3.5em;
+            color: #2c3e50;
+        }
 
-    .input-item {
-        margin: 10px 0;
-        flex: 1 1 45%;
-    }
+        h2, h3 {
+            color: #34495e;
+        }
 
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
+        .input-group {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    input[type='number'], select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
+        label {
+            font-size: 1.1em;
+        }
 
-    button {
-        width: 100%;
-        padding: 15px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
+        input[type='number'], select {
+            width: 120px;
+            padding: 12px;
+            border: 2px solid #dde4e9;
+            border-radius: 8px;
+        }
 
-    button:hover {
-        background-color: #0056b3;
-    }
+        .run-button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
 
-    .results {
-        display: flex;
-        justify-content: space-between;
-        margin: 20px 0;
-    }
+        .charts-container {
+            display: flex;
+            margin-top: 50px;
+            height: 600px;
+        }
 
-    .stats {
-        width: 45%;
-        padding: 15px;
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .chart-container {
-        display: flex;
-        justify-content: space-between;
-        height: 400px;
-    }
-
-    canvas {
-        flex: 1;
-        margin: 0 10px;
-    }
+        canvas {
+            flex: 1;
+            margin-left: 8px;
+        }
 
     </style>
-
 </head>
 <body>
-    <div class="main-container">
-        <h1>Random Walk Simulation</h1>
-        <div class="input-section">
-            <div class="input-item">
-                <label for="numServers">Servers (n):</label>
-                <input type="number" id="numServers" min="1" value="25">
+    <div class="container">
+        <div class="hw">
+            <h1>Homework #2</h1>
+            <h2>Theory: Welford's Algorithm</h2>
+            <p>Welford's algorithm provides an efficient and numerically stable method to compute mean and variance in a single pass:</p>
+            <pre><code>
+            // For mean:
+            M₁ = x₁
+            for k = 2 to n:
+                M_k = M_{k-1} + (x_k - M_{k-1}) / k
+
+            // For variance:
+            S₁ = 0
+            for k = 2 to n:
+                S_k = S_{k-1} + (x_k - M_{k-1})(x_k - M_k)
+            variance = S_n / (n - 1)
+            </code></pre>
+            <h3>Why Use Welford's Algorithm?</h3>
+            <p>1. Minimizes rounding errors.</p>
+            <p>2. Computes mean and variance in a single pass.</p>
+            <p>3. Suitable for streaming or real-time applications.</p>
+            <h2>Application / Practice</h2>
+            <p>We have n servers with m attackers. The hacker has probability p to penetrate each server.</p>
+            <h2>Input Parameters</h2>
+            <div class="input-group">
+                <label for="n">Number of servers (n):</label>
+                <input type="number" id="n" min="1" value="25">
             </div>
-            <div class="input-item">
-                <label for="numAttackers">Attackers (m):</label>
-                <input type="number" id="numAttackers" min="1" value="50">
+            <div class="input-group">
+                <label for="m">Number of attackers (m):</label>
+                <input type="number" id="m" min="1" value="50">
             </div>
-            <div class="input-item">
-                <label for="penetrationProb">Penetration Probability (p):</label>
-                <input type="number" id="penetrationProb" min="0" max="1" step="0.01" value="0.5">
+            <div class="input-group">
+                <label for="p">Probability of penetration (p):</label>
+                <input type="number" id="p" min="0" max="1" step="0.01" value="0.5">
             </div>
-            <div class="input-item">
-                <label for="midIndex">Mid-point Index:</label>
-                <input type="number" id="midIndex" min="0" value="12">
+            <div class="input-group">
+                <label for="midPointIndex">Mid-point Index:</label>
+                <input type="number" id="midPointIndex" min="0" value="12">
             </div>
-            <div class="input-item">
-                <label for="simulationChoice">Simulation Type:</label>
-                <select id="simulationChoice">
+            <div class="input-group">
+                <label for="simulationType">Simulation Type:</label>
+                <select id="simulationType">
                     <option value="randomWalk">Random Walk</option>
                     <option value="bernoulli">Bernoulli</option>
                 </select>
             </div>
-            <div class="input-item">
-                <label for="freqChoice">Frequency Type:</label>
-                <select id="freqChoice">
+            <div class="input-group">
+                <label for="frequencyType">Frequency Type:</label>
+                <select id="frequencyType">
                     <option value="absolute">Absolute</option>
                     <option value="relative">Relative</option>
                 </select>
             </div>
-        </div>
-        <button id="startSimulation">Start Simulation</button>
-
-        <div class="results">
-            <div class="stats">
-                <h3>Statistics at Mid-point</h3>
-                <p id="midMean">Mean: 0</p>
-                <p id="midStdDev">Std Dev: 0</p>
-                <p id="midMode">Mode: 0</p>
+            <div class="run-button-container">
+                <button class="run-button" id="runSimulationButton">Run Simulation</button>
             </div>
-            <div class="stats">
-                <h3>Final Statistics</h3>
-                <p id="finalMean">Mean: 0</p>
-                <p id="finalStdDev">Std Dev: 0</p>
-                <p id="finalMode">Mode: 0</p>
+            <div class="statistics">
+                <div>
+                    <h3>Midpoint Statistics</h3>
+                    <p id="midPointMean">Mean: 0</p>
+                    <p id="midPointStdDev">Standard Deviation: 0</p>
+                    <p id="midPointMode">Mode: 0</p>
+                </div>
+                <div>
+                    <h3>Final Timestep Statistics</h3>
+                    <p id="mean">Mean: 0</p>
+                    <p id="stdDev">Standard Deviation: 0</p>
+                    <p id="mode">Mode: 0</p>
+                </div>
             </div>
-        </div>
-
-        <div class="chart-container">
-            <canvas id="timestepChart"></canvas>
-            <canvas id="histogramChart"></canvas>
+            <div class="charts-container">
+                <canvas id="timestepsChart"></canvas>
+                <canvas id="histogramChart"></canvas>
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('startSimulation').addEventListener('click', function() {
-        const n = parseInt(document.getElementById('numServers').value);
-        const m = parseInt(document.getElementById('numAttackers').value);
-        const p = parseFloat(document.getElementById('penetrationProb').value);
-        const midIndex = parseInt(document.getElementById('midIndex').value);
-        const simulationType = document.getElementById('simulationChoice').value;
-        const freqType = document.getElementById('freqChoice').value;
+        const runSimulationButton = document.getElementById('runSimulationButton');
+        const nInput = document.getElementById('n');
+        const mInput = document.getElementById('m');
+        const pInput = document.getElementById('p');
+        const midPointIndexInput = document.getElementById('midPointIndex');
+        const simulationTypeInput = document.getElementById('simulationType');
+        const frequencyTypeInput = document.getElementById('frequencyType');
 
-        let steps = [Array(m).fill(0)];
-        
-        // Perform the simulation
-        for (let i = 1; i <= n; i++) {
-            steps.push(steps[i - 1].map(value => {
-                return simulationType === 'randomWalk' ? (Math.random() < p ? value + 1 : value - 1) : (Math.random() < p ? value + 1 : value);
-            }));
+        const midPointMeanElement = document.getElementById('midPointMean');
+        const midPointStdDevElement = document.getElementById('midPointStdDev');
+        const midPointModeElement = document.getElementById('midPointMode');
+        const meanElement = document.getElementById('mean');
+        const stdDevElement = document.getElementById('stdDev');
+        const modeElement = document.getElementById('mode');
+
+        const timestepsChartContext = document.getElementById('timestepsChart').getContext('2d');
+        const histogramChartContext = document.getElementById('histogramChart').getContext('2d');
+
+        let timesteps = [];
+        let chartInstance = null;
+        let histogramChartInstance = null;
+
+        runSimulationButton.addEventListener('click', runSimulation);
+
+        function runSimulation() {
+            const n = parseInt(nInput.value);
+            const m = parseInt(mInput.value);
+            const p = parseFloat(pInput.value);
+            const midPointIndex = parseInt(midPointIndexInput.value);
+            const simulationType = simulationTypeInput.value;
+            const frequencyType = frequencyTypeInput.value;
+
+            // Initialize timesteps
+            timesteps = [Array(m).fill(0)];
+            for (let i = 1; i <= n; i++) {
+                timesteps.push(timesteps[i - 1].map((value) => {
+                    return simulationType === 'randomWalk' ? (Math.random() < p ? value + 1 : value - 1) : (Math.random() < p ? value + 1 : value);
+                }));
+            }
+
+            // Normalize to relative frequency if needed
+            if (frequencyType === 'relative') {
+                timesteps = timesteps.map((step) => step.map((value) => value / n));
+            }
+
+            plotTimesteps(midPointIndex);
+            plotHistogram(n);
+
+            const finalTimestep = timesteps[n];
+            const midPointData = timesteps[midPointIndex];
+            const mean = computeMean(finalTimestep);
+            const stdDev = computeStandardDeviation(finalTimestep);
+            const mode = computeMode(finalTimestep);
+            const midPointMean = computeMean(midPointData);
+            const midPointStdDev = computeStandardDeviation(midPointData);
+            const midPointMode = computeMode(midPointData);
+
+            // Update statistics
+            midPointMeanElement.innerText = `Mean: ${midPointMean.toFixed(2)}`;
+            midPointStdDevElement.innerText = `Standard Deviation: ${midPointStdDev.toFixed(2)}`;
+            midPointModeElement.innerText = `Mode: ${midPointMode.join(', ')}`;
+            meanElement.innerText = `Mean: ${mean.toFixed(2)}`;
+            stdDevElement.innerText = `Standard Deviation: ${stdDev.toFixed(2)}`;
+            modeElement.innerText = `Mode: ${mode.join(', ')}`;
         }
 
-        // Apply frequency type
-        if (freqType === 'relative') {
-            steps = steps.map(step => step.map(value => value / n));
-        }
+        function plotTimesteps(midPointIndex) {
+            const data = timesteps.map((step, index) => {
+                return {
+                    x: index,
+                    y: step[midPointIndex],
+                };
+            });
 
-        updateCharts(steps, midIndex);
-        displayStatistics(steps, n, midIndex);
-        });
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
 
-        function updateCharts(steps, midIndex) {
-            const timestepData = steps.map((step, index) => ({ x: index, y: step[midIndex] }));
-
-            const timestepChartCtx = document.getElementById('timestepChart').getContext('2d');
-            new Chart(timestepChartCtx, {
+            chartInstance = new Chart(timestepsChartContext, {
                 type: 'line',
                 data: {
                     datasets: [{
-                        label: 'Mid-point Values',
-                        data: timestepData,
-                        borderColor: 'rgba(0, 123, 255, 1)',
+                        label: 'Timestep Data',
+                        data: data,
+                        borderColor: 'rgba(52, 152, 219, 1)',
                         fill: false,
+                        tension: 0.1,
                     }]
                 },
                 options: {
                     scales: {
-                        x: { title: { display: true, text: 'Timestep' } },
+                        x: { type: 'linear', title: { display: true, text: 'Timestep' } },
                         y: { title: { display: true, text: 'Value' } },
                     }
                 }
             });
+        }
 
-            const finalValues = steps[steps.length - 1];
-            const frequencyData = {};
-            finalValues.forEach(value => {
-                frequencyData[value] = (frequencyData[value] || 0) + 1;
+        function plotHistogram(n) {
+            const finalTimestep = timesteps[n];
+            const histogramData = {};
+
+            finalTimestep.forEach(value => {
+                histogramData[value] = (histogramData[value] || 0) + 1;
             });
 
-            const labels = Object.keys(frequencyData);
-            const values = Object.values(frequencyData);
+            const labels = Object.keys(histogramData);
+            const values = Object.values(histogramData);
 
-            const histogramChartCtx = document.getElementById('histogramChart').getContext('2d');
-            new Chart(histogramChartCtx, {
+            if (histogramChartInstance) {
+                histogramChartInstance.destroy();
+            }
+
+            histogramChartInstance = new Chart(histogramChartContext, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'Frequency',
                         data: values,
-                        backgroundColor: 'rgba(0, 123, 255, 0.6)',
+                        backgroundColor: 'rgba(52, 152, 219, 0.6)',
                     }]
                 },
                 options: {
@@ -233,40 +293,28 @@
             });
         }
 
-        function displayStatistics(steps, n, midIndex) {
-            const finalValues = steps[n];
-            const midValues = steps[midIndex];
-
-            document.getElementById('midMean').innerText = `Mean: ${calculateMean(midValues).toFixed(2)}`;
-            document.getElementById('midStdDev').innerText = `Std Dev: ${calculateStdDev(midValues).toFixed(2)}`;
-            document.getElementById('midMode').innerText = `Mode: ${calculateMode(midValues).join(', ')}`;
-
-            document.getElementById('finalMean').innerText = `Mean: ${calculateMean(finalValues).toFixed(2)}`;
-            document.getElementById('finalStdDev').innerText = `Std Dev: ${calculateStdDev(finalValues).toFixed(2)}`;
-            document.getElementById('finalMode').innerText = `Mode: ${calculateMode(finalValues).join(', ')}`;
+        function computeMean(data) {
+            const total = data.reduce((sum, value) => sum + value, 0);
+            return total / data.length;
         }
 
-        function calculateMean(data) {
-            const sum = data.reduce((acc, val) => acc + val, 0);
-            return sum / data.length;
+        function computeStandardDeviation(data) {
+            const mean = computeMean(data);
+            const squaredDiffs = data.map(value => Math.pow(value - mean, 2));
+            return Math.sqrt(computeMean(squaredDiffs));
         }
 
-        function calculateStdDev(data) {
-            const mean = calculateMean(data);
-            const variance = data.map(value => Math.pow(value - mean, 2)).reduce((acc, val) => acc + val, 0) / data.length;
-            return Math.sqrt(variance);
-        }
-
-        function calculateMode(data) {
+        function computeMode(data) {
             const frequency = {};
             data.forEach(value => {
                 frequency[value] = (frequency[value] || 0) + 1;
             });
 
-            const maxCount = Math.max(...Object.values(frequency));
-            return Object.keys(frequency).filter(key => frequency[key] === maxCount);
+            const maxFrequency = Math.max(...Object.values(frequency));
+            return Object.keys(frequency).filter(value => frequency[value] === maxFrequency);
         }
 
     </script>
 </body>
 </html>
+
