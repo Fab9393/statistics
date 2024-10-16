@@ -167,10 +167,13 @@
             <canvas id="graficoTraiettoriaAggressori"></canvas>
         </div>
         <div id="canvasContainer">
-            <canvas id="graficoDistribuzioneMezzo"></canvas>
-        </div>
-        <div id="canvasContainer">
             <canvas id="graficoDistribuzioneAggressori"></canvas>
+        </div>
+    </div>
+
+    <div id="chartContainer">
+        <div id="canvasContainer">
+            <canvas id="graficoDistribuzioneMezzo"></canvas>
         </div>
     </div>
 
@@ -249,7 +252,7 @@
     <script>
         let grafici = {};
 
-
+        // Funzione per eseguire la simulazione
         const avviaSimulazione = () => {
             const numeroServer = parseInt(document.getElementById('servers').value);
             const numeroAggressori = parseInt(document.getElementById('attackers').value);
@@ -258,22 +261,21 @@
 
             const traiettorieTotali = ottieniTraiettorie(numeroAggressori, tempo, probabilitaAttacco);
 
+            // Calcola la distribuzione finale degli aggressori
             const distribuzioneFinale = calcolaDistribuzione(traiettorieTotali);
 
-            const halfwayTime = Math.floor(tempo / 2);
-            const traiettorieMezzo = traiettorieTotali.map(traiettoria => traiettoria[halfwayTime]);
-            const distribuzioneMezzo = calcolaDistribuzione(traiettorieMezzo);
-
+            // Calcola l'intervallo per i grafici
             const intervalloGrafico = calcolaIntervallo(traiettorieTotali);
 
-
+            // Aggiorna i grafici
             graficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
             graficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
-            graficoDistribuzione(distribuzioneMezzo, numeroServer, intervalloGrafico, 'graficoDistribuzioneMezzo'); // New chart for halfway distribution
 
+            // Calcola e visualizza le statistiche
             mostraStatistiche(distribuzioneFinale);
         };
 
+        // Funzione per generare tutte le traiettorie degli aggressori
         const ottieniTraiettorie = (numeroAggressori, tempo, probabilitaAttacco) => {
             const traiettorie = [];
             for (let i = 0; i < numeroAggressori; i++) {
@@ -282,7 +284,7 @@
             return traiettorie;
         };
 
-
+        // Funzione per generare una traiettoria di attacco
         const generaTraiettoria = (passi, probabilita) => {
             let posizioneAttuale = 0;
             const traiettoria = [];
@@ -293,10 +295,10 @@
             return traiettoria;
         };
 
-
+        // Funzione per determinare l'esito di un attacco
         const esitoAttacco = (probabilita) => Math.random() < probabilita ? 1 : -1;
 
-
+        // Funzione per calcolare la distribuzione finale
         const calcolaDistribuzione = (trajectories) => {
             return trajectories.map(t => t[t.length - 1])
                 .reduce((acc, posizione) => {
@@ -305,7 +307,7 @@
                 }, {});
         };
 
-
+        // Funzione per calcolare l'intervallo grafico
         const calcolaIntervallo = (trajectories) => {
             return Math.max(...trajectories.flat().map(Math.abs));
         };
@@ -348,7 +350,7 @@
         });
     };
 
-
+    // Funzione per aggiornare il grafico della distribuzione
     const graficoDistribuzione = (risultati, numeroServer, intervalloGrafico, graficoID) => {
         const ctx = document.getElementById(graficoID).getContext('2d');
         const etichette = Array.from({ length: intervalloGrafico * 2 + 2 }, (_, i) => ((-intervalloGrafico) + i).toString());
@@ -389,7 +391,7 @@
         });
     };
 
-
+        // Funzione per mostrare le statistiche
         const mostraStatistiche = (distribuzione) => {
             const media = calcolaMedia(distribuzione);
             const deviazioneStandard = calcolaDeviazioneStandard(distribuzione);
@@ -400,14 +402,14 @@
             document.getElementById('mode').textContent = moda;
         };
 
-
+        // Funzione per calcolare la media
         const calcolaMedia = (distribuzione) => {
             const totale = Object.keys(distribuzione).reduce((somma, chiave) => somma + (parseInt(chiave) * distribuzione[chiave]), 0);
             const conteggio = Object.values(distribuzione).reduce((somma, valore) => somma + valore, 0);
             return totale / conteggio;
         };
 
-
+        // Funzione per calcolare la deviazione standard
         const calcolaDeviazioneStandard = (distribuzione) => {
             const media = calcolaMedia(distribuzione);
             const varianza = Object.keys(distribuzione).reduce((somma, chiave) => {
@@ -418,14 +420,14 @@
             return Math.sqrt(varianza / conteggio);
         };
 
-
+        // Funzione per calcolare la moda
         const calcolaModa = (distribuzione) => {
             const conteggioMax = Math.max(...Object.values(distribuzione));
             const modi = Object.keys(distribuzione).filter(chiave => distribuzione[chiave] === conteggioMax);
             return modi.join(', ');
         };
 
-
+        // Funzione per generare colori casuali per ogni linea (hacker)
         function getRandomColor() {
             const letters = '0123456789ABCDEF'; 
             let color = '#'; 
@@ -435,6 +437,7 @@
             return color; 
         }
 
+        // Evento di click per avviare la simulazione
         document.getElementById('simulateButton').addEventListener('click', avviaSimulazione);
     </script>
 
