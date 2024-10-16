@@ -141,14 +141,13 @@
     </style>
 </head>
 <body>
+    <h1>Welford Algorithm - HW2</h1>
     <nav>
         <ul>
             <li><a href="index.html">Home</a></li>
         </ul>
     </nav>
-
-    <div class="container">
-        <h1>Welford Algorithm</h1>
+    <div id="mod">
         <label for="servers">Servers:</label>
         <input type="number" id="servers" value="10" min="1"><br><br>
 
@@ -229,12 +228,13 @@
                 M_k = M_{k-1} + (x_k - M_{k-1}) / k<br>
             </p>
         </div>
-    
-        <div class="concept-panel">
-            <div class="concept-title">Central Limit Theorem</div>
-            <p>The Central Limit Theorem states that the distribution of the sample mean of a large number of independent, identically distributed variables will tend to follow a normal distribution, regardless of the original distribution of the variables.</p>
-            <p>This theorem is foundational in statistics and justifies using normal distribution in many types of analysis, especially when working with large datasets.</p>
-            <p>The Central Limit Theorem allows for simplifying the analysis of complex datasets by assuming that the sample mean will be approximately normally distributed.</p>
+
+        <div class="concept-panel"> 
+            <div class="concept-title">Law of Large Numbers</div> 
+            <p>The Law of Large Numbers is a fundamental principle in probability and statistics that states that as the number of trials or observations increases, the sample mean will converge to the expected value (theoretical mean) of the population.</p>
+            <p>This concept is essential for justifying the use of the sample mean as an estimate of the population mean.</p> <p>There are two main forms of the law: the Weak Law of Large Numbers and the Strong Law of Large Numbers.</p>
+            <p>The former guarantees that the sample mean converges in probability to the expected value, while the latter ensures almost sure convergence. The law is applied in various fields,</p>
+            <p>including economics, social sciences, and operations research, to support the idea that larger samples lead to more accurate estimates.</p>
         </div>
     </div>
 
