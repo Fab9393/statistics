@@ -175,7 +175,7 @@
 
     <div id="chartContainer">
         <div id="canvasContainer">
-            <canvas id="graficoTraiettoriaAggressori"></canvas>
+            <canvas id="graficoTraiettoriaAggressori2"></canvas>
         </div>
         <div id="canvasContainer">
             <canvas id="graficoDistribuzioneAggressori"></canvas>
@@ -276,6 +276,7 @@
 
             // Aggiorna i grafici
             graficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
+            graficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori2');
             graficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
             graficoDistribuzione(distribuzioneMedia,numeroServer,intervalloGrafico, 'graficoDistribuzioneMediaAggressori');
             // Calcola e visualizza le statistiche
