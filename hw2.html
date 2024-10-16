@@ -311,11 +311,9 @@
         
         const calculateFrequencyDistribution = (positions, binSize = 0.5) => {
             let frequencyMap = {};
-
-            // Calculate frequencies using bins
+            
             positions.forEach(pos => {
-                // Determine the bin for the current position
-                let bin = Math.floor(pos / binSize) * binSize; // Binning based on specified bin size
+                let bin = Math.floor(pos / binSize) * binSize; // Binning
                 frequencyMap[bin] = (frequencyMap[bin] || 0) + 1;
             });
 
@@ -323,14 +321,18 @@
             let relativeFrequencies = [];
             const totalPositions = positions.length;
 
-            // Populate absolute and relative frequencies
-            for (let bin in frequencyMap) {
-                absoluteFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] });
-                relativeFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] / totalPositions });
+            if (totalPositions > 0) { // Controllo per evitare divisione per zero
+                for (let bin in frequencyMap) {
+                    absoluteFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] });
+                    relativeFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] / totalPositions });
+                }
+            } else {
+                console.error("No positions available for frequency calculation.");
             }
 
             return { absoluteFrequencies, relativeFrequencies };
         };
+
 
 
         const plotCharts = (paths, meanValues, varianceValues, steps, finalPositions) => {
