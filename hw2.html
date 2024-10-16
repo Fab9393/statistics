@@ -1,9 +1,12 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk Simulator</title>
+    <title>Simulazione di Attacco</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Stili per l'header e il layout */
         header {
@@ -136,7 +139,6 @@
             }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <nav>
@@ -144,202 +146,212 @@
             <li><a href="index.html">Home</a></li>
         </ul>
     </nav>
-    <h2>Random Walk Simulator</h2>
 
-    <div id="controls">
-        <label>Steps: <input type="number" id="steps" value="100" /></label>
-        <label>Paths: <input type="number" id="paths" value="5" /></label>
-        <label>Time Step: <input type="number" step="0.01" id="time-step" value="0.1" /></label>
-        <label>Jump Probability: <input type="number" step="0.1" id="jump-prob" value="0.1" /></label>
-        <button id="run-simulation">Run Simulation</button>
+    <div class="container">
+        <h1>Simulazione di Attacco</h1>
+        <label for="servers">Numero di Server:</label>
+        <input type="number" id="servers" value="10" min="1"><br><br>
+
+        <label for="attackers">Numero di Aggressori:</label>
+        <input type="number" id="attackers" value="5" min="1"><br><br>
+
+        <label for="probability">Probabilità di Successo (0-1):</label>
+        <input type="number" step="0.01" id="probability" value="0.5" min="0 max="1"><br><br>
+
+        <label for="time">Tempo di Simulazione:</label>
+        <input type="number" id="time" value="100" min="1"><br><br>
+
+        <button id="simulateButton">Esegui Simulazione</button>
     </div>
 
-    <div class="chart-container">
-        <canvas id="walkChart"></canvas>
+    <canvas id="graficoTraiettoriaAggressori"></canvas>
+    <canvas id="graficoDistribuzioneAggressori"></canvas>
+
+    <div class="container">
+        <h2>Statistiche</h2>
+        <p>Media: <span id="mean">0</span></p>
+        <p>Deviazione Standard: <span id="stdDev">0</span></p>
+        <p>Moda: <span id="mode">0</span></p>
     </div>
-    <div class="chart-container">
-        <canvas id="meanChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <canvas id="varianceChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <canvas id="distributionChart"></canvas>
-    </div>
+
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
+    </footer>
 
     <script>
-        let walkChart, meanChart, varianceChart, distributionChart;
+        let grafici = {};
 
-        // Function to get Gaussian random numbers
-        const getGaussianRandom = (mean = 0, stddev = 1) => {
-            let u = Math.random();
-            let v = Math.random();
-            return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        // Funzione per eseguire la simulazione
+        const avviaSimulazione = () => {
+            const numeroServer = parseInt(document.getElementById('servers').value);
+            const numeroAggressori = parseInt(document.getElementById('attackers').value);
+            const probabilitaAttacco = parseFloat(document.getElementById('probability').value);
+            const tempo = parseInt(document.getElementById('time').value);
+
+            const traiettorieTotali = ottieniTraiettorie(numeroAggressori, tempo, probabilitaAttacco);
+
+            // Calcola la distribuzione finale degli aggressori
+            const distribuzioneFinale = calcolaDistribuzione(traiettorieTotali);
+
+            // Calcola l'intervallo per i grafici
+            const intervalloGrafico = calcolaIntervallo(traiettorieTotali);
+
+            // Aggiorna i grafici
+            aggiornaGraficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
+            aggiornaGraficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
+
+            // Calcola e visualizza le statistiche
+            mostraStatistiche(distribuzioneFinale);
         };
 
-        // Function to generate random jumps
-        const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
-
-        // Function to run the simulation
-        const runSimulation = (steps, dt, paths, jumpProb) => {
-            let pathsData = [];
-            let meanValues = Array(steps).fill(0);
-            let varianceValues = Array(steps).fill(0);
-            let finalPositions = [];
-
-            for (let p = 0; p < paths; p++) {
-                let path = [];
-                let position = 0;
-
-                for (let i = 0; i < steps; i++) {
-                    let step = getGaussianRandom(0, Math.sqrt(dt));
-                    let jump = generateRandomJump(jumpProb);
-                    position += step + jump;
-                    path.push(position);
-
-                    let delta = position - meanValues[i];
-                    meanValues[i] += delta / (p + 1);
-                    varianceValues[i] += delta * (position - meanValues[i]);
-                }
-
-                pathsData.push(path);
-                finalPositions.push(position);
+        // Funzione per generare tutte le traiettorie degli aggressori
+        const ottieniTraiettorie = (numeroAggressori, tempo, probabilitaAttacco) => {
+            const traiettorie = [];
+            for (let i = 0; i < numeroAggressori; i++) {
+                traiettorie.push(generaTraiettoria(tempo, probabilitaAttacco));
             }
-
-            varianceValues = varianceValues.map((v, i) => v / paths);
-            return { pathsData, meanValues, varianceValues, finalPositions };
+            return traiettorie;
         };
 
-        // Function to calculate frequency distribution
-        const calculateFrequencyDistribution = (positions, binSize = 0.5) => {
-            let frequencyMap = {};
-            
-            positions.forEach(pos => {
-                let bin = Math.floor(pos / binSize) * binSize; // Binning
-                frequencyMap[bin] = (frequencyMap[bin] || 0) + 1;
-            });
-
-            let absoluteFrequencies = [];
-            let relativeFrequencies = [];
-            const totalPositions = positions.length;
-
-            if (totalPositions > 0) {
-                for (let bin in frequencyMap) {
-                    absoluteFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] });
-                    relativeFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] / totalPositions });
-                }
-            } else {
-                console.error("No positions available for frequency calculation.");
+        // Funzione per generare una traiettoria di attacco
+        const generaTraiettoria = (passi, probabilita) => {
+            let posizioneAttuale = 0;
+            const traiettoria = [];
+            for (let i = 0; i < passi; i++) {
+                posizioneAttuale += esitoAttacco(probabilita);
+                traiettoria.push(posizioneAttuale);
             }
-
-            return { absoluteFrequencies, relativeFrequencies };
+            return traiettoria;
         };
 
-        // Function to plot charts
-        const plotCharts = (paths, meanValues, varianceValues, steps, finalPositions) => {
-            const labels = Array.from({ length: steps }, (_, i) => i + 1);
+        // Funzione per determinare l'esito di un attacco
+        const esitoAttacco = (probabilita) => Math.random() < probabilita ? 1 : -1;
 
-            if (walkChart) walkChart.destroy();
-            if (meanChart) meanChart.destroy();
-            if (varianceChart) varianceChart.destroy();
-            if (distributionChart) distributionChart.destroy();
+        // Funzione per calcolare la distribuzione finale
+        const calcolaDistribuzione = (trajectories) => {
+            return trajectories.map(t => t[t.length - 1])
+                .reduce((acc, posizione) => {
+                    acc[posizione] = (acc[posizione] || 0) + 1;
+                    return acc;
+                }, {});
+        };
 
-            const walkDatasets = paths.map((path, i) => ({
-                label: `Path ${i + 1}`,
-                data: path,
-                borderColor: getRandomColor(),
+        // Funzione per calcolare l'intervallo grafico
+        const calcolaIntervallo = (trajectories) => {
+            return Math.max(...trajectories.flat().map(Math.abs));
+        };
+
+        // Funzione per aggiornare il grafico a linee
+        const aggiornaGraficoLineare = (dataLineari, numeroPassi, intervalloGrafico, graficoID) => {
+            const ctx = document.getElementById(graficoID).getContext('2d');
+            const etichette = Array.from({ length: numeroPassi + 1 }, (_, i) => `${i}`);
+            const dataset = dataLineari.map((dati, indice) => ({
+                label: `Aggressore ${indice + 1}`,
+                data: dati.map((valore, i) => ({ x: i, y: valore })),
                 fill: false,
-                stepped: true
+                borderColor: `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`,
+                borderWidth: 1,
+                stepped: true,
+                pointRadius: 0,
             }));
 
-            walkChart = new Chart(document.getElementById('walkChart'), {
+            if (grafici[graficoID]) {
+                grafici[graficoID].destroy();
+            }
+            grafici[graficoID] = new Chart(ctx, {
                 type: 'line',
-                data: { labels, datasets: walkDatasets },
+                data: { labels: etichette, datasets: dataset },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { 
-                        x: { title: { display: true, text: 'Step' } }, 
-                        y: { title: { display: true, text: 'Position' } } 
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: -intervalloGrafico,
+                            max: intervalloGrafico,
+                            display: false
+                        }
                     },
-                    plugins: { legend: { display: true, position: 'bottom' } }
-                }
-            });
-
-            meanChart = new Chart(document.getElementById('meanChart'), {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [{ label: 'Mean', data: meanValues, borderColor: 'red', fill: false }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { 
-                        x: { title: { display: true, text: 'Step' } }, 
-                        y: { title: { display: true, text: 'Mean Position' } } 
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     }
                 }
             });
+        };
 
-            varianceChart = new Chart(document.getElementById('varianceChart'), {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [{ label: 'Variance', data: varianceValues, borderColor: 'green', fill: false }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { 
-                        x: { title: { display: true, text: 'Step' } }, 
-                        y: { title: { display: true, text: 'Variance' } } 
-                    }
-                }
-            });
+        // Funzione per aggiornare il grafico della distribuzione
+        const aggiornaGraficoDistribuzione = (risultati, numeroServer, intervalloGrafico, graficoID) => {
+            const ctx = document.getElementById(graficoID).getContext('2d');
+            const etichette = Array.from({ length: intervalloGrafico * 2 + 2 }, (_, i) => ((-intervalloGrafico) + i).toString());
 
-            const { absoluteFrequencies } = calculateFrequencyDistribution(finalPositions);
-            distributionChart = new Chart(document.getElementById('distributionChart'), {
+            if (grafici[graficoID]) {
+                grafici[graficoID].destroy();
+            }
+            grafici[graficoID] = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: absoluteFrequencies.map(freq => freq.position),
+                    labels: etichette,
                     datasets: [{
-                        label: 'Frequency Distribution',
-                        data: absoluteFrequencies.map(freq => freq.count),
-                        backgroundColor: 'blue'
+                        label: 'Numero di Aggressori',
+                        data: risultati,
+                        backgroundColor: Array.from({ length: numeroServer }, () =>
+                            `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`),
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { 
-                        x: { title: { display: true, text: 'Position' } }, 
-                        y: { title: { display: true, text: 'Frequency' } } 
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { reverse: true, display: false, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     }
                 }
             });
         };
 
-        // Function to get random color for chart lines
-        const getRandomColor = () => {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
+        // Funzione per mostrare le statistiche
+        const mostraStatistiche = (distribuzione) => {
+            const media = calcolaMedia(distribuzione);
+            const deviazioneStandard = calcolaDeviazioneStandard(distribuzione);
+            const moda = calcolaModa(distribuzione);
+
+            document.getElementById('mean').textContent = media.toFixed(2);
+            document.getElementById('stdDev').textContent = deviazioneStandard.toFixed(2);
+            document.getElementById('mode').textContent = moda;
         };
 
-        // Button click event
-        document.getElementById('run-simulation').addEventListener('click', () => {
-            const steps = parseInt(document.getElementById('steps').value);
-            const paths = parseInt(document.getElementById('paths').value);
-            const dt = parseFloat(document.getElementById('time-step').value);
-            const jumpProb = parseFloat(document.getElementById('jump-prob').value);
+        // Funzione per calcolare la media
+        const calcolaMedia = (distribuzione) => {
+            const totale = Object.keys(distribuzione).reduce((somma, chiave) => somma + (parseInt(chiave) * distribuzione[chiave]), 0);
+            const conteggio = Object.values(distribuzione).reduce((somma, valore) => somma + valore, 0);
+            return totale / conteggio;
+        };
 
-            const { pathsData, meanValues, varianceValues, finalPositions } = runSimulation(steps, dt, paths, jumpProb);
-            plotCharts(pathsData, meanValues, varianceValues, steps, finalPositions);
-        });
+        // Funzione per calcolare la deviazione standard
+        const calcolaDeviazioneStandard = (distribuzione) => {
+            const media = calcolaMedia(distribuzione);
+            const varianza = Object.keys(distribuzione).reduce((somma, chiave) => {
+                const differenza = parseInt(chiave) - media;
+                return somma + (differenza * differenza * distribuzione[chiave]);
+            }, 0);
+            const conteggio = Object.values(distribuzione).reduce((somma, valore) => somma + valore, 0);
+            return Math.sqrt(varianza / conteggio);
+        };
+
+        // Funzione per calcolare la moda
+        const calcolaModa = (distribuzione) => {
+            const conteggioMax = Math.max(...Object.values(distribuzione));
+            const modi = Object.keys(distribuzione).filter(chiave => distribuzione[chiave] === conteggioMax);
+            return modi.join(', ');
+        };
+
+        // Evento di click per avviare la simulazione
+        document.getElementById('run-simulation').addEventListener('click', avviaSimulazione);
     </script>
+
 </body>
 </html>
