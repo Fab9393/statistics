@@ -148,24 +148,28 @@
     </nav>
 
     <div class="container">
-        <h1>Simulazione di Attacco</h1>
-        <label for="servers">Numero di Server:</label>
+        <h1>Welford Algorithm</h1>
+        <label for="servers">Servers:</label>
         <input type="number" id="servers" value="10" min="1"><br><br>
 
-        <label for="attackers">Numero di Aggressori:</label>
+        <label for="attackers">Hackers:</label>
         <input type="number" id="attackers" value="5" min="1"><br><br>
 
-        <label for="probability">Probabilità di Successo (0-1):</label>
+        <label for="probability">Probability (0-1):</label>
         <input type="number" step="0.01" id="probability" value="0.5" min="0 max="1"><br><br>
 
-        <label for="time">Tempo di Simulazione:</label>
+        <label for="time">Time:</label>
         <input type="number" id="time" value="100" min="1"><br><br>
 
         <button id="simulateButton">Esegui Simulazione</button>
     </div>
-
-    <canvas id="graficoTraiettoriaAggressori"></canvas>
-    <canvas id="graficoDistribuzioneAggressori"></canvas>
+    <div id="chartContainer">
+        <div id="canvasContainer">
+            <canvas id="graficoTraiettoriaAggressori"></canvas>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="graficoDistribuzioneAggressori"></canvas>
+        </div>
 
     <div class="container">
         <h2>Statistiche</h2>
@@ -197,8 +201,8 @@
             const intervalloGrafico = calcolaIntervallo(traiettorieTotali);
 
             // Aggiorna i grafici
-            aggiornaGraficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
-            aggiornaGraficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
+            graficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
+            graficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
 
             // Calcola e visualizza le statistiche
             mostraStatistiche(distribuzioneFinale);
@@ -242,76 +246,75 @@
         };
 
         // Funzione per aggiornare il grafico a linee
-        const aggiornaGraficoLineare = (dataLineari, numeroPassi, intervalloGrafico, graficoID) => {
-            const ctx = document.getElementById(graficoID).getContext('2d');
-            const etichette = Array.from({ length: numeroPassi + 1 }, (_, i) => `${i}`);
-            const dataset = dataLineari.map((dati, indice) => ({
-                label: `Aggressore ${indice + 1}`,
-                data: dati.map((valore, i) => ({ x: i, y: valore })),
-                fill: false,
-                borderColor: `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`,
-                borderWidth: 1,
-                stepped: true,
-                pointRadius: 0,
-            }));
+        const graficoLineare = (dataLineari, numeroPassi, intervalloGrafico, graficoID) => {
+        const ctx = document.getElementById(graficoID).getContext('2d');
+        const etichette = Array.from({ length: numeroPassi + 1 }, (_, i) => `${i}`);
+        const dataset = dataLineari.map((dati, indice) => ({
+            label: `Aggressore ${indice + 1}`,
+            data: dati.map((valore, i) => ({ x: i, y: valore })),
+            fill: false,
+            borderColor: getRandomColor(), // Utilizza getRandomColor() qui
+            borderWidth: 1,
+            stepped: true,
+            pointRadius: 0,
+        }));
 
-            if (grafici[graficoID]) {
-                grafici[graficoID].destroy();
-            }
-            grafici[graficoID] = new Chart(ctx, {
-                type: 'line',
-                data: { labels: etichette, datasets: dataset },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            min: -intervalloGrafico,
-                            max: intervalloGrafico,
-                            display: false
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+        if (grafici[graficoID]) {
+            grafici[graficoID].destroy();
+        }
+        grafici[graficoID] = new Chart(ctx, {
+            type: 'line',
+            data: { labels: etichette, datasets: dataset },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: -intervalloGrafico,
+                        max: intervalloGrafico,
+                        display: false
                     }
-                }
-            });
-        };
-
-        // Funzione per aggiornare il grafico della distribuzione
-        const aggiornaGraficoDistribuzione = (risultati, numeroServer, intervalloGrafico, graficoID) => {
-            const ctx = document.getElementById(graficoID).getContext('2d');
-            const etichette = Array.from({ length: intervalloGrafico * 2 + 2 }, (_, i) => ((-intervalloGrafico) + i).toString());
-
-            if (grafici[graficoID]) {
-                grafici[graficoID].destroy();
-            }
-            grafici[graficoID] = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: etichette,
-                    datasets: [{
-                        label: 'Numero di Aggressori',
-                        data: risultati,
-                        backgroundColor: Array.from({ length: numeroServer }, () =>
-                            `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`),
-                    }]
                 },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        x: { beginAtZero: true },
-                        y: { reverse: true, display: false, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 }
-            });
-        };
+            }
+        });
+    };
+
+    // Funzione per aggiornare il grafico della distribuzione
+    const graficoDistribuzione = (risultati, numeroServer, intervalloGrafico, graficoID) => {
+        const ctx = document.getElementById(graficoID).getContext('2d');
+        const etichette = Array.from({ length: intervalloGrafico * 2 + 2 }, (_, i) => ((-intervalloGrafico) + i).toString());
+
+        if (grafici[graficoID]) {
+            grafici[graficoID].destroy();
+        }
+        grafici[graficoID] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: etichette,
+                datasets: [{
+                    label: 'Numero di Aggressori',
+                    data: risultati,
+                    backgroundColor: Array.from({ length: numeroServer }, () => getRandomColor()), // Utilizza getRandomColor() qui
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { reverse: true, display: false, beginAtZero: true }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    };
 
         // Funzione per mostrare le statistiche
         const mostraStatistiche = (distribuzione) => {
@@ -348,6 +351,16 @@
             const modi = Object.keys(distribuzione).filter(chiave => distribuzione[chiave] === conteggioMax);
             return modi.join(', ');
         };
+
+        // Funzione per generare colori casuali per ogni linea (hacker)
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF'; 
+            let color = '#'; 
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color; 
+        }
 
         // Evento di click per avviare la simulazione
         document.getElementById('simulateButton').addEventListener('click', avviaSimulazione);
