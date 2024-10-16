@@ -93,13 +93,11 @@
             padding: 5px;
         }
 
-        .charts-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 0px;
-            align-items: flex-start;
+        .chart-container {
+            position: relative;
+            height: 300px;
             width: 100%;
-            height: 400px; /* Imposta un'altezza fissa per entrambi i grafici */
+            margin-bottom: 20px;
         }
 
         .desc-content {
@@ -165,7 +163,7 @@
 
         <button id="simulateButton">Esegui Simulazione</button>
     </div>
-    <div id="chartsContainer">
+    <div id="chartContainer">
         <div id="canvasContainer">
             <canvas id="graficoTraiettoriaAggressori"></canvas>
         </div>
