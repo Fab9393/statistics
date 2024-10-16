@@ -367,8 +367,16 @@
             options: {
                 indexAxis: 'y',
                 scales: {
-                    x: { beginAtZero: true },
-                    y: { reverse: true, display: false, beginAtZero: true }
+                    x: { beginAtZero: true,
+                        ticks: {
+                        stepSize: 1 // Incrementa di 1 per ogni livello di successo
+                        } 
+                    },
+                    y: { 
+                        reverse: true,
+                         display: false, 
+                         beginAtZero: true 
+                    }
                 },
                 plugins: {
                     legend: {
