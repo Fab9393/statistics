@@ -6,65 +6,63 @@
     <title>Simulazione di Attacco</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .input-container {
+            margin: 15px 0;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .output-container {
+            margin-top: 30px;
+        }
+
+        canvas {
+            margin-top: 20px;
+            width: 100%;
+            height: 300px;
+        }
+    </style>
 </head>
-
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-    
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        padding: 20px;
-    }
-    
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        text-align: center;
-    }
-    
-    .input-container {
-        margin: 15px 0;
-    }
-    
-    input {
-        padding: 10px;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        width: 100px;
-    }
-    
-    button {
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-    
-    button:hover {
-        background-color: #218838;
-    }
-    
-    .output-container {
-        margin-top: 30px;
-    }
-    
-    canvas {
-        margin-top: 20px;
-        width: 100%;
-        height: 300px;
-    }
-    
-</style>
-
 <body>
     <div class="container">
         <h1>Simulazione di Attacco</h1>
@@ -105,185 +103,184 @@
     </div>
 
     <script>
-       let charts = {};
+        let charts = {};
 
-function runSimulation() {
-    // Prendi i valori dai campi di input
-    const n = parseInt(document.getElementById('servers').value);
-    const m = parseInt(document.getElementById('attackers').value);
-    const p = parseFloat(document.getElementById('probability').value);
-    const t = parseInt(document.getElementById('time').value);
+        function runSimulation() {
+            // Prendi i valori dai campi di input
+            const n = parseInt(document.getElementById('servers').value);
+            const m = parseInt(document.getElementById('attackers').value);
+            const p = parseFloat(document.getElementById('probability').value);
+            const t = parseInt(document.getElementById('time').value);
 
-    // Funzione di aiuto per determinare il successo dell'attacco
-    const attackOutcome = () => Math.random() < p ? 1 : -1;
+            // Funzione di aiuto per determinare il successo dell'attacco
+            const attackOutcome = () => Math.random() < p ? 1 : -1;
 
-    // Genera la traiettoria per un singolo attaccante
-    const generateTrajectory = () => {
-        return Array.from({ length: n }, () => 0)
-            .reduce((trajectory) => {
-                const lastValue = trajectory[trajectory.length - 1] || 0;
-                return [...trajectory, lastValue + attackOutcome()];
-            }, []);
-    };
+            // Genera la traiettoria per un singolo attaccante
+            const generateTrajectory = () => {
+                return Array.from({ length: n }, () => 0)
+                    .reduce((trajectory) => {
+                        const lastValue = trajectory[trajectory.length - 1] || 0;
+                        return [...trajectory, lastValue + attackOutcome()];
+                    }, []);
+            };
 
-    // Esegui la simulazione per ciascun attaccante
-    const allTrajectories = Array.from({ length: m }, () => generateTrajectory());
+            // Esegui la simulazione per ciascun attaccante
+            const allTrajectories = Array.from({ length: m }, () => generateTrajectory());
 
-    // Ottieni la distribuzione finale
-    const getDistribution = arr => arr
-        .map(trajectory => trajectory[trajectory.length - 1]) // Ottieni l'ultimo valore per ogni attaccante
-        .reduce((acc, position) => {
-            acc[position] = (acc[position] || 0) + 1; // Conta le occorrenze di ogni posizione finale
-            return acc;
-        }, {});
+            // Ottieni la distribuzione finale
+            const getDistribution = arr => arr
+                .map(trajectory => trajectory[trajectory.length - 1]) // Ottieni l'ultimo valore per ogni attaccante
+                .reduce((acc, position) => {
+                    acc[position] = (acc[position] || 0) + 1; // Conta le occorrenze di ogni posizione finale
+                    return acc;
+                }, {});
 
-    // Funzione per ottenere il valore assoluto massimo
-    const maxAbsValue = arr => Math.max(...arr.flat().map(Math.abs));
+            // Funzione per ottenere il valore assoluto massimo
+            const maxAbsValue = arr => Math.max(...arr.flat().map(Math.abs));
 
-    // Funzione per ottenere una porzione dell'array
-    const getSlice = (arr, s, e) => arr.map((x) => x.slice(s, e));
+            // Funzione per ottenere una porzione dell'array
+            const getSlice = (arr, s, e) => arr.map((x) => x.slice(s, e));
 
-    // Calcola il massimo valore assoluto per regolare l'asse y
-    let chartRange = maxAbsValue(allTrajectories);
+            // Calcola il massimo valore assoluto per regolare l'asse y
+            let chartRange = maxAbsValue(allTrajectories);
 
-    // Ottieni la parte iniziale delle traiettorie
-    const temp = getSlice(allTrajectories, 0, t);
+            // Ottieni la parte iniziale delle traiettorie
+            const temp = getSlice(allTrajectories, 0, t);
 
-    // Aggiorna i grafici
-    updateLineChart(temp, t - 1, chartRange, 'penetrationLineChart');
-    updateDistributionChart(getDistribution(temp), n, chartRange, 'penetrationDistributionChart');
+            // Aggiorna i grafici
+            updateLineChart(temp, t - 1, chartRange, 'penetrationLineChart');
+            updateDistributionChart(getDistribution(temp), n, chartRange, 'penetrationDistributionChart');
 
-    updateLineChart(getSlice(allTrajectories, t, n), n - t, chartRange, 'line2');
-    updateDistributionChart(getDistribution(allTrajectories), n, chartRange, 'distributionChart2');
+            updateLineChart(getSlice(allTrajectories, t, n), n - t, chartRange, 'line2');
+            updateDistributionChart(getDistribution(allTrajectories), n, chartRange, 'distributionChart2');
 
-    // Calcola le statistiche con l'algoritmo di Knuth
-    const res = knuthMeanVariance(Object.values(getDistribution(allTrajectories)));
-    const mean = res.mean;
-    const stdDev = res.standardDeviation;
-    const mode = calculateMode(Object.values(getDistribution(allTrajectories)));
+            // Calcola le statistiche con l'algoritmo di Knuth
+            const res = knuthMeanVariance(Object.values(getDistribution(allTrajectories)));
+            const mean = res.mean;
+            const stdDev = res.standardDeviation;
+            const mode = calculateMode(Object.values(getDistribution(allTrajectories)));
 
-    // Aggiorna il DOM con i risultati
-    document.getElementById('mean').textContent = mean.toFixed(2);
-    document.getElementById('stdDev').textContent = stdDev.toFixed(2);
-    document.getElementById('mode').textContent = mode;
-}
+            // Aggiorna il DOM con i risultati
+            document.getElementById('mean').textContent = mean.toFixed(2);
+            document.getElementById('stdDev').textContent = stdDev.toFixed(2);
+            document.getElementById('mode').textContent = mode;
+        }
 
-// Funzione per aggiornare il grafico a linee
-function updateLineChart(lineData, n, chartRange, chart) {
-    const ctx = document.getElementById(chart).getContext('2d');
-    const labels = Array.from({ length: n + 1 }, (_, i) => `${i}`);
-    const datasets = lineData.map((data, index) => ({
-        label: `Attacker ${index + 1}`,
-        data: data.map((value, i) => ({ x: i, y: value })),
-        fill: false,
-        borderColor: `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`,
-        borderWidth: 1,
-        stepped: true,
-        pointRadius: 0,
-    }));
+        // Funzione per aggiornare il grafico a linee
+        function updateLineChart(lineData, n, chartRange, chart) {
+            const ctx = document.getElementById(chart).getContext('2d');
+            const labels = Array.from({ length: n + 1 }, (_, i) => `${i}`);
+            const datasets = lineData.map((data, index) => ({
+                label: `Attacker ${index + 1}`,
+                data: data.map((value, i) => ({ x: i, y: value })),
+                fill: false,
+                borderColor: `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`,
+                borderWidth: 1,
+                stepped: true,
+                pointRadius: 0,
+            }));
 
-    if (charts[chart]) {
-        charts[chart].destroy();
-    }
-
-    charts[chart] = new Chart(ctx, {
-        type: 'line',
-        data: { labels: labels, datasets: datasets },
-        options: {
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    min: -chartRange, 
-                    max: chartRange, 
-                    display: false 
-                } 
-            },
-            plugins: {
-                legend: { display: false }
+            if (charts[chart]) {
+                charts[chart].destroy();
             }
+
+            charts[chart] = new Chart(ctx, {
+                type: 'line',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            min: -chartRange, 
+                            max: chartRange, 
+                            display: false 
+                        } 
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
         }
-    });
-}
 
-// Funzione per aggiornare il grafico a barre (distribuzione)
-function updateDistributionChart(results, n, chartRange, chart) {
-    const ctx = document.getElementById(chart).getContext('2d');
-    const labels = Array.from({ length: chartRange * 2 + 2 }, (_, i) => ((-chartRange) + i).toString());
+        // Funzione per aggiornare il grafico a barre (distribuzione)
+        function updateDistributionChart(results, n, chartRange, chart) {
+            const ctx = document.getElementById(chart).getContext('2d');
+            const labels = Array.from({ length: chartRange * 2 + 2 }, (_, i) => ((-chartRange) + i).toString());
 
-    if (charts[chart]) {
-        charts[chart].destroy();
-    }
-
-    charts[chart] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Number of Attackers',
-                data: labels.map(label => results[label] || 0),
-                backgroundColor: Array.from({ length: n }, () => 
-                    `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`
-                ),
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: {
-                x: { beginAtZero: true },
-                y: { reverse: true, display: false, beginAtZero: true }
-            },
-            plugins: {
-                legend: { display: false }
+            if (charts[chart]) {
+                charts[chart].destroy();
             }
+
+            charts[chart] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Attackers',
+                        data: labels.map(label => results[label] || 0),
+                        backgroundColor: Array.from({ length: n }, () => 
+                            `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`
+                        ),
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { reverse: true, display: false, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
         }
-    });
-}
 
-// Algoritmo di Knuth per la media e la varianza
-function knuthMeanVariance(arr) {
-    let mean = 0;
-    let M2 = 0;
-    let N = 0;
+        // Algoritmo di Knuth per la media e la varianza
+        function knuthMeanVariance(arr) {
+            let mean = 0;
+            let M2 = 0;
+            let N = 0;
 
-    for (let x of arr) {
-        N += 1;
-        const delta = x - mean;
-        mean += delta / N;
-        M2 += delta * (x - mean);
-    }
+            for (let x of arr) {
+                N += 1;
+                const delta = x - mean;
+                mean += delta / N;
+                M2 += delta * (x - mean);
+            }
 
-    const variance = N > 1 ? M2 / (N - 1) : 0;
-    const standardDeviation = Math.sqrt(variance);
+            const variance = N > 1 ? M2 / (N - 1) : 0;
+            const standardDeviation = Math.sqrt(variance);
 
-    return {
-        mean: mean,
-        variance: variance,
-        standardDeviation: standardDeviation,
-    };
-}
-
-// Funzione per calcolare la moda
-function calculateMode(arr) {
-    const frequencyMap = {};
-    arr.forEach(value => {
-        if (frequencyMap[value]) {
-            frequencyMap[value]++;
-        } else {
-            frequencyMap[value] = 1;
+            return {
+                mean: mean,
+                variance: variance,
+                standardDeviation: standardDeviation,
+            };
         }
-    });
 
-    let mode = null;
-    let maxCount = 0;
-    for (const [key, value] of Object.entries(frequencyMap)) {
-        if (value > maxCount) {
-            maxCount = value;
-            mode = key;
+        // Funzione per calcolare la moda
+        function calculateMode(arr) {
+            const frequencyMap = {};
+            arr.forEach(value => {
+                if (frequencyMap[value]) {
+                    frequencyMap[value]++;
+                } else {
+                    frequencyMap[value] = 1;
+                }
+            });
+
+            let mode = null;
+            let maxCount = 0;
+            for (const [key, value] of Object.entries(frequencyMap)) {
+                if (value > maxCount) {
+                    maxCount = value;
+                    mode = key;
+                }
+            }
+            return mode;
         }
-    }
-    return mode;
-}
- 
     </script>
 </body>
 </html>
