@@ -173,7 +173,7 @@
 
     <div id="chartContainer">
         <div id="canvasContainer">
-            <canvas id="graficoDistribuzioneMezzo"></canvas>
+            <canvas id="graficoDistribuzioneMediaAggressori"></canvas>
         </div>
     </div>
 
@@ -264,13 +264,15 @@
             // Calcola la distribuzione finale degli aggressori
             const distribuzioneFinale = calcolaDistribuzione(traiettorieTotali);
 
+            const distribuzioneMedia = calcolaDistribuzioneMedia(traiettorieTotali);
+
             // Calcola l'intervallo per i grafici
             const intervalloGrafico = calcolaIntervallo(traiettorieTotali);
 
             // Aggiorna i grafici
             graficoLineare(traiettorieTotali, tempo, intervalloGrafico, 'graficoTraiettoriaAggressori');
             graficoDistribuzione(distribuzioneFinale, numeroServer, intervalloGrafico, 'graficoDistribuzioneAggressori');
-
+            graficoDistribuzioneMedia(distribuzioneMedia,numeroServer,intervalloGrafico, 'graficoDistribuzioneMediaAggressori');
             // Calcola e visualizza le statistiche
             mostraStatistiche(distribuzioneFinale);
         };
@@ -301,6 +303,15 @@
         // Funzione per calcolare la distribuzione finale
         const calcolaDistribuzione = (trajectories) => {
             return trajectories.map(t => t[t.length - 1])
+                .reduce((acc, posizione) => {
+                    acc[posizione] = (acc[posizione] || 0) + 1;
+                    return acc;
+                }, {});
+        };
+
+                // Funzione per calcolare la distribuzione finale
+                const calcolaDistribuzioneMedia = (trajectories) => {
+            return trajectories.map(t => t[t.length/2 - 1])
                 .reduce((acc, posizione) => {
                     acc[posizione] = (acc[posizione] || 0) + 1;
                     return acc;
