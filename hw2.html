@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulation</title>
+    <title>Simulazione Algortimo di Welford - Grafico - HW2</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -33,60 +33,30 @@
         }
 
         h1 {
-            font-size: 3.5em;
-            color: #2c3e50;
+            font-size: 3.0em;
+            color: #007BFF;
         }
 
         h2, h3 {
-            color: #34495e;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        label {
-            font-size: 1.1em;
-        }
-
-        input[type='number'], select {
-            width: 120px;
-            padding: 12px;
-            border: 2px solid #dde4e9;
-            border-radius: 8px;
-        }
-
-        .run-button {
-            background-color: #3498db;
-            color: #fff;
-            padding: 14px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-        }
-
-        .charts-container {
-            display: flex;
-            margin-top: 50px;
-            height: 600px;
-        }
-
-        canvas {
-            flex: 1;
-            margin-left: 8px;
+            color: #007BFF;
         }
 
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+    <h2>Welford's Algorithm - HW2</h2>
     <div class="container">
         <div class="hw">
             <h1>Homework #2</h1>
+            <p>We have n servers with m attackers. The hacker has probability p to penetrate each server.</p>
             <h2>Theory: Welford's Algorithm</h2>
             <p>Welford's algorithm provides an efficient and numerically stable method to compute mean and variance in a single pass:</p>
+            <p>1. Computes mean and variance in a single pass minimizing rounding errors.</p>
             <pre><code>
             // For mean:
             M₁ = x₁
@@ -98,47 +68,37 @@
             for k = 2 to n:
                 S_k = S_{k-1} + (x_k - M_{k-1})(x_k - M_k)
             variance = S_n / (n - 1)
-            </code></pre>
-            <h3>Why Use Welford's Algorithm?</h3>
-            <p>1. Minimizes rounding errors.</p>
-            <p>2. Computes mean and variance in a single pass.</p>
-            <p>3. Suitable for streaming or real-time applications.</p>
-            <h2>Application / Practice</h2>
-            <p>We have n servers with m attackers. The hacker has probability p to penetrate each server.</p>
-            <h2>Input Parameters</h2>
-            <div class="input-group">
-                <label for="n">Number of servers (n):</label>
-                <input type="number" id="n" min="1" value="25">
-            </div>
-            <div class="input-group">
-                <label for="m">Number of attackers (m):</label>
-                <input type="number" id="m" min="1" value="50">
-            </div>
-            <div class="input-group">
+            </code></pre>            
+            <div id ="mod">
+
+                <label for="n">Number of Servers (n):</label>
+                <input type="number" id="n" min="1" value="10">
+
+                <label for="m">Number of Hackers (m):</label>
+                <input type="number" id="m" min="1" value="20">
+
                 <label for="p">Probability of penetration (p):</label>
                 <input type="number" id="p" min="0" max="1" step="0.01" value="0.5">
-            </div>
-            <div class="input-group">
+
                 <label for="midPointIndex">Mid-point Index:</label>
                 <input type="number" id="midPointIndex" min="0" value="12">
-            </div>
-            <div class="input-group">
+
                 <label for="simulationType">Simulation Type:</label>
                 <select id="simulationType">
                     <option value="randomWalk">Random Walk</option>
                     <option value="bernoulli">Bernoulli</option>
                 </select>
-            </div>
-            <div class="input-group">
+
                 <label for="frequencyType">Frequency Type:</label>
                 <select id="frequencyType">
                     <option value="absolute">Absolute</option>
                     <option value="relative">Relative</option>
                 </select>
+
+                <button class="simulateButton" id="simulationnButton">Execute Simulation</button>
             </div>
-            <div class="run-button-container">
-                <button class="run-button" id="runSimulationButton">Run Simulation</button>
-            </div>
+
+
             <div class="statistics">
                 <div>
                     <h3>Midpoint Statistics</h3>
@@ -153,42 +113,182 @@
                     <p id="mode">Mode: 0</p>
                 </div>
             </div>
-            <div class="charts-container">
-                <canvas id="timestepsChart"></canvas>
-                <canvas id="histogramChart"></canvas>
+            <div class="chart-container">
+                <div id= "canvasContainer">
+                    <canvas id="timestepsChart" width="800" height="400" style="overflow-y: scroll;"></canvas>
+                </div>
+                <div id= "canvasContainer">
+                    <canvas id="histogramChart" width="400" height="400"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Population</div>
+            <p>In statistics, the term population refers to the entire group or set of individuals, objects, events, or data points that a study is focused on. The population is the complete collection of elements that share common characteristics and that researchers are interested in understanding, analyzing, or making conclusions about. For example:</p>
+
+                <p>In a medical study, the population might include all patients with a certain condition.</p>
+                <p>In a survey, the population could refer to all voters in a country. Researchers often collect data from a sample of this population because it may not be practical to study the entire population due to time, cost, or logistical constraints.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Statistical Units</div>
+            <p>A statistical unit is the basic element from which data is collected in a statistical study. Each statistical unit represents one member of the population, be it an individual person, a single object, or an event. It serves as the smallest entity of observation. In any dataset, these units are the primary objects that give rise to the data points being analyzed. For instance:</p>
+
+               <p>In a survey about household income, the statistical unit might be an individual household.</p> 
+                <p>In a clinical trial, the unit could be a patient or participant.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Distribution</div>
+            <p>A distribution refers to the way in which the values of a dataset or variable are spread across a population or sample. Distributions describe how often each possible value (or a range of values) occurs, and they provide a summary of the frequency of different outcomes. There are various types of distributions, including:</p>
+
+                <p>Normal distribution: Bell-shaped and symmetrical around the mean, common in many natural phenomena.</p>
+                <p>Binomial distribution: Describes the probability of a specific number of successes in a fixed number of independent yes/no trials.</p>
+                <p>Uniform distribution: All outcomes are equally likely. Understanding the distribution helps in predicting future values and in making informed decisions about the data.</p>
+        </div>
+    </div>
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Mean</div>
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:</p>
+
+                <p>If the values are close together, the mean gives a good indication of a central point.</p>
+                <p> However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Floating Point Representation Calculation Issues</div>
+            <p>Computers represent numbers using floating-point notation, but this representation comes with limitations due to the finite precision of digital storage. </p>
+            <p> Floating-point numbers can only represent a subset of real numbers, which introduces potential rounding errors or approximation errors. </p>
+            <p> These issues are more pronounced when performing calculations involving very large or very small numbers or when many operations are chained together.</p> 
+            <p> Errors can accumulate, making certain calculations inaccurate, especially in high-precision applications like scientific computing or financial modeling.</p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Catastrophic Cancellation Error</div>
+            <p>This error occurs during subtraction when two numbers that are very close in value are subtracted from each other. Because of the way floating-point arithmetic works, small differences between large, similar numbers can result in a loss of precision. </p>
+            <p> The relative error introduced by rounding can be significant when the difference between the two numbers is very small compared to their actual values. This is often called catastrophic cancellation because the resulting loss of accuracy can be substantial. </p>
+            <p> For example, in scientific computations, such errors can significantly distort results if not managed correctly. Using techniques like compensated summation algorithms (e.g., Kahan summation) can help mitigate this error.</p>
+        </div>
+    </div>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Numerical Solutions (e.g., Knuth's Method)</div>
+            <p>These are methods developed to minimize errors caused by floating point representation in numerical calculations. Knuth's method involves algorithmic techniques to avoid rounding errors and improve precision during calculations.</p>
+
+               <p> <code>Knuth's Contributions</code> </p>
+
+               <p> Knuth is a renowned computer scientist who has written several volumes of "The Art of Computer Programming," where he addresses floating point number problems and how to manage them efficiently in calculations.</p>
+            
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">sommaCompensata function (Compensated Sum - Knuth Algorithm)</div>
+            <img src="knuth.png" alt="Code Example" class="code-image">
+               <p>This function implements a compensated sum algorithm (also known as Kahan summation algorithm). It improves the precision of floating-point arithmetic by compensating for small errors that accumulate when summing multiple floating-point numbers.</p> 
+                
+               <p>Parameters:<br>
+                somma: The current sum.<br>
+                valore: The new value to be added to the sum.<br>
+                compensazione: The compensation factor that adjusts for rounding errors.<br>
+            </p> 
+            <p>Returns:<br>
+                An object containing the updated sum (somma) and the updated compensation (compensazione).<br>
+            </p> 
+            <p>Process:<br>
+                Subtracts the compensation from the value.<br>
+                Adds the adjusted value to the sum.<br>
+                Updates the compensation for rounding errors in the sum.<br>
+                Returns the updated sum and compensation.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">simulazioneHackingServer function (Server Hacking Simulation)</div>
+            <img src="simulation.png" alt="Code Example" class="code-image">
+                <p>This function simulates attacks on N servers by M hackers, where each hacker has a probability p of successfully hacking a server.</p>
+                <p>    
+                Parameters:<br>
+                N: Number of servers.<br>
+                M: Number of hackers.<br>
+                p: Probability of a successful hack.<br>
+            </p>
+            <p>Returns:<br>
+                successiPerHacker: A matrix that records the number of successful hacks for each hacker across servers.<br>
+                distribuzioneEmpirica: The empirical distribution of successful hacks for each hacker as a percentage of the total.<br>
+            </p>
+            <p>Process:<br>
+                Creates a matrix to store successful hacks for each hacker on each server.<br>
+                Loops through each server, where each hacker tries to hack the server with a success rate of p.<br>
+                Updates the number of successful hacks for each hacker after each server.<br>
+                At the end, applies the Knuth compensated summation algorithm to calculate the total number of successes for all hackers.<br>
+                Returns the results in a matrix (successiPerHacker) and computes the empirical distribution of successes.<br>
+            </p>
+        </div>
+    </div>
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">getRandomColor function</div>
+            <img src="random_color.png" alt="Code Example" class="code-image">
+            <p>
+                This function generates a random color in hexadecimal format to be used in the chart lines or bars.
+            </p>    
+            <p>Returns:<br>
+                A string representing a random color in the format #RRGGBB.<br>
+            </p>
+            <p>Process:<br>
+                It iterates over 6 hexadecimal digits, randomly generating each digit.<br>
+                Returns the final color string.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">disegnaGrafico function (Draw Main Chart)</div>
+            <img src="draw_chart.png" alt="Code Example" class="code-image">
+            <p>
+                This function draws the main line chart that visualizes the successful hacks across multiple servers for each hacker.
+            </p>    
+            <p>Parameters:<br>
+                successiPerHacker: The matrix of successful hacks for each hacker on each server.<br>
+                distribuzioneEmpirica: The empirical distribution of successes for each hacker.<br>
+                N: Number of servers.<br>
+                M: Number of hackers.<br>
+            </p>
+            <p> Process:<br>
+                It calculates the total successes for all hackers.<br>
+                For each hacker, it creates a dataset to be displayed on the chart, showing the number of successful hacks per server.<br>
+                It then uses the Chart.js library to create a line chart with the data.<br>
+                The chart is responsive and labeled with each hacker's success rate and empirical distribution.<br>
+                Finally, it calls the disegnaIstogramma function to draw the histogram on the right.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">disegnaIstogramma function (Draw Histogram)</div>
+            <img src="draw_histogram.png" alt="Code Example" class="code-image">
+            <p>
+                This function creates a horizontal bar chart (histogram) showing the distribution of successful hacks among hackers.
+            </p>    
+            <p>Parameters:<br>
+                successiPerHacker: The matrix of successful hacks for each hacker.<br>
+            </p>
+            <p>
+                Process:<br>
+                It extracts the total successes of each hacker from the last server.<br>
+                It counts how many hackers achieved each success level.<br>
+                It builds a bar chart (using Chart.js) where the x-axis represents the number of successful hacks and the y-axis represents the number of hackers.<br>
+                The histogram is displayed beside the main chart.<br>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 2</p>
+    </footer>
+
     <script>
-        const runSimulationButton = document.getElementById('runSimulationButton');
-        const nInput = document.getElementById('n');
-        const mInput = document.getElementById('m');
-        const pInput = document.getElementById('p');
-        const midPointIndexInput = document.getElementById('midPointIndex');
-        const simulationTypeInput = document.getElementById('simulationType');
-        const frequencyTypeInput = document.getElementById('frequencyType');
-
-        const midPointMeanElement = document.getElementById('midPointMean');
-        const midPointStdDevElement = document.getElementById('midPointStdDev');
-        const midPointModeElement = document.getElementById('midPointMode');
-        const meanElement = document.getElementById('mean');
-        const stdDevElement = document.getElementById('stdDev');
-        const modeElement = document.getElementById('mode');
-
-        const timestepsChartContext = document.getElementById('timestepsChart').getContext('2d');
-        const histogramChartContext = document.getElementById('histogramChart').getContext('2d');
-
-        let timesteps = [];
-        let chartInstance = null;
-        let histogramChartInstance = null;
-
-        runSimulationButton.addEventListener('click', runSimulation);
-
         function runSimulation() {
-            const n = parseInt(nInput.value);
-            const m = parseInt(mInput.value);
-            const p = parseFloat(pInput.value);
+            const n = parseInt(document.getElementById('n').value);
+            const m = parseInt(document.getElementById('m').value);
+            const p = parseFloat(document.getElementById('p').value);
             const midPointIndex = parseInt(midPointIndexInput.value);
             const simulationType = simulationTypeInput.value;
             const frequencyType = frequencyTypeInput.value;
@@ -206,8 +306,8 @@
                 timesteps = timesteps.map((step) => step.map((value) => value / n));
             }
 
-            plotTimesteps(midPointIndex);
-            plotHistogram(n);
+            genTimesteps(midPointIndex);
+            genHistogram(n);
 
             const finalTimestep = timesteps[n];
             const midPointData = timesteps[midPointIndex];
@@ -227,7 +327,7 @@
             modeElement.innerText = `Mode: ${mode.join(', ')}`;
         }
 
-        function plotTimesteps(midPointIndex) {
+        function genTimesteps(midPointIndex) {
             const data = timesteps.map((step, index) => {
                 return {
                     x: index,
@@ -259,7 +359,7 @@
             });
         }
 
-        function plotHistogram(n) {
+        function genHistogram(n) {
             const finalTimestep = timesteps[n];
             const histogramData = {};
 
@@ -281,7 +381,6 @@
                     datasets: [{
                         label: 'Frequency',
                         data: values,
-                        backgroundColor: 'rgba(52, 152, 219, 0.6)',
                     }]
                 },
                 options: {
@@ -293,26 +392,42 @@
             });
         }
 
-        function computeMean(data) {
-            const total = data.reduce((sum, value) => sum + value, 0);
-            return total / data.length;
+        function computeMean(values) {
+            return (values.reduce((sum, value) => sum + value, 0))/ values.length;
         }
 
-        function computeStandardDeviation(data) {
-            const mean = computeMean(data);
-            const squaredDiffs = data.map(value => Math.pow(value - mean, 2));
-            return Math.sqrt(computeMean(squaredDiffs));
+        function computeStandardDeviation(values) {
+            return Math.sqrt(values.map(value => Math.pow(value - computeMean(values), 2)));
         }
 
-        function computeMode(data) {
-            const frequency = {};
-            data.forEach(value => {
-                frequency[value] = (frequency[value] || 0) + 1;
+        function computeMode(values) {
+            const freq = {};
+            values.forEach(value => {
+                freq[value] = (freq[value] || 0) + 1;
             });
-
-            const maxFrequency = Math.max(...Object.values(frequency));
-            return Object.keys(frequency).filter(value => frequency[value] === maxFrequency);
+            return Object.keys(frequency).filter(value => frequency[value] === Math.max(...Object.values(freq)));
         }
+
+        const runSimulationButton = document.getElementById('runSimulationButton');
+        const midPointIndexInput = document.getElementById('midPointIndex');
+        const simulationTypeInput = document.getElementById('simulationType');
+        const frequencyTypeInput = document.getElementById('frequencyType');
+
+        const midPointMeanElement = document.getElementById('midPointMean');
+        const midPointStdDevElement = document.getElementById('midPointStdDev');
+        const midPointModeElement = document.getElementById('midPointMode');
+        const meanElement = document.getElementById('mean');
+        const stdDevElement = document.getElementById('stdDev');
+        const modeElement = document.getElementById('mode');
+
+        const timestepsChartContext = document.getElementById('timestepsChart').getContext('2d');
+        const histogramChartContext = document.getElementById('histogramChart').getContext('2d');
+
+        let timesteps = [];
+        let chartInstance = null;
+        let histogramChartInstance = null;
+
+        runSimulationButton.addEventListener('click', runSimulation);
 
     </script>
 </body>
