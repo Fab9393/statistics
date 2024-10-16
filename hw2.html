@@ -1,395 +1,438 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulazione di Attacco</title>
+    <title>Random Walk Simulator</title>
     <style>
-        .contenitore {
+        /* Stili per l'header e il layout */
+        header {
             width: 100%;
-            display: flex;
-            justify-content: center;
-            background-color: #f0f4f8;
-            padding: 40px;
-            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .compito {
-            min-height: 100vh;
+        main {
+            flex: 1;
             display: flex;
-            align-items: start;
             flex-direction: column;
-            width: 80%;
-            max-width: 1200px;
-            background-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            padding: 60px;
-            line-height: 1.6;
-        }
-
-        h1 {
-            font-size: 3.5em;
-            color: #2c3e50;
-            margin-bottom: 40px;
-            font-weight: 700;
-        }
-
-        h2, h3 {
-            color: #34495e;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-
-        p {
-            font-size: 1.1em;
-            color: #5d6d7e;
-            margin-bottom: 25px;
-            line-height: 1.8;
-        }
-
-        .gruppo-input {
-            margin-bottom: 25px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        label {
-            font-size: 1.1em;
-            color: #34495e;
-            font-weight: 500;
-        }
-
-        input[type='number'] {
-            width: 120px;
-            padding: 12px;
-            border: 2px solid #dde4e9;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type='number']:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .bottone-esegui {
-            display: flex;
-            width: 100%;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            margin-top: 30px;
+            padding: 20px;
         }
 
-        .bottone-esegui {
-            background-color: #3498db;
-            color: #fff;
-            padding: 14px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1em;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .bottone-esegui:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
-        }
-
-        .bottone-esegui-disabilitato {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-
-        canvas {
-            margin-top: 50px;
-            max-width: 50%;
-            margin-left: 8px;
-        }
-
-        .statistiche {
-            width: 100%;
-            color: #34495e;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            margin-top: 40px;
-            background-color: #f8fafc;
-            padding: 30px;
-            border-radius: 12px;
-        }
-
-        .statistiche h2 {
+        main h2 {
             font-size: 2em;
             margin-bottom: 20px;
-            color: #2c3e50;
         }
 
-        .statistiche p {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: #34495e;
+        nav {
+            background-color: #333;
+            padding: 10px;
         }
 
-        pre {
-            width: 100%;
-            background-color: #f8fafc;
-            border: 1px solid #e1e8ed;
-            border-radius: 8px;
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav a {
+            display: inline-block;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 0;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .desc-content {
+            background-color: white;
             padding: 20px;
-            overflow-x: auto;
-            max-height: 400px;
-            margin-bottom: 30px;
-        }
-
-        code {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 0.95em;
-            color: #2c3e50;
-        }
-
-        .compito > * {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
             max-width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .concept-panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .concept-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
         }
 
         @media (max-width: 768px) {
-            .compito {
-                width: 95%;
-                padding: 30px;
+            .concept-panel {
+                width: calc(50% - 20px);
             }
+        }
 
-            h1 {
-                font-size: 2.5em;
-            }
-
-            .gruppo-input {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            input[type='number'] {
+        @media (max-width: 480px) {
+            .concept-panel {
                 width: 100%;
-                margin-top: 10px;
             }
-        }
-
-        .contenitore-grafici {
-            display: flex;
-            width: 100%;
-            height: 600px;
-            margin-top: 50px;
-            align-items: stretch;
-        }
-
-        #graficoTimesteps {
-            flex: 2;
-            margin-right: -20px;
-        }
-
-        #graficoIstogramma {
-            flex: 1;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div id="app">
-        <div class="contenitore">
-            <div class="compito">
-                <h1>Compito #2</h1>
-                <h2>Teoria: Algoritmo di Welford</h2>
-                <p>
-                    L'algoritmo di Welford fornisce un metodo efficiente e numericamente stabile per calcolare la media e
-                    la varianza in un singolo passaggio:
-                </p>
-                <pre><code>
-// Per la media:
-M₁ = x₁
-per k = 2 fino a n:
-    M_k = M_{k-1} + (x_k - M_{k-1}) / k
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+    <h2>Random Walk Simulator</h2>
 
-// Per la varianza:
-S₁ = 0
-per k = 2 fino a n:
-    S_k = S_{k-1} + (x_k - M_{k-1})(x_k - M_k)
-varianza = S_n / (n - 1)
-                </code></pre>
-                <h3>Perché usare l'algoritmo di Welford?</h3>
-                <p>
-                    1. Quando si lavora con grandi set di dati o valori ad alta precisione, il metodo naive per
-                    calcolare la varianza (∑(x - μ)² / n) può portare a cancellazioni catastrofiche, specialmente quando
-                    la varianza è piccola rispetto alla media. L'algoritmo di Welford minimizza questi errori di
-                    arrotondamento.
-                </p>
-                <p>
-                    2. Questo algoritmo calcola sia la media che la varianza in un singolo passaggio attraverso i dati,
-                    il che è più efficiente rispetto agli algoritmi a due passaggi, specialmente per grandi set di
-                    dati.
-                </p>
-                <p>
-                    3. Consente aggiornamenti in tempo reale mentre arrivano nuovi punti dati, rendendolo adatto per
-                    applicazioni in streaming o in tempo reale, dove i dati vengono elaborati man mano che arrivano
-                    piuttosto che essere memorizzati e poi rielaborati tutti insieme.
-                </p>
-                <h2>Applicazione / Pratica</h2>
-                <p>
-                    Abbiamo n server con m attaccanti. L'hacker ha una probabilità p di penetrare ciascun server.
-                    Supportiamo ora sia il modello di cammino casuale (-1 o +1) che il modello di Bernoulli (0 o 1),
-                    così come le traiettorie di frequenza assoluta e relativa.
-                </p>
-                <h2>Spiegazione dettagliata: calcolo della deviazione standard</h2>
-                <p>
-                    La deviazione standard è una misura della quantità di variazione o dispersione in un insieme di
-                    valori. Viene calcolata come la radice quadrata della varianza. L'algoritmo di Welford fornisce un
-                    metodo efficiente e numericamente stabile per calcolare sia la media che la varianza in un
-                    singolo passaggio attraverso i dati.
-                </p>
-                <div class="gruppo-input">
-                    <label for="serverCount">Numero di server (n):</label>
-                    <input type="number" id="serverCount" v-model.number="numeroServer" min="1" step="1" />
-                </div>
-                <div class="gruppo-input">
-                    <label for="attackerCount">Numero di attaccanti (m):</label>
-                    <input type="number" id="attackerCount" v-model.number="numeroAttaccanti" min="1" step="1" />
-                </div>
-                <div class="gruppo-input">
-                    <label for="penetrationProb">Probabilità di penetrazione (p):</label>
-                    <input type="number" id="penetrationProb" v-model.number="probPenetrazione" min="0" max="1" step="0.01" />
-                </div>
-                <div class="gruppo-input">
-                    <label for="timesteps">Numero di passi temporali:</label>
-                    <input type="number" id="timesteps" v-model.number="passiTemporali" min="1" step="1" />
-                </div>
-                <div class="bottone-esegui" :class="{'bottone-esegui-disabilitato': !abilitaBottone}" @click="eseguiSimulazione">
-                    <span>Avvia Simulazione</span>
-                </div>
-                <div class="contenitore-grafici">
-                    <canvas id="graficoTimesteps"></canvas>
-                    <canvas id="graficoIstogramma"></canvas>
-                </div>
-                <div class="statistiche">
-                    <div>
-                        <h2>Statistiche</h2>
-                        <p>Media: {{media}}</p>
-                        <p>Deviazione standard: {{deviazioneStandard}}</p>
-                    </div>
-                    <div>
-                        <h2>Deviazione standard della deviazione standard</h2>
-                        <p>{{deviazioneStandardDeviazioneStandard}}</p>
-                    </div>
-                </div>
-            </div>
+    <div id="controls">
+        <label>Steps: <input type="number" id="steps" value="100" /></label>
+        <label>Paths: <input type="number" id="paths" value="5" /></label>
+        <label>Time Step: <input type="number" step="0.01" id="time-step" value="0.1" /></label>
+        <label>Jump Probability: <input type="number" step="0.1" id="jump-prob" value="0.1" /></label>
+        <button id="run-simulation">Run Simulation</button>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="walkChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
+    <div class="chart-container">
+        <canvas id="meanChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
+    <div class="chart-container">
+        <canvas id="varianceChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
+    <div class="chart-container">
+        <canvas id="distributionChart"></canvas>
+    </div>
+    <div>
+        <p>
+            <br>
+        </p>
+    </div>
+    <h2>Statistic Notions</h2>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Standard Deviation</div>
+            <p>Standard deviation is a measure of how spread out the values in a dataset are. It indicates the typical distance between the individual values and the mean of the dataset.</p>
+            <p>A small standard deviation means that the data points tend to be close to the mean, while a large standard deviation indicates that the data points are spread out over a larger range of values.</p>
+            <p>Standard deviation is widely used in statistics to understand the variability or dispersion in data.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Variance</div>
+            <p>Variance measures how far a set of numbers are spread out from their mean. It is calculated as the average of the squared differences from the mean.</p>
+            <p>Variance helps in understanding the distribution of data points and is the square of the standard deviation.</p>
+            <p>Like standard deviation, higher variance indicates greater dispersion, while lower variance indicates that data points are closer to the mean.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Normal Distribution</div>
+            <p>Normal distribution, also known as Gaussian distribution, is a probability distribution where most of the values cluster around the central peak. The distribution is symmetric, meaning values are equally likely to be above or below the mean.</p>
+            <p>The mean, median, and mode of a normal distribution are all equal, and the spread of values is described by the standard deviation.</p>
+            <p>This distribution is important in statistics because many real-world phenomena tend to follow a normal distribution.</p>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Random Walk</div>
+            <p>A random walk is a mathematical concept that describes a path consisting of a series of random steps. It is used to model various phenomena in physics, economics, biology, and other fields.</p>
+            <p>In a random walk, each step is determined randomly, and the position of the walker at each step depends on both the random step and the previous position. The walk can occur in one dimension, two dimensions, or more, and may involve fixed-size steps or variable steps.</p>
+            <p>This model is widely used to describe unpredictable processes, such as stock market fluctuations, diffusion of particles, or genetic drift in populations. In statistics, it is also important in the study of stochastic processes.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Mean</div>
+            <p>The mean (or average) is a central statistical measure that represents the typical or central value of a dataset. It is computed by summing all the values in a dataset and dividing the sum by the total number of values. The mean provides insight into the overall tendency or center of the data:</p>
+            <p>If the values are close together, the mean gives a good indication of a central point.</p>
+            <p>However, the mean can be affected by outliers, as extreme values can skew the mean in one direction or another.</p>
+        </div>
+    
+        <div class="concept-panel">
+            <div class="concept-title">Central Limit Theorem</div>
+            <p>The Central Limit Theorem states that the distribution of the sample mean of a large number of independent, identically distributed variables will tend to follow a normal distribution, regardless of the original distribution of the variables.</p>
+            <p>This theorem is foundational in statistics and justifies using normal distribution in many types of analysis, especially when working with large datasets.</p>
+            <p>The Central Limit Theorem allows for simplifying the analysis of complex datasets by assuming that the sample mean will be approximately normally distributed.</p>
+        </div>
+    </div>
+
+    <h2>Code Fragments View</h2>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">getGaussianRandom(mean, stddev)</div>
+            <p>This function generates a random number following a Gaussian distribution with a specified mean and standard deviation.</p>
+            <p>It utilizes the Box-Muller transform method to convert uniformly distributed random numbers into a normally distributed random number.</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">generateRandomJump(prob)</div>
+            <p>This function determines whether to make a jump in the random walk based on a given probability.</p>
+            <p>If the random condition is met, it returns +1 or -1 (representing a jump), otherwise it returns 0 (indicating no jump).</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">runSimulation(steps, dt, paths, jumpProb)</div>
+            <p>This function executes the random walk simulation over a specified number of steps and paths.</p>
+            <p>It calculates the positions of the walker at each step, updating the mean and variance dynamically using the Welford method, and returns the path data, mean values, and variance values.</p>
+        </div>
+    </div>
+
+    <div class="desc-content">  
+        <div class="concept-panel">
+            <div class="concept-title">calculateFrequencyDistribution(positions)</div>
+            <p>This function calculates the absolute and relative frequency distributions of the final positions after running the simulation.</p>
+            <p>It returns a frequency map that shows how many times each position was reached and their corresponding relative frequencies based on the total number of paths.</p>
+        </div>
+        
+        <div class="concept-panel">
+            <div class="concept-title">plotCharts(paths, meanValues, varianceValues, steps, finalPositions)</div>
+            <p>This function visualizes the results of the simulation using charts, including the paths taken, mean values, variance values, and frequency distributions.</p>
+            <p>It uses Chart.js to create line charts for the paths, mean, and variance, as well as a bar chart for the absolute and relative frequency distributions.</p>
+        </div>
+    </div>
+
     <script>
-        const app = new Vue({
-            el: '#app',
-            data: {
-                numeroServer: 5,
-                numeroAttaccanti: 3,
-                probPenetrazione: 0.5,
-                passiTemporali: 10,
-                media: null,
-                deviazioneStandard: null,
-                deviazioneStandardDeviazioneStandard: null,
-                risultati: [],
-                abilitaBottone: true,
-                colori: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6'],
-                istogrammaData: [],
-            },
-            methods: {
-                eseguiSimulazione() {
-                    this.risultati = [];
-                    this.istogrammaData = [];
-                    let somma = 0;
-                    let sommaQuadrati = 0;
+        let walkChart, meanChart, varianceChart, distributionChart;
 
-                    for (let t = 0; t < this.passiTemporali; t++) {
-                        const risultatoPasso = this.simulaAttacco();
-                        this.risultati.push(risultatoPasso);
-                        somma += risultatoPasso;
-                        sommaQuadrati += risultatoPasso * risultatoPasso;
+        const getGaussianRandom = (mean = 0, stddev = 1) => {
+            let u = Math.random();
+            let v = Math.random();
+            return mean + stddev * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        };
 
-                        this.istogrammaData.push(risultatoPasso);
-                    }
+        const generateRandomJump = (prob) => Math.random() < prob ? (Math.random() < 0.5 ? -1 : 1) : 0;
 
-                    this.media = somma / this.passiTemporali;
-                    this.deviazioneStandard = Math.sqrt((sommaQuadrati / this.passiTemporali) - (this.media * this.media));
-                    this.deviazioneStandardDeviazioneStandard = this.calcolaDeviazioneStandard(this.risultati);
+        const runSimulation = (steps, dt, paths, jumpProb) => {
+            let pathsData = [];
+            let meanValues = Array(steps).fill(0);
+            let varianceValues = Array(steps).fill(0);
+            let finalPositions = [];
 
-                    this.generaGraficoTimesteps();
-                    this.generaGraficoIstogramma();
+            for (let p = 0; p < paths; p++) {
+                let path = [];
+                let position = 0;
+
+                for (let i = 0; i < steps; i++) {
+                    let step = getGaussianRandom(0, Math.sqrt(dt));
+                    let jump = generateRandomJump(jumpProb);
+                    position += step + jump;
+                    path.push(position);
+
+                    let delta = position - meanValues[i];
+                    meanValues[i] += delta / (p + 1);
+                    varianceValues[i] += delta * (position - meanValues[i]);
+                }
+
+                pathsData.push(path);
+                finalPositions.push(position); // Salva la posizione finale
+            }
+
+            varianceValues = varianceValues.map((v, i) => v / paths);
+
+            return { pathsData, meanValues, varianceValues, finalPositions };
+        };
+        
+        const calculateFrequencyDistribution = (positions, binSize = 0.5) => {
+            let frequencyMap = {};
+
+            // Calculate frequencies using bins
+            positions.forEach(pos => {
+                // Determine the bin for the current position
+                let bin = Math.floor(pos / binSize) * binSize; // Binning based on specified bin size
+                frequencyMap[bin] = (frequencyMap[bin] || 0) + 1;
+            });
+
+            let absoluteFrequencies = [];
+            let relativeFrequencies = [];
+            const totalPositions = positions.length;
+
+            // Populate absolute and relative frequencies
+            for (let bin in frequencyMap) {
+                absoluteFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] });
+                relativeFrequencies.push({ position: parseFloat(bin), count: frequencyMap[bin] / totalPositions });
+            }
+
+            return { absoluteFrequencies, relativeFrequencies };
+        };
+
+
+        const plotCharts = (paths, meanValues, varianceValues, steps, finalPositions) => {
+            const labels = Array.from({ length: steps }, (_, i) => i + 1);
+
+            if (walkChart) walkChart.destroy();
+            if (meanChart) meanChart.destroy();
+            if (varianceChart) varianceChart.destroy();
+            if (distributionChart) distributionChart.destroy();
+
+            const walkDatasets = paths.map((path, i) => ({
+                label: `Path ${i + 1}`,
+                data: path,
+                borderColor: getRandomColor(),
+                fill: false,
+                stepped: true
+            }));
+
+            walkChart = new Chart(document.getElementById('walkChart'), {
+                type: 'line',
+                data: { labels, datasets: walkDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Position' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
+                }
+            });
+
+            meanChart = new Chart(document.getElementById('meanChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{ label: 'Mean', data: meanValues, borderColor: 'red', fill: false }]
                 },
-                simulaAttacco() {
-                    let attacchiRiusciti = 0;
-                    for (let i = 0; i < this.numeroAttaccanti; i++) {
-                        if (Math.random() < this.probPenetrazione) {
-                            attacchiRiusciti++;
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Mean Value' } } }
+                }
+            });
+
+            varianceChart = new Chart(document.getElementById('varianceChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{ label: 'Variance', data: varianceValues, borderColor: 'blue', fill: false }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Step' } }, y: { title: { display: true, text: 'Variance Value' } } }
+                }
+            });
+
+            const { absoluteFrequencies, relativeFrequencies } = calculateFrequencyDistribution(finalPositions);
+
+            distributionChart = new Chart(document.getElementById('distributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: absoluteFrequencies.map(f => f.position),
+                    datasets: [
+                        {
+                            label: 'Absolute Frequency',
+                            data: absoluteFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Relative Frequency',
+                            data: relativeFrequencies.map(f => f.count),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
                         }
-                    }
-                    return attacchiRiusciti;
+                    ]
                 },
-                calcolaDeviazioneStandard(data) {
-                    const media = data.reduce((acc, val) => acc + val, 0) / data.length;
-                    const sommaQuadrati = data.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
-                    return Math.sqrt(sommaQuadrati / (data.length - 1));
-                },
-                generaGraficoTimesteps() {
-                    const ctx = document.getElementById('graficoTimesteps').getContext('2d');
-                    const grafico = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: Array.from({ length: this.passiTemporali }, (_, i) => i + 1),
-                            datasets: [{
-                                label: 'Attacchi Riusciti',
-                                data: this.risultati,
-                                borderColor: this.colori[0],
-                                backgroundColor: this.colori[0],
-                                fill: false,
-                                borderWidth: 2,
-                            }],
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                },
-                            },
-                        },
-                    });
-                },
-                generaGraficoIstogramma() {
-                    const ctx = document.getElementById('graficoIstogramma').getContext('2d');
-                    const grafico = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: Array.from({ length: this.passiTemporali }, (_, i) => `T${i + 1}`),
-                            datasets: [{
-                                label: 'Frequenza Attacchi Riusciti',
-                                data: this.istogrammaData,
-                                backgroundColor: this.colori[1],
-                            }],
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                },
-                            },
-                        },
-                    });
-                },
-            },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { title: { display: true, text: 'Position' } }, y: { title: { display: true, text: 'Frequency' } } },
+                    plugins: { legend: { display: true, position: 'bottom' } }
+                }
+            });
+        };
+
+        const getRandomColor = () => {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgb(${r},${g},${b})`;
+        };
+
+        document.getElementById('run-simulation').addEventListener('click', () => {
+            const steps = parseInt(document.getElementById('steps').value);
+            const paths = parseInt(document.getElementById('paths').value);
+            const dt = parseFloat(document.getElementById('time-step').value);
+            const jumpProb = parseFloat(document.getElementById('jump-prob').value);
+
+            const { pathsData, meanValues, varianceValues, finalPositions } = runSimulation(steps, dt, paths, jumpProb);
+            plotCharts(pathsData, meanValues, varianceValues, steps, finalPositions);
         });
     </script>
 </body>
