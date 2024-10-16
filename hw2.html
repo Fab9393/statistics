@@ -1,286 +1,272 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulazione di Attacco</title>
+    <title>Random Walk Simulation</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            padding: 20px;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #e7f0f7;
+    margin: 0;
+    padding: 20px;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
+    .main-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
-        .input-container {
-            margin: 15px 0;
-        }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
 
-        input {
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100px;
-        }
+    .input-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
 
-        button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+    .input-item {
+        margin: 10px 0;
+        flex: 1 1 45%;
+    }
 
-        button:hover {
-            background-color: #218838;
-        }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-        .output-container {
-            margin-top: 30px;
-        }
+    input[type='number'], select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
 
-        canvas {
-            margin-top: 20px;
-            width: 100%;
-            height: 300px;
-        }
+    button {
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .results {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+    }
+
+    .stats {
+        width: 45%;
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .chart-container {
+        display: flex;
+        justify-content: space-between;
+        height: 400px;
+    }
+
+    canvas {
+        flex: 1;
+        margin: 0 10px;
+    }
+
     </style>
+
 </head>
 <body>
-    <div class="container">
-        <h1>Simulazione di Attacco</h1>
+    <div class="main-container">
+        <h1>Random Walk Simulation</h1>
+        <div class="input-section">
+            <div class="input-item">
+                <label for="numServers">Servers (n):</label>
+                <input type="number" id="numServers" min="1" value="25">
+            </div>
+            <div class="input-item">
+                <label for="numAttackers">Attackers (m):</label>
+                <input type="number" id="numAttackers" min="1" value="50">
+            </div>
+            <div class="input-item">
+                <label for="penetrationProb">Penetration Probability (p):</label>
+                <input type="number" id="penetrationProb" min="0" max="1" step="0.01" value="0.5">
+            </div>
+            <div class="input-item">
+                <label for="midIndex">Mid-point Index:</label>
+                <input type="number" id="midIndex" min="0" value="12">
+            </div>
+            <div class="input-item">
+                <label for="simulationChoice">Simulation Type:</label>
+                <select id="simulationChoice">
+                    <option value="randomWalk">Random Walk</option>
+                    <option value="bernoulli">Bernoulli</option>
+                </select>
+            </div>
+            <div class="input-item">
+                <label for="freqChoice">Frequency Type:</label>
+                <select id="freqChoice">
+                    <option value="absolute">Absolute</option>
+                    <option value="relative">Relative</option>
+                </select>
+            </div>
+        </div>
+        <button id="startSimulation">Start Simulation</button>
 
-        <div class="input-container">
-            <label for="servers">Numero di Server:</label>
-            <input type="number" id="servers" value="10">
+        <div class="results">
+            <div class="stats">
+                <h3>Statistics at Mid-point</h3>
+                <p id="midMean">Mean: 0</p>
+                <p id="midStdDev">Std Dev: 0</p>
+                <p id="midMode">Mode: 0</p>
+            </div>
+            <div class="stats">
+                <h3>Final Statistics</h3>
+                <p id="finalMean">Mean: 0</p>
+                <p id="finalStdDev">Std Dev: 0</p>
+                <p id="finalMode">Mode: 0</p>
+            </div>
         </div>
 
-        <div class="input-container">
-            <label for="attackers">Numero di Attaccanti:</label>
-            <input type="number" id="attackers" value="5">
+        <div class="chart-container">
+            <canvas id="timestepChart"></canvas>
+            <canvas id="histogramChart"></canvas>
         </div>
-
-        <div class="input-container">
-            <label for="probability">Probabilità di Successo:</label>
-            <input type="number" id="probability" step="0.01" value="0.5">
-        </div>
-
-        <div class="input-container">
-            <label for="time">Tempo (t):</label>
-            <input type="number" id="time" value="5">
-        </div>
-
-        <button onclick="runSimulation()">Esegui Simulazione</button>
-
-        <div class="output-container">
-            <h2>Risultati</h2>
-            <p>Media: <span id="mean"></span></p>
-            <p>Deviazione Standard: <span id="stdDev"></span></p>
-            <p>Moda: <span id="mode"></span></p>
-        </div>
-
-        <canvas id="penetrationLineChart"></canvas>
-        <canvas id="penetrationDistributionChart"></canvas>
-        <canvas id="line2"></canvas>
-        <canvas id="distributionChart2"></canvas>
     </div>
 
     <script>
-        let charts = {};
+        document.getElementById('startSimulation').addEventListener('click', function() {
+        const n = parseInt(document.getElementById('numServers').value);
+        const m = parseInt(document.getElementById('numAttackers').value);
+        const p = parseFloat(document.getElementById('penetrationProb').value);
+        const midIndex = parseInt(document.getElementById('midIndex').value);
+        const simulationType = document.getElementById('simulationChoice').value;
+        const freqType = document.getElementById('freqChoice').value;
 
-        function runSimulation() {
-            // Prendi i valori dai campi di input
-            const n = parseInt(document.getElementById('servers').value);
-            const m = parseInt(document.getElementById('attackers').value);
-            const p = parseFloat(document.getElementById('probability').value);
-            const t = parseInt(document.getElementById('time').value);
-
-            // Funzione di aiuto per determinare il successo dell'attacco
-            const attackOutcome = () => Math.random() < p ? 1 : -1;
-
-            // Genera la traiettoria per un singolo attaccante
-            const generateTrajectory = () => {
-                return Array.from({ length: n }, () => 0)
-                    .reduce((trajectory) => {
-                        const lastValue = trajectory[trajectory.length - 1] || 0;
-                        return [...trajectory, lastValue + attackOutcome()];
-                    }, []);
-            };
-
-            // Esegui la simulazione per ciascun attaccante
-            const allTrajectories = Array.from({ length: m }, () => generateTrajectory());
-
-            // Ottieni la distribuzione finale
-            const getDistribution = arr => arr
-                .map(trajectory => trajectory[trajectory.length - 1]) // Ottieni l'ultimo valore per ogni attaccante
-                .reduce((acc, position) => {
-                    acc[position] = (acc[position] || 0) + 1; // Conta le occorrenze di ogni posizione finale
-                    return acc;
-                }, {});
-
-            // Funzione per ottenere il valore assoluto massimo
-            const maxAbsValue = arr => Math.max(...arr.flat().map(Math.abs));
-
-            // Funzione per ottenere una porzione dell'array
-            const getSlice = (arr, s, e) => arr.map((x) => x.slice(s, e));
-
-            // Calcola il massimo valore assoluto per regolare l'asse y
-            let chartRange = maxAbsValue(allTrajectories);
-
-            // Ottieni la parte iniziale delle traiettorie
-            const temp = getSlice(allTrajectories, 0, t);
-
-            // Aggiorna i grafici
-            updateLineChart(temp, t - 1, chartRange, 'penetrationLineChart');
-            updateDistributionChart(getDistribution(temp), n, chartRange, 'penetrationDistributionChart');
-
-            updateLineChart(getSlice(allTrajectories, t, n), n - t, chartRange, 'line2');
-            updateDistributionChart(getDistribution(allTrajectories), n, chartRange, 'distributionChart2');
-
-            // Calcola le statistiche con l'algoritmo di Knuth
-            const res = knuthMeanVariance(Object.values(getDistribution(allTrajectories)));
-            const mean = res.mean;
-            const stdDev = res.standardDeviation;
-            const mode = calculateMode(Object.values(getDistribution(allTrajectories)));
-
-            // Aggiorna il DOM con i risultati
-            document.getElementById('mean').textContent = mean.toFixed(2);
-            document.getElementById('stdDev').textContent = stdDev.toFixed(2);
-            document.getElementById('mode').textContent = mode;
+        let steps = [Array(m).fill(0)];
+        
+        // Perform the simulation
+        for (let i = 1; i <= n; i++) {
+            steps.push(steps[i - 1].map(value => {
+                return simulationType === 'randomWalk' ? (Math.random() < p ? value + 1 : value - 1) : (Math.random() < p ? value + 1 : value);
+            }));
         }
 
-        // Funzione per aggiornare il grafico a linee
-        function updateLineChart(lineData, n, chartRange, chart) {
-            const ctx = document.getElementById(chart).getContext('2d');
-            const labels = Array.from({ length: n + 1 }, (_, i) => `${i}`);
-            const datasets = lineData.map((data, index) => ({
-                label: `Attacker ${index + 1}`,
-                data: data.map((value, i) => ({ x: i, y: value })),
-                fill: false,
-                borderColor: `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`,
-                borderWidth: 1,
-                stepped: true,
-                pointRadius: 0,
-            }));
+        // Apply frequency type
+        if (freqType === 'relative') {
+            steps = steps.map(step => step.map(value => value / n));
+        }
 
-            if (charts[chart]) {
-                charts[chart].destroy();
-            }
+        updateCharts(steps, midIndex);
+        displayStatistics(steps, n, midIndex);
+        });
 
-            charts[chart] = new Chart(ctx, {
+        function updateCharts(steps, midIndex) {
+            const timestepData = steps.map((step, index) => ({ x: index, y: step[midIndex] }));
+
+            const timestepChartCtx = document.getElementById('timestepChart').getContext('2d');
+            new Chart(timestepChartCtx, {
                 type: 'line',
-                data: { labels: labels, datasets: datasets },
+                data: {
+                    datasets: [{
+                        label: 'Mid-point Values',
+                        data: timestepData,
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        fill: false,
+                    }]
+                },
                 options: {
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            min: -chartRange, 
-                            max: chartRange, 
-                            display: false 
-                        } 
-                    },
-                    plugins: {
-                        legend: { display: false }
+                        x: { title: { display: true, text: 'Timestep' } },
+                        y: { title: { display: true, text: 'Value' } },
                     }
                 }
             });
-        }
 
-        // Funzione per aggiornare il grafico a barre (distribuzione)
-        function updateDistributionChart(results, n, chartRange, chart) {
-            const ctx = document.getElementById(chart).getContext('2d');
-            const labels = Array.from({ length: chartRange * 2 + 2 }, (_, i) => ((-chartRange) + i).toString());
+            const finalValues = steps[steps.length - 1];
+            const frequencyData = {};
+            finalValues.forEach(value => {
+                frequencyData[value] = (frequencyData[value] || 0) + 1;
+            });
 
-            if (charts[chart]) {
-                charts[chart].destroy();
-            }
+            const labels = Object.keys(frequencyData);
+            const values = Object.values(frequencyData);
 
-            charts[chart] = new Chart(ctx, {
+            const histogramChartCtx = document.getElementById('histogramChart').getContext('2d');
+            new Chart(histogramChartCtx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Number of Attackers',
-                        data: labels.map(label => results[label] || 0),
-                        backgroundColor: Array.from({ length: n }, () => 
-                            `rgba(${Math.floor(Math.random() * 255)}, 0, 255, 0.7)`
-                        ),
+                        label: 'Frequency',
+                        data: values,
+                        backgroundColor: 'rgba(0, 123, 255, 0.6)',
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
                     scales: {
-                        x: { beginAtZero: true },
-                        y: { reverse: true, display: false, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { display: false }
+                        x: { title: { display: true, text: 'Value' } },
+                        y: { title: { display: true, text: 'Frequency' } },
                     }
                 }
             });
         }
 
-        // Algoritmo di Knuth per la media e la varianza
-        function knuthMeanVariance(arr) {
-            let mean = 0;
-            let M2 = 0;
-            let N = 0;
+        function displayStatistics(steps, n, midIndex) {
+            const finalValues = steps[n];
+            const midValues = steps[midIndex];
 
-            for (let x of arr) {
-                N += 1;
-                const delta = x - mean;
-                mean += delta / N;
-                M2 += delta * (x - mean);
-            }
+            document.getElementById('midMean').innerText = `Mean: ${calculateMean(midValues).toFixed(2)}`;
+            document.getElementById('midStdDev').innerText = `Std Dev: ${calculateStdDev(midValues).toFixed(2)}`;
+            document.getElementById('midMode').innerText = `Mode: ${calculateMode(midValues).join(', ')}`;
 
-            const variance = N > 1 ? M2 / (N - 1) : 0;
-            const standardDeviation = Math.sqrt(variance);
-
-            return {
-                mean: mean,
-                variance: variance,
-                standardDeviation: standardDeviation,
-            };
+            document.getElementById('finalMean').innerText = `Mean: ${calculateMean(finalValues).toFixed(2)}`;
+            document.getElementById('finalStdDev').innerText = `Std Dev: ${calculateStdDev(finalValues).toFixed(2)}`;
+            document.getElementById('finalMode').innerText = `Mode: ${calculateMode(finalValues).join(', ')}`;
         }
 
-        // Funzione per calcolare la moda
-        function calculateMode(arr) {
-            const frequencyMap = {};
-            arr.forEach(value => {
-                if (frequencyMap[value]) {
-                    frequencyMap[value]++;
-                } else {
-                    frequencyMap[value] = 1;
-                }
+        function calculateMean(data) {
+            const sum = data.reduce((acc, val) => acc + val, 0);
+            return sum / data.length;
+        }
+
+        function calculateStdDev(data) {
+            const mean = calculateMean(data);
+            const variance = data.map(value => Math.pow(value - mean, 2)).reduce((acc, val) => acc + val, 0) / data.length;
+            return Math.sqrt(variance);
+        }
+
+        function calculateMode(data) {
+            const frequency = {};
+            data.forEach(value => {
+                frequency[value] = (frequency[value] || 0) + 1;
             });
 
-            let mode = null;
-            let maxCount = 0;
-            for (const [key, value] of Object.entries(frequencyMap)) {
-                if (value > maxCount) {
-                    maxCount = value;
-                    mode = key;
-                }
-            }
-            return mode;
+            const maxCount = Math.max(...Object.values(frequency));
+            return Object.keys(frequency).filter(key => frequency[key] === maxCount);
         }
+
     </script>
 </body>
 </html>
