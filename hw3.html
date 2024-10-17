@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione di Attacco Continua</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+    <h2>HW3 - Simulazione di Attacco Continua</h2>
+    <div id="controls">
+        <label for="lambda">Tasso di Attacco (λ):</label>
+        <input type="number" id="lambda" step="0.01" value="0.1" min="0"><br><br>
+        <label for="time">Tempo (T):</label>
+        <input type="number" id="time" value="10" min="1"><br><br>
+        <label for="intervals">Numero di Intervalli (n):</label>
+        <input type="number" id="intervals" value="1000" min="1"><br><br>
+        <button id="simulateButton">Esegui Simulazione</button>
+    </div>
+    <div id="chartContainer">
+        <canvas id="attackChart"></canvas>
+    </div>
+    <div class="container">
+        <h3>Risultati</h3>
+        <p>Media: <span id="mean">0</span></p>
+        <p>Deviazione Standard: <span id="stdDev">0</span></p>
+        <p>Moda: <span id="mode">0</span></p>
+    </div>
+
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
+    </footer>
+    
+    <script>
+        document.getElementById('simulateButton').addEventListener('click', () => {
+            const lambda = parseFloat(document.getElementById('lambda').value);
+            const T = parseInt(document.getElementById('time').value);
+            const n = parseInt(document.getElementById('intervals').value);
+            const { time, attacks } = simulateContinuousAttacks(lambda, T, n);
+            renderChart(time, attacks);
+            const results = calculateStatistics(attacks);
+            displayResults(results);
+        });
+
+        function simulateContinuousAttacks(lambda, T, n) {
+            const dt = T / n;
+            const time = Array.from({ length: n }, (_, i) => i * dt);
+            const attacks = new Array(n).fill(0);
+            for (let i = 1; i < n; i++) {
+                if (Math.random() < lambda * dt) {
+                    attacks[i] = 1;
+                }
+            }
+            return { time, attacks };
+        }
+
+        function renderChart(time, attacks) {
+            const ctx = document.getElementById('attackChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: time,
+                    datasets: [{
+                        label: 'Attacks',
+                        data: attacks,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function calculateStatistics(data) {
+            const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
+            const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
+            const stdDev = Math.sqrt(variance);
+            const mode = data.sort((a,b) => 
+                          data.filter(v => v===a).length
+                        - data.filter(v => v===b).length
+                      ).pop();
+            return { mean, stdDev, mode };
+        }
+
+        function displayResults({ mean, stdDev, mode }) {
+            document.getElementById('mean').textContent = mean.toFixed(2);
+            document.getElementById('stdDev').textContent = stdDev.toFixed(2);
+            document.getElementById('mode').textContent = mode;
+        }
+    </script>
+</body>
+</html>
