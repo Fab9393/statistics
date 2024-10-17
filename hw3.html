@@ -26,24 +26,23 @@
     <div id="chartContainer">
         <canvas id="attackChart"></canvas>
     </div>
+    <div id="chartContainer">
+        <canvas id="histogramChart"></canvas>
+    </div>
     <div class="container">
         <h3>Risultati</h3>
         <p>Media: <span id="mean">0</span></p>
         <p>Deviazione Standard: <span id="stdDev">0</span></p>
         <p>Moda: <span id="mode">0</span></p>
     </div>
-
-    <footer>
-        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
-    </footer>
-    
     <script>
         document.getElementById('simulateButton').addEventListener('click', () => {
             const lambda = parseFloat(document.getElementById('lambda').value);
             const T = parseInt(document.getElementById('time').value);
             const n = parseInt(document.getElementById('intervals').value);
             const { time, attacks } = simulateContinuousAttacks(lambda, T, n);
-            renderChart(time, attacks);
+            renderChart(time, attacks, 'attackChart');
+            renderHistogram(attacks, 'histogramChart');
             const results = calculateStatistics(attacks);
             displayResults(results);
         });
@@ -60,8 +59,8 @@
             return { time, attacks };
         }
 
-        function renderChart(time, attacks) {
-            const ctx = document.getElementById('attackChart').getContext('2d');
+        function renderChart(time, attacks, chartID) {
+            const ctx = document.getElementById(chartID).getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -83,13 +82,42 @@
             });
         }
 
+        function renderHistogram(attacks, chartID) {
+            const ctx = document.getElementById(chartID).getContext('2d');
+            const attackCounts = attacks.reduce((acc, attack) => {
+                acc[attack] = (acc[attack] || 0) + 1;
+                return acc;
+            }, {});
+            const labels = Object.keys(attackCounts);
+            const data = Object.values(attackCounts);
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Attack Count',
+                        data: data,
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
         function calculateStatistics(data) {
             const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
             const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
             const stdDev = Math.sqrt(variance);
-            const mode = data.sort((a,b) => 
-                          data.filter(v => v===a).length
-                        - data.filter(v => v===b).length
+            const mode = data.sort((a, b) => 
+                          data.filter(v => v === a).length
+                        - data.filter(v => v === b).length
                       ).pop();
             return { mean, stdDev, mode };
         }
