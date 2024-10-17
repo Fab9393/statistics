@@ -151,17 +151,25 @@
             });
         }
 
-        // Calcolo delle statistiche
-        function calculateStatistics(data) {
-            const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
-            const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
-            const stdDev = Math.sqrt(variance);
 
-            // Calcolo della moda
-            const mode = data.filter(val => val === 1).length > 0 ? 1 : 0;
+    // Calcolo delle statistiche
+    function calculateStatistics(data) {
+        // Filtra i valori di attacco (consideriamo solo 1 e ignoriamo gli zeri)
+        const filteredData = data.filter(val => val === 1);
+        
+        const mean = filteredData.length > 0 ? (filteredData.length / data.length) : 0;
+        
+        const variance = filteredData.length > 0
+            ? filteredData.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length
+            : 0;
 
-            return { mean, stdDev, mode };
-        }
+        const stdDev = Math.sqrt(variance);
+        
+        // Calcolo della moda (in questo caso 0 o 1)
+        const mode = filteredData.length > 0 ? 1 : 0;
+
+        return { mean, stdDev, mode };
+    }
 
         // Visualizzazione dei risultati
         function displayResults({ mean, stdDev, mode }) {
