@@ -18,6 +18,14 @@
             justify-content: space-between;
             align-items: flex-start;
         }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
         canvas {
             max-width: 45%;
         }
@@ -43,8 +51,12 @@
         <button id="simulateButton">Esegui Simulazione</button>
     </div>
     <div id="chartContainer">
-        <canvas id="attackChart"></canvas>
-        <canvas id="histogramChart"></canvas>
+        <div id ="canvasContainer">
+            <canvas id="attackChart"></canvas>
+        </div>
+        <div id ="canvasContainer">
+            <canvas id="histogramChart"></canvas>
+        </div>
     </div>
     <div class="container">
         <h3>Risultati</h3>
