@@ -7,9 +7,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* styles.css */
+/* styles.css */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-color: #f5f5f5;
     color: #333;
     display: flex;
     justify-content: center;
@@ -24,6 +25,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
 }
 
 h1 {
@@ -31,13 +33,41 @@ h1 {
     margin-bottom: 20px;
 }
 
+.parameters {
+    margin-bottom: 20px;
+}
+
+.parameters label {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.parameters input {
+    width: 100px;
+    padding: 5px;
+    margin-right: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
 .chart-container {
     position: relative;
-    width: 70%;
-    margin: auto;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
 }
 
 #sdeChart {
@@ -52,21 +82,17 @@ h1 {
     border: 1px solid #ddd;
     border-radius: 5px;
     position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 5px;
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-button:hover {
-    background-color: #0056b3;
+.bar {
+    background-color: #ff6347;
+    height: 100%;
+    width: 0;
+    transition: width 0.5s ease;
 }
 
     </style>
@@ -76,22 +102,38 @@ button:hover {
     <div class="container">
         <h1>SDE Simulator: Constant Rate of Attack</h1>
 
-        <div class="chart-container">
-            <canvas id="sdeChart"></canvas>
-            <div class="histogram"></div>
+        <!-- Input form for parameters -->
+        <div class="parameters">
+            <label for="lambda">Lambda (Rate of Attack):</label>
+            <input type="number" id="lambda" value="10" step="0.1">
+
+            <label for="dt">dt (Time Interval):</label>
+            <input type="number" id="dt" value="0.01" step="0.01">
+
+            <label for="steps">Total Steps:</label>
+            <input type="number" id="steps" value="1000">
+
+            <button id="simulateBtn">Simulate</button>
         </div>
 
-        <button id="simulateBtn">Simulate</button>
+        <div class="chart-container">
+            <canvas id="sdeChart"></canvas>
+            <div class="histogram">
+                <div class="bar"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // script.js
+// script.js
 document.getElementById("simulateBtn").addEventListener("click", simulateSDE);
 
 function simulateSDE() {
-    const Lambda = 10; // Constant rate of attack
-    const dt = 1 / 1000; // Infinitesimal time interval
-    const totalSteps = 1000;
+    // Get parameters from the form
+    const Lambda = parseFloat(document.getElementById("lambda").value);
+    const dt = parseFloat(document.getElementById("dt").value);
+    const totalSteps = parseInt(document.getElementById("steps").value);
+    
     let attacks = [];
     let currentValue = 0;
 
@@ -105,13 +147,16 @@ function simulateSDE() {
     }
 
     // Update the chart with the new data
-    updateChart(attacks);
+    updateChart(attacks, dt, totalSteps);
+
+    // Update the histogram with final value mapped to time steps
+    updateHistogram(currentValue, totalSteps);
 }
 
-function updateChart(data) {
+function updateChart(data, dt, totalSteps) {
     const ctx = document.getElementById('sdeChart').getContext('2d');
     
-    // If a chart already exists, destroy it before creating a new one
+    // Destroy existing chart if any
     if (window.myChart) {
         window.myChart.destroy();
     }
@@ -120,9 +165,9 @@ function updateChart(data) {
     window.myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({ length: data.length }, (_, i) => i + 1),
+            labels: Array.from({ length: data.length }, (_, i) => (i * dt).toFixed(2)),
             datasets: [{
-                label: 'SDE Simulation',
+                label: 'SDE Simulation (Attacks over Time)',
                 data: data,
                 borderColor: '#007bff',
                 borderWidth: 2,
@@ -137,37 +182,31 @@ function updateChart(data) {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Time Steps'
+                        text: 'Time (t)'
                     }
                 },
                 y: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Value'
+                        text: 'Attack Count'
                     }
                 }
             }
         }
     });
-
-    // Update the histogram to show the final value
-    updateHistogram(data[data.length - 1]);
 }
 
-function updateHistogram(finalValue) {
-    const histogram = document.querySelector('.histogram');
-    histogram.innerHTML = ''; // Clear previous histogram
-    const bar = document.createElement('div');
-    
-    bar.style.height = '100%';
-    bar.style.width = finalValue * 5 + 'px'; // Scale the width based on final value
-    bar.style.backgroundColor = '#007bff';
-    bar.style.position = 'absolute';
-    bar.style.right = '0';
+function updateHistogram(finalValue, totalSteps) {
+    const histogram = document.querySelector('.histogram .bar');
+    const maxBarWidth = document.querySelector('.histogram').offsetWidth;
 
-    histogram.appendChild(bar);
+    // Scale the bar width in proportion to the number of steps
+    const newBarWidth = (finalValue / totalSteps) * maxBarWidth;
+
+    histogram.style.width = `${newBarWidth}px`;
 }
+
 
     </script>
 </body>
