@@ -151,7 +151,7 @@
             }
 
             histogramChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'bar', // Modificato per l'istogramma orizzontale
                 data: {
                     labels: Array.from({ length: n }, (_, i) => `Intervallo ${i + 1}`),
                     datasets: [{
@@ -163,19 +163,20 @@
                     }]
                 },
                 options: {
+                    indexAxis: 'y', // Imposta l'asse x come asse delle categorie
                     scales: {
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Intervalli di Tempo'
-                            }
-                        },
-                        y: {
                             title: {
                                 display: true,
                                 text: 'Numero di Attacchi'
                             },
                             beginAtZero: true
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Intervalli di Tempo'
+                            }
                         }
                     }
                 }
