@@ -1,301 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDE Simulator with Histogram</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Simulazione di Attacco Continuo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #202020;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            background-color: #f4f4f4;
+            padding: 20px;
         }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
         #controls {
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 20px;
         }
-
-        #controls input {
-            margin-right: 10px;
-            padding: 5px;
-            font-size: 14px;
-        }
-
-        #controls button {
-            padding: 5px 10px;
-            font-size: 14px;
-            background-color: #007bff;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        #controls button:hover {
-            background-color: #0056b3;
-        }
-
-        .chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: auto; /* Permette lo scroll orizzontale */
-            width: 80%; /* Limita la larghezza totale del container */
-            max-width: 100%; /* Evita sforamento orizzontale */
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        #sdeChart {
-            width: 100%; /* Lascia che il grafico prenda tutto lo spazio disponibile */
-            min-width: 400px; /* Imposta una larghezza minima per consentire lo scroll */
-            height: 400px; /* Altezza fissa del grafico */
-            margin-left:10px;
-            margin-right: 10px;
-        }
-
-        .histogram {
-            width: 25%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .bar {
-            background-color: #ff6347;
-            height: 20px;
-            width: 0;
-            margin-bottom: 5px;
-            transition: width 0.3s ease;
-            position: relative;
-        }
-
-        .histogram-label {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .bar span {
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .histogram div:last-child {
-            text-align: center;
-            color: #fff;
-            margin-top: 10px;
-        }
-
-        
-        nav {
-            background-color: #333;
-            padding: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        nav ul li {
-            display: inline;
-        }
-
-        nav a {
-            display: inline-block;
+        button {
+            background-color: #007BFF;
             color: white;
-            background-color: #007bff;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
         }
-
-        nav a:hover {
+        button:hover {
             background-color: #0056b3;
         }
-
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+        .chart-container {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-        </ul>
-    </nav>
-
-    <h1>SDE Simulator with Histogram</h1>
-
+    <h1>Simulazione Continua di Attacchi</h1>
     <div id="controls">
-        <input type="number" id="lambda" placeholder="Lambda (Attack Rate)" step="0.01" value="0.5">
-        <input type="number" id="dt" placeholder="dt (Time Step)" step="0.01" value="0.1">
-        <input type="number" id="steps" placeholder="Total Steps" step="1" value="100">
-        <button id="simulateBtn">Simulate</button>
+        <label for="lambda">Tasso di attacco (Lambda):</label>
+        <input type="number" id="lambda" value="1" step="0.1" min="0"><br><br>
+
+        <label for="time">Tempo totale (T):</label>
+        <input type="number" id="time" value="10" step="1" min="1"><br><br>
+
+        <label for="n">Numero di suddivisioni (n):</label>
+        <input type="number" id="n" value="100" step="10" min="10"><br><br>
+
+        <button id="simulateButton">Esegui Simulazione</button>
     </div>
 
     <div class="chart-container">
-        <canvas id="sdeChart"></canvas>
-        <div class="histogram"></div>
+        <canvas id="lineChart"></canvas>
     </div>
 
-    <footer>
-        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
-    </footer>
+    <div class="chart-container">
+        <canvas id="histogramChart"></canvas>
+    </div>
 
     <script>
-        document.getElementById("simulateBtn").addEventListener("click", simulateSDE);
+        let lineChart, histogramChart;
 
-        function simulateSDE() {
-            const Lambda = parseFloat(document.getElementById("lambda").value);
-            const dt = parseFloat(document.getElementById("dt").value);
-            const totalSteps = parseInt(document.getElementById("steps").value);
+        const avviaSimulazione = () => {
+            const lambda = parseFloat(document.getElementById('lambda').value);
+            const T = parseInt(document.getElementById('time').value);
+            const n = parseInt(document.getElementById('n').value);
+            const dt = T / n;
 
-            let attacks = [];
-            let currentValue = 0;
+            // Simulazione del processo continuo
+            const traiettoria = generaTraiettoria(T, n, lambda, dt);
+            const conteggioAttacchi = generaConteggioAttacchi(traiettoria, n);
 
-            // Simula il processo SDE e raccoglie i dati degli attacchi
-            for (let i = 0; i < totalSteps; i++) {
-                const randomValue = Math.random();
-                if (randomValue < Lambda * dt) {
-                    currentValue += 1; // Simula un attacco (+1)
+            // Grafico della traiettoria
+            disegnaGraficoTraiettoria(traiettoria, T, n);
+            // Grafico dell'istogramma
+            disegnaGraficoIstogramma(conteggioAttacchi, n);
+        };
+
+        const generaTraiettoria = (T, n, lambda, dt) => {
+            let posizione = 0;
+            const traiettoria = [0];
+
+            for (let i = 0; i < n; i++) {
+                const probAttacco = lambda * dt;
+                if (Math.random() < probAttacco) {
+                    posizione += 1; // +1 attacco
                 }
-                attacks.push(currentValue); // Salva il valore corrente per la linea
+                traiettoria.push(posizione);
             }
 
-            // Aggiorna il grafico della linea
-            updateChart(attacks, dt, totalSteps);
+            return traiettoria;
+        };
 
-            // Calcola la distribuzione degli attacchi in bins temporali per l'istogramma
-            const histogramData = calculateHistogram(attacks, totalSteps, 10); // 10 bins (modificabile)
-            updateHistogram(histogramData, 10); // Passa il numero di bins come parametro
-        }
+        const generaConteggioAttacchi = (traiettoria, n) => {
+            // Calcola il numero di attacchi in ciascun intervallo di tempo
+            const conteggio = new Array(n).fill(0);
+            for (let i = 0; i < traiettoria.length - 1; i++) {
+                conteggio[i] = traiettoria[i + 1] - traiettoria[i]; // Salto tra i punti
+            }
+            return conteggio.slice(0, n); // Limita a n intervalli
+        };
 
-        function calculateHistogram(data, totalSteps, numberOfBins) {
-            const binSize = totalSteps / numberOfBins;
-            const histogramData = new Array(numberOfBins).fill(0);
+        const disegnaGraficoTraiettoria = (traiettoria, T, n) => {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const etichette = Array.from({ length: n + 1 }, (_, i) => (T / n * i).toFixed(2));
 
-            // Conta il numero di attacchi per ogni bin
-            data.forEach((value, index) => {
-                const binIndex = Math.floor(index / binSize);
-                histogramData[binIndex] += 1;
-            });
+            if (lineChart) {
+                lineChart.destroy();
+            }
 
-            return histogramData;
-        }
-
-        function updateChart(data, dt, totalSteps) {
-    const ctx = document.getElementById('sdeChart').getContext('2d');
-
-    if (window.myChart) {
-        window.myChart.destroy();
-    }
-
-    // Limitiamo il numero massimo di punti visualizzati
-    const maxPointsToShow = 100; // Limite fisso per evitare crescita infinita
-    const startIndex = data.length > maxPointsToShow ? data.length - maxPointsToShow : 0;
-    const visibleData = data.slice(startIndex); // Mostra solo i dati recenti
-    const visibleLabels = Array.from({ length: visibleData.length }, (_, i) => (i * dt + startIndex * dt).toFixed(2));
-
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: visibleLabels, // Etichette asse X limitate ai dati visibili
-            datasets: [{
-                label: 'SDE Simulation (Attacks over Time)',
-                data: visibleData, // Dati limitati a un massimo di 100 punti
-                borderColor: '#007bff',
-                borderWidth: 2,
-                fill: false,
-                pointRadius: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Attacks over Time'
-                }
-            },
-            scales: {
-                x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Time (t)' // Asse X
-                    }
+            lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: etichette,
+                    datasets: [{
+                        label: 'Traiettoria dell\'attacco',
+                        data: traiettoria,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
                 },
-                y: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Attacks' // Asse Y
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tempo'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Numero di Attacchi'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        }
-    });
-}
-
-
-        function updateHistogram(histogramData, numberOfBins) {
-            const histogram = document.querySelector('.histogram');
-            histogram.innerHTML = ''; // Pulisce le barre precedenti
-
-            const maxAttackCount = Math.max(...histogramData);
-
-            // Etichette asse Y per l'istogramma
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'histogram-label';
-            labelDiv.innerHTML = '<strong>Number of Attacks</strong>';
-            histogram.appendChild(labelDiv);
-
-            // Crea barre dell'istogramma per visualizzare la distribuzione
-            histogramData.forEach((value, index) => {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = '20px';
-                bar.style.width = (value / maxAttackCount) * 100 + '%'; // Scala in percentuale
-                bar.style.backgroundColor = `hsl(${240 + (index / histogramData.length) * 60}, 100%, 50%)`;
-                bar.style.marginBottom = '4px';
-
-                const barLabel = document.createElement('span');
-                barLabel.innerText = `Bin ${index + 1}: ${value}`;
-                barLabel.style.paddingLeft = '10px';
-                barLabel.style.color = '#fff';
-                bar.appendChild(barLabel);
-
-                histogram.appendChild(bar);
             });
+        };
 
-            // Etichetta dell'asse X
-            const xAxisLabel = document.createElement('div');
-            xAxisLabel.innerHTML = '<strong>Bins (Time Segments)</strong>';
-            histogram.appendChild(xAxisLabel);
-        }
+        const disegnaGraficoIstogramma = (conteggioAttacchi, n) => {
+            const ctx = document.getElementById('histogramChart').getContext('2d');
+
+            if (histogramChart) {
+                histogramChart.destroy();
+            }
+
+            histogramChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({ length: n }, (_, i) => `Intervallo ${i + 1}`),
+                    datasets: [{
+                        label: 'Numero di Attacchi per Intervallo',
+                        data: conteggioAttacchi,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Intervalli di Tempo'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Numero di Attacchi'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        };
+
+        document.getElementById('simulateButton').addEventListener('click', avviaSimulazione);
     </script>
-
 </body>
 </html>
