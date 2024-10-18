@@ -74,6 +74,7 @@ button:hover {
     height: 300px;
 }
 
+/* CSS aggiornato per migliorare la visualizzazione dell'istogramma */
 .histogram {
     width: 25%;
     display: flex;
@@ -87,16 +88,37 @@ button:hover {
     width: 0;
     margin-bottom: 5px;
     transition: width 0.3s ease;
+    position: relative;
 }
+
+.histogram-label {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.bar span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+.histogram div:last-child {
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+}
+
 
     </style>
 </head>
 <body>
-
-    <div class="container">
         <h1>SDE Simulator: Constant Rate of Attack</h1>
 
         <!-- Input form for parameters -->
+    <div class="container">
         <div class="parameters">
             <label for="lambda">Lambda (Rate of Attack):</label>
             <input type="number" id="lambda" value="10" step="0.1">
@@ -109,7 +131,8 @@ button:hover {
 
             <button id="simulateBtn">Simulate</button>
         </div>
-
+    </div>
+    <div class="container">
         <div class="chart-container">
             <canvas id="sdeChart"></canvas>
             <p></p>
@@ -132,28 +155,28 @@ function simulateSDE() {
     let attacks = [];
     let currentValue = 0;
 
-    // Simula il processo SDE e raccoglie i dati degli attacchi
+    // Simula il processo SDE
     for (let i = 0; i < totalSteps; i++) {
         const randomValue = Math.random();
         if (randomValue < Lambda * dt) {
-            currentValue += 1; // Simula un attacco (+1)
+            currentValue += 1; // Simula un attacco
         }
-        attacks.push(currentValue); // Salva il valore corrente per la linea
+        attacks.push(currentValue); // Aggiungi il valore attuale alla lista di attacchi
     }
 
     // Aggiorna il grafico della linea
     updateChart(attacks, dt, totalSteps);
 
-    // Calcola la distribuzione degli attacchi in bins temporali per l'istogramma
-    const histogramData = calculateHistogram(attacks, totalSteps, 10); // 10 bins (modificabile)
-    updateHistogram(histogramData);
+    // Crea un istogramma con i bin
+    const histogramData = calculateHistogram(attacks, totalSteps, 10); // 10 bin
+    updateHistogram(histogramData, 10); // Passa il numero di bin come parametro
 }
 
 function calculateHistogram(data, totalSteps, numberOfBins) {
     const binSize = totalSteps / numberOfBins;
     const histogramData = new Array(numberOfBins).fill(0);
 
-    // Conta il numero di attacchi per ogni bin
+    // Conta il numero di attacchi in ogni bin
     data.forEach((value, index) => {
         const binIndex = Math.floor(index / binSize);
         histogramData[binIndex] += 1;
@@ -185,19 +208,25 @@ function updateChart(data, dt, totalSteps) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Attacks over Time'
+                }
+            },
             scales: {
                 x: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Time (t)'
+                        text: 'Time (t)' // Asse X
                     }
                 },
                 y: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Attack Count'
+                        text: 'Number of Attacks' // Asse Y
                     }
                 }
             }
@@ -205,21 +234,40 @@ function updateChart(data, dt, totalSteps) {
     });
 }
 
-function updateHistogram(histogramData) {
+function updateHistogram(histogramData, numberOfBins) {
     const histogram = document.querySelector('.histogram');
-    histogram.innerHTML = ''; // Pulisce le barre precedenti
+    histogram.innerHTML = ''; // Pulisci le barre precedenti
 
-    // Crea le barre dell'istogramma
+    const maxAttackCount = Math.max(...histogramData);
+
+    // Etichette asse Y per l'istogramma
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'histogram-label';
+    labelDiv.innerHTML = '<strong>Number of Attacks</strong>';
+    histogram.appendChild(labelDiv);
+
+    // Crea barre dell'istogramma per visualizzare la distribuzione
     histogramData.forEach((value, index) => {
         const bar = document.createElement('div');
         bar.className = 'bar';
         bar.style.height = '20px';
-        bar.style.width = value * 20 + 'px'; // Larghezza proporzionale alla frequenza
+        bar.style.width = (value / maxAttackCount) * 100 + '%'; // Scala in percentuale
         bar.style.backgroundColor = `hsl(${240 + (index / histogramData.length) * 60}, 100%, 50%)`;
         bar.style.marginBottom = '4px';
 
+        const barLabel = document.createElement('span');
+        barLabel.innerText = `Bin ${index + 1}: ${value}`;
+        barLabel.style.paddingLeft = '10px';
+        barLabel.style.color = '#fff';
+        bar.appendChild(barLabel);
+
         histogram.appendChild(bar);
     });
+
+    // Etichetta dell'asse X
+    const xAxisLabel = document.createElement('div');
+    xAxisLabel.innerHTML = '<strong>Bins (Time Segments)</strong>';
+    histogram.appendChild(xAxisLabel);
 }
 
 
