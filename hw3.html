@@ -141,10 +141,15 @@ function simulateSDE() {
         attacks.push(currentValue);
         histogramData.push(currentValue); // Collect the current state for the histogram
     }
+    let histogramDataGraph = [];
+    for(let i = histogramData.length-1; i >= 0; i-- )
+    {
+        histogramDataGraph.push(histogramData[i]);
+    }
 
     // Update both the line chart and the histogram
     updateChart(attacks, dt, totalSteps);
-    updateHistogram(histogramData);
+    updateHistogram(histogramDataGraph);
 }
 
 function updateChart(data, dt, totalSteps) {
