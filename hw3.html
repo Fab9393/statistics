@@ -55,12 +55,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: auto; /* Permette lo scroll orizzontale */
+            width: 80%; /* Limita la larghezza totale del container */
+            max-width: 100%; /* Evita sforamento orizzontale */
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         #sdeChart {
-            width: 65%;
-            height: 400px;
-            margin-right: 30px;
+            width: 100%; /* Lascia che il grafico prenda tutto lo spazio disponibile */
+            min-width: 400px; /* Imposta una larghezza minima per consentire lo scroll */
+            height: 400px; /* Altezza fissa del grafico */
+            margin-left:10px;
+            margin-right: 10px;
         }
 
         .histogram {
