@@ -128,29 +128,38 @@ function simulateSDE() {
     const Lambda = parseFloat(document.getElementById("lambda").value);
     const dt = parseFloat(document.getElementById("dt").value);
     const totalSteps = parseInt(document.getElementById("steps").value);
-    
+
     let attacks = [];
-    let histogramData = [];
     let currentValue = 0;
 
-    // Simulate the SDE process
+    // Simula il processo SDE e raccoglie i dati degli attacchi
     for (let i = 0; i < totalSteps; i++) {
         const randomValue = Math.random();
         if (randomValue < Lambda * dt) {
-            currentValue += 1; // Simulating an attack
+            currentValue += 1; // Simula un attacco (+1)
         }
-        attacks.push(currentValue);
-        histogramData.push(currentValue); // Collect the current state for the histogram
-    }
-    let histogramDataGraph = [];
-    for(let i = histogramData.length-1; i >= 0; i-- )
-    {
-        histogramDataGraph.push(histogramData[i]);
+        attacks.push(currentValue); // Salva il valore corrente per la linea
     }
 
-    // Update both the line chart and the histogram
+    // Aggiorna il grafico della linea
     updateChart(attacks, dt, totalSteps);
-    updateHistogram(histogramDataGraph);
+
+    // Calcola la distribuzione degli attacchi in bins temporali per l'istogramma
+    const histogramData = calculateHistogram(attacks, totalSteps, 10); // 10 bins (modificabile)
+    updateHistogram(histogramData);
+}
+
+function calculateHistogram(data, totalSteps, numberOfBins) {
+    const binSize = totalSteps / numberOfBins;
+    const histogramData = new Array(numberOfBins).fill(0);
+
+    // Conta il numero di attacchi per ogni bin
+    data.forEach((value, index) => {
+        const binIndex = Math.floor(index / binSize);
+        histogramData[binIndex] += 1;
+    });
+
+    return histogramData;
 }
 
 function updateChart(data, dt, totalSteps) {
@@ -170,7 +179,7 @@ function updateChart(data, dt, totalSteps) {
                 borderColor: '#007bff',
                 borderWidth: 2,
                 fill: false,
-                pointRadius: 0 // Hide data points for a cleaner look
+                pointRadius: 0
             }]
         },
         options: {
@@ -198,20 +207,21 @@ function updateChart(data, dt, totalSteps) {
 
 function updateHistogram(histogramData) {
     const histogram = document.querySelector('.histogram');
-    histogram.innerHTML = ''; // Clear previous bars
+    histogram.innerHTML = ''; // Pulisce le barre precedenti
 
-    // Create bars to represent the histogram growing over time
+    // Crea le barre dell'istogramma
     histogramData.forEach((value, index) => {
         const bar = document.createElement('div');
         bar.className = 'bar';
         bar.style.height = '20px';
-        bar.style.width = value * 20 + 'px'; // Width scaled by the attack value
+        bar.style.width = value * 20 + 'px'; // Larghezza proporzionale alla frequenza
         bar.style.backgroundColor = `hsl(${240 + (index / histogramData.length) * 60}, 100%, 50%)`;
         bar.style.marginBottom = '4px';
 
         histogram.appendChild(bar);
     });
 }
+
 
     </script>
 </body>
