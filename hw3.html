@@ -198,53 +198,60 @@
         }
 
         function updateChart(data, dt, totalSteps) {
-            const ctx = document.getElementById('sdeChart').getContext('2d');
+    const ctx = document.getElementById('sdeChart').getContext('2d');
 
-            if (window.myChart) {
-                window.myChart.destroy();
-            }
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
 
-            window.myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: data.length }, (_, i) => (i * dt).toFixed(2)),
-                    datasets: [{
-                        label: 'SDE Simulation (Attacks over Time)',
-                        data: data,
-                        borderColor: '#007bff',
-                        borderWidth: 2,
-                        fill: false,
-                        pointRadius: 0
-                    }]
+    // Limitiamo il numero massimo di punti visualizzati
+    const maxPointsToShow = 100; // Limite fisso per evitare crescita infinita
+    const startIndex = data.length > maxPointsToShow ? data.length - maxPointsToShow : 0;
+    const visibleData = data.slice(startIndex); // Mostra solo i dati recenti
+    const visibleLabels = Array.from({ length: visibleData.length }, (_, i) => (i * dt + startIndex * dt).toFixed(2));
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: visibleLabels, // Etichette asse X limitate ai dati visibili
+            datasets: [{
+                label: 'SDE Simulation (Attacks over Time)',
+                data: visibleData, // Dati limitati a un massimo di 100 punti
+                borderColor: '#007bff',
+                borderWidth: 2,
+                fill: false,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Attacks over Time'
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time (t)' // Asse X
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Attacks over Time'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Time (t)' // Asse X
-                            }
-                        },
-                        y: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Attacks' // Asse Y
-                            }
-                        }
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Attacks' // Asse Y
                     }
                 }
-            });
+            }
         }
+    });
+}
+
 
         function updateHistogram(histogramData, numberOfBins) {
             const histogram = document.querySelector('.histogram');
