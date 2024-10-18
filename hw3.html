@@ -6,7 +6,6 @@
     <title>SDE Simulator with Chart.js</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* styles.css */
 /* styles.css */
 body {
     font-family: 'Arial', sans-serif;
@@ -77,22 +76,17 @@ button:hover {
 
 .histogram {
     width: 25%;
-    height: 300px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    position: relative;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
     justify-content: flex-start;
-    padding: 5px;
 }
 
 .bar {
     background-color: #ff6347;
-    height: 100%;
+    height: 20px;
     width: 0;
-    transition: width 0.5s ease;
+    margin-bottom: 5px;
+    transition: width 0.3s ease;
 }
 
     </style>
@@ -125,43 +119,39 @@ button:hover {
     </div>
 
     <script>
-// script.js
 document.getElementById("simulateBtn").addEventListener("click", simulateSDE);
 
 function simulateSDE() {
-    // Get parameters from the form
     const Lambda = parseFloat(document.getElementById("lambda").value);
     const dt = parseFloat(document.getElementById("dt").value);
     const totalSteps = parseInt(document.getElementById("steps").value);
     
     let attacks = [];
+    let histogramData = [];
     let currentValue = 0;
 
-    // Simulate the SDE process with attacks
+    // Simulate the SDE process
     for (let i = 0; i < totalSteps; i++) {
         const randomValue = Math.random();
         if (randomValue < Lambda * dt) {
-            currentValue += 1; // Simulating a +1 attack
+            currentValue += 1; // Simulating an attack
         }
         attacks.push(currentValue);
+        histogramData.push(currentValue); // Collect the current state for the histogram
     }
 
-    // Update the chart with the new data
+    // Update both the line chart and the histogram
     updateChart(attacks, dt, totalSteps);
-
-    // Update the histogram with final value mapped to time steps
-    updateHistogram(currentValue, totalSteps);
+    updateHistogram(histogramData);
 }
 
 function updateChart(data, dt, totalSteps) {
     const ctx = document.getElementById('sdeChart').getContext('2d');
-    
-    // Destroy existing chart if any
+
     if (window.myChart) {
         window.myChart.destroy();
     }
 
-    // Create the line chart
     window.myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -171,7 +161,8 @@ function updateChart(data, dt, totalSteps) {
                 data: data,
                 borderColor: '#007bff',
                 borderWidth: 2,
-                fill: false
+                fill: false,
+                pointRadius: 0 // Hide data points for a cleaner look
             }]
         },
         options: {
@@ -197,16 +188,22 @@ function updateChart(data, dt, totalSteps) {
     });
 }
 
-function updateHistogram(finalValue, totalSteps) {
-    const histogram = document.querySelector('.histogram .bar');
-    const maxBarWidth = document.querySelector('.histogram').offsetWidth;
+function updateHistogram(histogramData) {
+    const histogram = document.querySelector('.histogram');
+    histogram.innerHTML = ''; // Clear previous bars
 
-    // Scale the bar width in proportion to the number of steps
-    const newBarWidth = (finalValue / totalSteps) * maxBarWidth;
+    // Create bars to represent the histogram growing over time
+    histogramData.forEach((value, index) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = '20px';
+        bar.style.width = value * 20 + 'px'; // Width scaled by the attack value
+        bar.style.backgroundColor = `hsl(${240 + (index / histogramData.length) * 60}, 100%, 50%)`;
+        bar.style.marginBottom = '4px';
 
-    histogram.style.width = `${newBarWidth}px`;
+        histogram.appendChild(bar);
+    });
 }
-
 
     </script>
 </body>
