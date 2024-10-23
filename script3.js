@@ -211,7 +211,7 @@ function disegnaIstogramma(successiPerHacker) {
                         text: 'Number of Success'  // Ora diventa l'asse Y
                     },
                     beginAtZero: true,
-                    reverse: false,  // Rimuovi l'inversione e fai partire da 0 in alto
+                    reverse: true,
                     ticks: {
                         stepSize: 1 
                     }
