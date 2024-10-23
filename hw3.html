@@ -1,189 +1,54 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulazione di Attacco Continuo</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        #controls {
-            margin-bottom: 20px;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        input[type="number"] {
-            width: 100px;
-            padding: 5px;
-        }
-        .chart-container {
-            height: 400px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-    </style>
+    <title>Simulazione Attacchi Hacker - Grafico - HW1</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Libreria Chart.js -->
 </head>
 <body>
-    <h1>Simulazione Continua di Attacchi</h1>
-    <div id="controls">
-        <label for="lambda">Tasso di attacco (Lambda):</label>
-        <input type="number" id="lambda" value="1" step="0.1" min="0"><br><br>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
 
-        <label for="time">Tempo totale (T):</label>
-        <input type="number" id="time" value="10" step="1" min="1"><br><br>
-
-        <label for="n">Numero di suddivisioni (n):</label>
-        <input type="number" id="n" value="100" step="10" min="10"><br><br>
-
-        <button id="simulateButton">Esegui Simulazione</button>
+    
+    <div id="mod">
+        <label for="n">Number of Servers (N):</label>
+        <input type="number" id="n" value="10" required>
+        
+        <label for="m">Number of Hackers (M):</label>
+        <input type="number" id="m" value="5" required>
+        
+        <label for="p">jump Probability (λ):</label>
+        <input type="number" id="p" step="0.01" value="0.11" required>
+        
+        <button id="simulateButton">Execute Simulation</button> <!-- Pulsante per avviare la simulazione -->
+    </div>
+    
+    <div id="chartContainer">
+        <div id="canvasContainer">
+            <canvas id="attacchiGrafico" width="800" height="400" style="overflow-y: scroll;"></canvas> <!-- Grafico delle simulazioni -->
+        </div>
+        <div id="canvasContainer">
+            <canvas id="istogrammaGrafico" width="400" height="400"></canvas> <!-- Istogramma della distribuzione -->
+        </div>
     </div>
 
-    <div class="chart-container">
-        <canvas id="lineChart"></canvas>
+    <div id = "meanContainer">
+        <div class="homework-content">
+            <h2>Mean of Total Success Across all Hackers</h2>
+        </div>
     </div>
+    
 
-    <div class="chart-container">
-        <canvas id="histogramChart"></canvas>
-    </div>
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
+    </footer>
 
-    <script>
-        let lineChart, histogramChart;
-
-        const avviaSimulazione = () => {
-            const lambda = parseFloat(document.getElementById('lambda').value);
-            const T = parseInt(document.getElementById('time').value);
-            const n = parseInt(document.getElementById('n').value);
-            const dt = T / n;
-
-            // Simulazione del processo continuo
-            const traiettoria = generaTraiettoria(T, n, lambda, dt);
-            const conteggioAttacchi = generaConteggioAttacchi(traiettoria, n);
-
-            // Grafico della traiettoria
-            disegnaGraficoTraiettoria(traiettoria, T, n);
-            // Grafico dell'istogramma
-            disegnaGraficoIstogramma(conteggioAttacchi, n);
-        };
-
-        const generaTraiettoria = (T, n, lambda, dt) => {
-            let posizione = 0;
-            const traiettoria = [0];
-
-            for (let i = 0; i < n; i++) {
-                const probAttacco = lambda * dt;
-                if (Math.random() < probAttacco) {
-                    posizione += 1; // +1 attacco
-                }
-                traiettoria.push(posizione);
-            }
-
-            return traiettoria;
-        };
-
-        const generaConteggioAttacchi = (traiettoria, n) => {
-            // Calcola il numero di attacchi in ciascun intervallo di tempo
-            const conteggio = new Array(n).fill(0);
-            for (let i = 0; i < traiettoria.length - 1; i++) {
-                conteggio[i] = traiettoria[i + 1] - traiettoria[i]; // Salto tra i punti
-            }
-            return conteggio.slice(0, n); // Limita a n intervalli
-        };
-
-        const disegnaGraficoTraiettoria = (traiettoria, T, n) => {
-            const ctx = document.getElementById('lineChart').getContext('2d');
-            const etichette = Array.from({ length: n + 1 }, (_, i) => (T / n * i).toFixed(2));
-
-            if (lineChart) {
-                lineChart.destroy();
-            }
-
-            lineChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: etichette,
-                    datasets: [{
-                        label: 'Traiettoria dell\'attacco',
-                        data: traiettoria,
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Tempo'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Numero di Attacchi'
-                            },
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        };
-
-        const disegnaGraficoIstogramma = (conteggioAttacchi, n) => {
-            const ctx = document.getElementById('histogramChart').getContext('2d');
-
-            if (histogramChart) {
-                histogramChart.destroy();
-            }
-
-            histogramChart = new Chart(ctx, {
-                type: 'bar', // Modificato per l'istogramma orizzontale
-                data: {
-                    labels: Array.from({ length: n }, (_, i) => `Intervallo ${i + 1}`),
-                    datasets: [{
-                        label: 'Numero di Attacchi per Intervallo',
-                        data: conteggioAttacchi,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', // Imposta l'asse x come asse delle categorie
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Numero di Attacchi'
-                            },
-                            beginAtZero: true
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Intervalli di Tempo'
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        document.getElementById('simulateButton').addEventListener('click', avviaSimulazione);
-    </script>
+    <script src="script3.js"></script> <!-- Link al file JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
