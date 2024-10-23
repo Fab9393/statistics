@@ -264,10 +264,12 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     // Calcola la varianza dei successi totali
     const varianzaSuccessiTotali = calcolaVarianza(totaleSuccessiPerHacker, mediaSuccessiTotali);
 
+    const standardDeviation = Math.sqrt(varianzaSuccessiTotali);
+
     // Inietta il risultato nel HTML
     document.querySelector('.homework-content').innerHTML += `
         <p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>
         <p>Variance of Total Successes Across All Hackers: ${varianzaSuccessiTotali.toFixed(2)}</p>
-        <p>Distribution of Hackers: ${distribuzioneEmpirica.map(e => e.toFixed(2)).join(', ')}</p>`;
+        <p>Standard Deviation: ${standardDeviation.toFixed(2)}</p>`;
 });
 
