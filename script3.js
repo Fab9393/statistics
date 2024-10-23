@@ -180,7 +180,7 @@ function disegnaIstogramma(successiPerHacker) {
     const labels = Object.keys(distribuzioneSuccessi).sort((a, b) => a - b);
     const data = labels.map(label => distribuzioneSuccessi[label]);
 
-    // Costruire il grafico istogramma
+    // Costruire il grafico istogramma ruotato di 90 gradi
     histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -193,21 +193,22 @@ function disegnaIstogramma(successiPerHacker) {
         },
         options: {
             responsive: true,
+            indexAxis: 'y',  // Ruota l'istogramma di 90 gradi
             scales: {
-                y: {
+                x: {
                     title: {
                         display: true,
-                        text: 'Number of Success'
+                        text: 'Number of Hackers'  // Ora diventa l'asse X
                     },
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1 
                     }
                 },
-                x: {
+                y: {
                     title: {
                         display: true,
-                        text: 'Number of Hackers'
+                        text: 'Number of Success'  // Ora diventa l'asse Y
                     },
                     beginAtZero: true,
                     ticks: {
@@ -224,6 +225,7 @@ function disegnaIstogramma(successiPerHacker) {
         }
     });
 }
+
 
 
 function calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker) {
