@@ -268,6 +268,7 @@ document.getElementById('simulateButton').addEventListener('click', () => {
 
     // Inietta il risultato nel HTML
     document.querySelector('.homework-content').innerHTML += `
+        <p><br></p>
         <p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>
         <p>Variance of Total Successes Across All Hackers: ${varianzaSuccessiTotali.toFixed(2)}</p>
         <p>Standard Deviation: ${standardDeviation.toFixed(2)}</p>`;
