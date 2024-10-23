@@ -19,7 +19,7 @@ function simulazioneHackingServer(N, M, p) {
             let r = Math.random(); // Genera un numero casuale tra 0 e 1
             
             // Se r <= p, l'hacker riesce a bucare il server
-            if (r <= (p/n)) {
+            if (r <= (p/N)) {
                 posizioniY[i]++; // Incrementa la posizione dell'hacker sull'asse Y
             }
         }
