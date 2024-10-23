@@ -61,6 +61,14 @@ function simulazioneHackingServer(N, M, p) {
     return { successiPerHacker, distribuzioneEmpirica };
 }
 
+
+// Funzione per calcolare la varianza dei successi totali
+function calcolaVarianza(totaleSuccessiPerHacker, media) {
+    let sommaQuadrati = totaleSuccessiPerHacker.reduce((acc, val) => acc + Math.pow(val - media, 2), 0);
+    return sommaQuadrati / totaleSuccessiPerHacker.length;
+}
+
+
 // Funzione per generare colori casuali per ogni linea (hacker)
 function getRandomColor() {
     const letters = '0123456789ABCDEF'; 
@@ -234,7 +242,6 @@ function calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker) {
 }
 
 
-// Aggiungi evento al pulsante
 document.getElementById('simulateButton').addEventListener('click', () => {
     // Leggi i valori dal modulo
     const N = parseInt(document.getElementById('n').value); // Numero di server
@@ -244,18 +251,23 @@ document.getElementById('simulateButton').addEventListener('click', () => {
     // Esegui la simulazione e ottieni i risultati
     const { successiPerHacker, distribuzioneEmpirica } = simulazioneHackingServer(N, M, p);
 
-    
     document.getElementById('mod').style.display = 'none'; // Nascondi la modale
     // Disegna il grafico con i risultati
     disegnaGrafico(successiPerHacker, distribuzioneEmpirica, N, M);
 
-    // Calculate total successes for each hacker
+    // Calcola i successi totali per ciascun hacker
     const totaleSuccessiPerHacker = successiPerHacker.map(successi => successi[N - 1]);
 
-    // Calculate the mean of total successes across all hackers
+    // Calcola la media dei successi totali
     const mediaSuccessiTotali = calcolaMediaTotaleSuccessi(totaleSuccessiPerHacker);
 
-    // Inject the result into the HTML
-    document.querySelector('.homework-content').innerHTML += `<p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>`;
-    
+    // Calcola la varianza dei successi totali
+    const varianzaSuccessiTotali = calcolaVarianza(totaleSuccessiPerHacker, mediaSuccessiTotali);
+
+    // Inietta il risultato nel HTML
+    document.querySelector('.homework-content').innerHTML += `
+        <p>Mean of Total Successes Across All Hackers: ${mediaSuccessiTotali.toFixed(2)}</p>
+        <p>Variance of Total Successes Across All Hackers: ${varianzaSuccessiTotali.toFixed(2)}</p>
+        <p>Distribution of Hackers: ${distribuzioneEmpirica.map(e => e.toFixed(2)).join(', ')}</p>`;
 });
+

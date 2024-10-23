@@ -37,9 +37,216 @@
         </div>
     </div>
 
-    <div id = "meanContainer">
+    <div id="meanContainer">
         <div class="homework-content">
-            <h2>Mean of Total Success Across all Hackers</h2>
+            <h2>Results of the Simulation</h2>
+            <p id="meanResults">Mean of Total Successes Across All Hackers: <span id="meanValue"></span></p>
+            <p id="varianceResults">Variance of Total Successes Across All Hackers: <span id="varianceValue"></span></p>
+            <p id="distributionResults">Distribution of Hackers: <span id="distributionValue"></span></p>
+        </div>
+    </div>
+
+    <h2>Statistic Notions</h2>
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Mean (Media)</div>
+            <p>
+                The mean is a measure of central tendency, representing the average value in a dataset.
+            </p>
+            <p>Formula:<br>
+                Mean = (Sum of all values) / (Number of values)<br>
+            </p>
+            <p>Process:<br>
+                Sum up all the data points and divide the total by the number of data points.<br>
+                For example, if we have the numbers 2, 4, and 6, the mean is (2 + 4 + 6) / 3 = 4.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Variance (Varianza)</div>
+            <p>
+                Variance measures how much the data points in a dataset differ from the mean. It shows the spread of the data.
+            </p>
+            <p>Formula:<br>
+                Variance = (Sum of squared differences from the mean) / (Number of values)<br>
+            </p>
+            <p>Process:<br>
+                First, find the mean. Then, subtract the mean from each data point, square the result, and sum them up. Divide by the number of data points.<br>
+                A higher variance indicates greater spread among the values.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Standard Deviation (Deviazione Standard)</div>
+            <p>
+                The standard deviation is the square root of the variance. It provides a measure of the dispersion of the data relative to the mean.
+            </p>
+            <p>Formula:<br>
+                Standard Deviation = √Variance<br>
+            </p>
+            <p>Process:<br>
+                Calculate the variance first, then take the square root of the result.<br>
+                Standard deviation gives a more interpretable measure of spread compared to variance, as it is in the same units as the data.<br>
+            </p>
+        </div>
+    </div>
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Empirical Distribution (Distribuzione Empirica)</div>
+            <p>
+                An empirical distribution represents the observed frequencies of data points, giving an approximation of the probability distribution based on the sample.
+            </p>
+            <p>Process:<br>
+                Collect the observed data points, group them into bins, and calculate the frequency of each bin.<br>
+                The empirical distribution is often represented as a histogram.<br>
+            </p>
+            <p>Usage:<br>
+                Empirical distributions help understand the actual spread and pattern of the data in a sample.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Central Limit Theorem (Teorema del Limite Centrale)</div>
+            <p>
+                The Central Limit Theorem states that the distribution of sample means approaches a normal distribution as the sample size becomes large, regardless of the original data distribution.
+            </p>
+            <p>Process:<br>
+                Take random samples from a population and calculate their means.<br>
+                As the number of samples increases, the distribution of these means will approach a normal distribution.<br>
+            </p>
+            <p>Usage:<br>
+                This theorem is fundamental in inferential statistics, allowing us to make predictions about population parameters from sample statistics.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Binomial Distribution (Distribuzione Binomiale)</div>
+            <p>
+                The binomial distribution models the number of successes in a fixed number of independent trials, each with the same probability of success.
+            </p>
+            <p>Formula:<br>
+                P(X=k) = (n choose k) * p^k * (1-p)^(n-k)<br>
+                where n is the number of trials, k is the number of successes, and p is the probability of success.<br>
+            </p>
+            <p>Process:<br>
+                Use the formula to calculate the probability of obtaining exactly k successes in n trials.<br>
+                Binomial distributions are used when there are only two outcomes (e.g., success or failure).<br>
+            </p>
+        </div>
+    </div>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Arithmetic Mean</div>
+            <p>
+                The arithmetic mean is the most common measure of central tendency, representing the average of all values in a dataset.
+            </p>
+            <p>Formula:<br>
+                Arithmetic Mean = (Σxᵢ) / N<br>
+                Where Σxᵢ is the sum of all values in the dataset, and N is the number of values.<br>
+            </p>
+            <p>Process:<br>
+                1. Add up all the values in the dataset.<br>
+                2. Divide the sum by the number of values (N).<br>
+                The result is the arithmetic mean, a simple and effective way to describe the center of the data.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Mode</div>
+            <p>
+                The mode is the value that appears most frequently in a dataset. It is a measure of central tendency that highlights the most common data point.
+            </p>
+            <p>Process:<br>
+                1. Count how often each value appears in the dataset.<br>
+                2. The value with the highest frequency is the mode.<br>
+                If multiple values have the same frequency, the dataset is multimodal, and all such values are considered modes.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Geometric Mean</div>
+            <p>
+                The geometric mean is a measure of central tendency that is calculated as the nth root of the product of all values. It is useful for datasets involving growth rates or ratios.
+            </p>
+            <p>Formula:<br>
+                Geometric Mean (GM) = (Πxᵢ)^(1/N)<br>
+                Where Πxᵢ is the product of all values, and N is the number of values.<br>
+            </p>
+            <p>Process:<br>
+                1. Multiply all the values in the dataset together.<br>
+                2. Take the Nth root of the product, where N is the number of values.<br>
+                The geometric mean is particularly effective for datasets where values vary multiplicatively, such as financial returns.<br>
+            </p>
+        </div>
+    </div>
+    
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Harmonic Mean</div>
+            <p>
+                The harmonic mean is a measure of central tendency, particularly useful for rates. It is the reciprocal of the arithmetic mean of the reciprocals of the values.
+            </p>
+            <p>Formula:<br>
+                Harmonic Mean (HM) = N / Σ(1/xᵢ)<br>
+                Where Σ(1/xᵢ) is the sum of the reciprocals of all values, and N is the total number of values.<br>
+            </p>
+            <p>Process:<br>
+                1. Find the reciprocal of each value in the dataset.<br>
+                2. Calculate the sum of these reciprocals.<br>
+                3. Divide the number of values (N) by this sum.<br>
+                The harmonic mean is particularly useful for situations involving rates, such as speed or efficiency.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Midrange</div>
+            <p>
+                The midrange is a simple measure of central tendency, calculated as the average of the minimum and maximum values in a dataset.
+            </p>
+            <p>Formula:<br>
+                Midrange = (min + max) / 2<br>
+                Where min is the smallest value and max is the largest value in the dataset.<br>
+            </p>
+            <p>Process:<br>
+                1. Identify the minimum and maximum values in the dataset.<br>
+                2. Add these two values together.<br>
+                3. Divide the sum by 2 to find the midrange.<br>
+                The midrange gives a quick estimate of the center but can be influenced by outliers.<br>
+            </p>
+        </div>
+    </div>
+    
+
+    <h2>Significant Code Fragments</h2>
+
+    <div class="desc-content">
+        <div class="concept-panel">
+            <div class="concept-title">Function: r ≤ p/n (Success Probability Check)</div>
+            <p>
+                This function checks if an attack by a hacker is successful based on the probability of success (p) and the number of servers (n).
+            </p>
+            <p>Formula:<br>
+                r ≤ p/n<br>
+                Where r is a random number between 0 and 1, p is the success probability, and n is the total number of servers.<br>
+            </p>
+            <p>Process:<br>
+                1. A random number r is generated between 0 and 1.<br>
+                2. The value of r is compared with p/n.<br>
+                3. If r is less than or equal to p/n, the attack is successful; otherwise, it fails.<br>
+                This approach makes it harder for hackers to succeed as the number of servers (n) increases, effectively reducing the success rate.<br>
+            </p>
+        </div>
+        <div class="concept-panel">
+            <div class="concept-title">Variance Calculation Function</div>
+            <p>
+                This function calculates the variance of successful attacks across hackers, which measures how spread out the successes are compared to the mean.
+            </p>
+            <p>Formula:<br>
+                Variance = (Σ(xᵢ - μ)²) / N<br>
+                Where xᵢ represents the successes for each hacker, μ is the average number of successes, and N is the total number of hackers.<br>
+            </p>
+            <p>Process:<br>
+                1. Calculate the mean (μ) of total successes across all hackers.<br>
+                2. Subtract the mean from each hacker’s success count, then square the difference.<br>
+                3. Sum all the squared differences and divide by the total number of hackers (N).<br>
+                4. The result is the variance, representing how spread out the hacker success counts are relative to the mean.<br>
+            </p>
         </div>
     </div>
     
