@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Random Walk</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Stili per l'header e il layout */
+        header {
+            width: 100%;
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        main h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav a {
+            display: inline-block;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 0;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 300 300 px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .desc-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .concept-panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .concept-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .concept-panel {
+                width: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .concept-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Simulazione del Random Walk Continuo</h2>
+    <div id="controls">
+        <label for="walkers">Numero di Walkers:</label>
+        <input type="number" id="walkers" value="10" min="1"><br><br>
+
+        <label for="time">Tempo Totale:</label>
+        <input type="number" id="time" value="1" step="0.1" min="0.1"><br><br>
+
+        <label for="dt">Intervallo di tempo \( dt \):</label>
+        <input type="number" id="dt" value="0.01" step="0.001" min="0.001"><br><br>
+
+        <button id="simulateButton">Esegui Simulazione</button>
+    </div>
+
+    <h2>Traiettorie del Random Walk</h2>
+    <div id="chartContainer">
+        <div id="canvasContainer">
+            <canvas id="trajectoryChart"></canvas>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="distributionChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let charts = {};
+
+        // Funzione per la simulazione del random walk continuo
+        const simulateRandomWalk = () => {
+            const numWalkers = parseInt(document.getElementById('walkers').value);
+            const totalTime = parseFloat(document.getElementById('time').value);
+            const dt = parseFloat(document.getElementById('dt').value);
+
+            const steps = Math.ceil(totalTime / dt);
+            const trajectories = generateTrajectories(numWalkers, steps, dt);
+
+            const finalPositions = trajectories.map(t => t[t.length - 1]);
+            const maxPos = Math.max(...finalPositions.map(Math.abs));
+
+            plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
+            plotDistribution(finalPositions, maxPos, 'distributionChart');
+        };
+
+        // Funzione per generare le traiettorie dei walkers
+        const generateTrajectories = (numWalkers, steps, dt) => {
+            const trajectories = [];
+            for (let i = 0; i < numWalkers; i++) {
+                let position = 0;
+                const trajectory = [position];
+                for (let j = 0; j < steps; j++) {
+                    const jump = (Math.random() < 0.5 ? 1 : -1) * Math.sqrt(dt);
+                    position += jump;
+                    trajectory.push(position);
+                }
+                trajectories.push(trajectory);
+            }
+            return trajectories;
+        };
+
+        // Funzione per graficare le traiettorie
+        const plotTrajectories = (data, steps, dt, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
+
+            const datasets = data.map((trajectory, index) => ({
+                label: `Walker ${index + 1}`,
+                data: trajectory.map((value, i) => ({ x: labels[i], y: value })),
+                fill: false,
+                borderColor: getRandomColor(),
+                borderWidth: 1,
+                pointRadius: 0,
+            }));
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { type: 'linear', position: 'bottom' }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // Funzione per graficare la distribuzione finale delle posizioni
+        const plotDistribution = (positions, maxPos, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const distribution = positions.reduce((acc, pos) => {
+                acc[pos] = (acc[pos] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Array.from({ length: Math.ceil(maxPos) * 2 + 1 }, (_, i) => (i - maxPos).toFixed(1));
+            const data = labels.map(label => distribution[label] || 0);
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ data, backgroundColor: '#007bff' }] },
+                options: {
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // Funzione per generare colori casuali
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            return '#' + Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('');
+        }
+
+        // Evento di click per avviare la simulazione
+        document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
+    </script>
+</body>
+</html>
