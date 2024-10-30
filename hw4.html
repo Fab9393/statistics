@@ -297,10 +297,7 @@
 
         // Extract labels and data for the histogram
         const labels = Object.keys(positionCounts).sort((a, b) => b - a); // Sort labels in descending order
-        let data = labels.map(label => positionCounts[label]);
-        
-        // Round data values to two decimal places and invert the order
-        data = data.map(value => parseFloat(value).toFixed(2)); // Round each value
+        const data = labels.map(label => positionCounts[label]); // Keep data as numbers
 
         // Create the chart
         if (charts[chartId]) charts[chartId].destroy();
@@ -310,18 +307,30 @@
                 labels,
                 datasets: [{
                     label: 'Distribuzione finale dei cammini',
-                    data,
+                    data, // Use raw numeric data
                     backgroundColor: '#007bff',
                 }]
             },
             options: {
                 indexAxis: 'y',
                 scales: {
-                    x: { beginAtZero: true },
+                    x: { 
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return Number(value).toFixed(2); // Format X axis values to two decimals
+                            }
+                        }
+                    },
                     y: {
                         title: {
                             display: true,
                             text: 'Posizioni finali'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return Number(value).toFixed(2); // Format Y axis values to two decimals
+                            }
                         }
                     }
                 },
@@ -329,6 +338,7 @@
             }
         });
     };
+
 
 
         function getRandomColor() {
