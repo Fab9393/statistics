@@ -186,6 +186,44 @@
         illustrating how randomness accumulates over time. In line with Donsker’s Theorem, this distribution approximates a Gaussian (normal) 
         distribution, especially with a high number of steps and walkers.
     </p>
+    <div>
+        <p><br></p>
+    </div>
+    <h3>Significant Code Fragments</h3>
+    <p>
+        The following function is crucial for generating the trajectories of the random walkers:
+    </p>
+    <pre>
+    <code>
+    const generateTrajectories = (numWalkers, steps, dt) => {
+        const trajectories = [];
+        for (let i = 0; i &lt; numWalkers; i++) {
+            let position = 0;
+            const trajectory = [position];
+            for (let j = 0; j &lt; steps; j++) {
+                const jump = (Math.random() &lt; 0.5 ? 1 : -1) * Math.sqrt(dt);
+                position += jump;
+                trajectory.push(position);
+            }
+            trajectories.push(trajectory);
+        }
+        return trajectories;
+    };
+    </code>
+    </pre>
+    <p>
+        This <strong>generateTrajectories</strong> function simulates the movement of multiple random walkers. The function takes three parameters: 
+        <strong>numWalkers</strong>, <strong>steps</strong>, and <strong>dt</strong>. It initializes an array to hold the trajectories of each walker.
+    </p>
+    <p>
+        In the outer loop, we iterate over the number of walkers. For each walker, we start at position zero and create an array called <strong>trajectory</strong> to track the walker’s path.
+    </p>
+    <p>
+        The inner loop runs for the specified number of steps. At each step, a random jump is calculated, which can be either positive or negative based on a random threshold. The jump length is proportional to <em>sqrt(dt)</em>, ensuring that the steps are scaled correctly for the time interval.
+    </p>
+    <p>
+        After each jump, the new position is added to the trajectory, and once all steps are completed for a walker, the trajectory is stored in the main <strong>trajectories</strong> array. Finally, the function returns the complete set of trajectories for all walkers.
+    </p>
 
     <script>
         let charts = {};
