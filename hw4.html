@@ -288,7 +288,7 @@
 
         const plotDistribution = (positions, chartId) => {
         const ctx = document.getElementById(chartId).getContext('2d');
-
+        
         // Count the final positions
         const positionCounts = positions.reduce((acc, pos) => {
             acc[pos] = (acc[pos] || 0) + 1;
@@ -298,9 +298,8 @@
         // Extract labels and data for the histogram
         const labels = Object.keys(positionCounts).sort((a, b) => b - a); // Sort labels in descending order
         let data = labels.map(label => positionCounts[label]);
-
-        // Round data values to integers (no need to convert to string)
-        data = data.map(value => Math.round(value)); // Round each value to the nearest integer
+        
+        data = data.map(value => Math.round(value * 100) / 100); // Round each value
 
         // Create the chart
         if (charts[chartId]) charts[chartId].destroy();
@@ -322,11 +321,6 @@
                         title: {
                             display: true,
                             text: 'Posizioni finali'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return Math.round(value); // Round y-axis labels to nearest integer
-                            }
                         }
                     }
                 },
