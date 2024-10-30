@@ -225,30 +225,47 @@
             });
         };
 
-        const plotDistribution = (positions, minPos, maxPos, chartId) => {
+        const plotDistribution = (positions, chartId) => {
             const ctx = document.getElementById(chartId).getContext('2d');
-            const distribution = positions.reduce((acc, pos) => {
+            
+            // Conteggio delle posizioni finali
+            const positionCounts = positions.reduce((acc, pos) => {
                 acc[pos] = (acc[pos] || 0) + 1;
                 return acc;
             }, {});
 
-            const labels = Array.from(
-                { length: Math.ceil(maxPos - minPos) + 1 },
-                (_, i) => (minPos + i).toFixed(1)
-            );
-            const data = labels.map(label => distribution[label] || 0);
+            // Estrazione delle etichette e dei dati per l'istogramma
+            const labels = Object.keys(positionCounts).sort((a, b) => a - b);
+            const data = labels.map(label => positionCounts[label]);
 
+            // Creazione del grafico
             if (charts[chartId]) charts[chartId].destroy();
             charts[chartId] = new Chart(ctx, {
                 type: 'bar',
-                data: { labels, datasets: [{ data, backgroundColor: '#007bff' }] },
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Distribuzione finale dei cammini',
+                        data,
+                        backgroundColor: '#007bff',
+                    }]
+                },
                 options: {
                     indexAxis: 'y',
-                    scales: { x: { beginAtZero: true } },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Posizioni finali'
+                            }
+                        }
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
         };
+
 
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
