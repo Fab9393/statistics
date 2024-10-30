@@ -259,8 +259,8 @@
 
             // Estrazione delle etichette e dei dati per l'istogramma
             const labels = Object.keys(positionCounts).sort((a, b) => a - b);
-            const data = labels.map(label => positionCounts[label]);
-            const data2 = [];
+            let data = labels.map(label => positionCounts[label]);
+            let data2 = [];
             for (let i = data.length - 1; i >= 0; i--) {
                 data2.push(parseFloat(data[i]).toFixed(2));
             }
