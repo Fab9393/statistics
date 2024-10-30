@@ -6,7 +6,7 @@
     <title>Simulazione Random Walk</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <style>
+    <style>
         /* Stili per l'header e il layout */
         header {
             width: 100%;
@@ -167,7 +167,6 @@
     <script>
         let charts = {};
 
-        // Funzione per la simulazione del random walk continuo
         const simulateRandomWalk = () => {
             const numWalkers = parseInt(document.getElementById('walkers').value);
             const totalTime = parseFloat(document.getElementById('time').value);
@@ -177,13 +176,13 @@
             const trajectories = generateTrajectories(numWalkers, steps, dt);
 
             const finalPositions = trajectories.map(t => t[t.length - 1]);
-            const maxPos = Math.max(...finalPositions.map(Math.abs));
+            const minPos = Math.min(...finalPositions);
+            const maxPos = Math.max(...finalPositions);
 
             plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
-            plotDistribution(finalPositions, maxPos, 'distributionChart');
+            plotDistribution(finalPositions, minPos, maxPos, 'distributionChart');
         };
 
-        // Funzione per generare le traiettorie dei walkers
         const generateTrajectories = (numWalkers, steps, dt) => {
             const trajectories = [];
             for (let i = 0; i < numWalkers; i++) {
@@ -199,7 +198,6 @@
             return trajectories;
         };
 
-        // Funzione per graficare le traiettorie
         const plotTrajectories = (data, steps, dt, chartId) => {
             const ctx = document.getElementById(chartId).getContext('2d');
             const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
@@ -227,15 +225,17 @@
             });
         };
 
-        // Funzione per graficare la distribuzione finale delle posizioni
-        const plotDistribution = (positions, maxPos, chartId) => {
+        const plotDistribution = (positions, minPos, maxPos, chartId) => {
             const ctx = document.getElementById(chartId).getContext('2d');
             const distribution = positions.reduce((acc, pos) => {
                 acc[pos] = (acc[pos] || 0) + 1;
                 return acc;
             }, {});
 
-            const labels = Array.from({ length: Math.ceil(maxPos) * 2 + 1 }, (_, i) => (i - maxPos).toFixed(1));
+            const labels = Array.from(
+                { length: Math.ceil(maxPos - minPos) + 1 },
+                (_, i) => (minPos + i).toFixed(1)
+            );
             const data = labels.map(label => distribution[label] || 0);
 
             if (charts[chartId]) charts[chartId].destroy();
@@ -250,14 +250,13 @@
             });
         };
 
-        // Funzione per generare colori casuali
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             return '#' + Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('');
         }
 
-        // Evento di click per avviare la simulazione
         document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
     </script>
 </body>
 </html>
+
