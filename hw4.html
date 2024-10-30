@@ -291,7 +291,7 @@
         
         // Count the final positions
         const positionCounts = positions.reduce((acc, pos) => {
-            const roundedPos = Math.round(pos); // Arrotonda a interi
+            const roundedPos = pos.toFixed(2); // Arrotonda
             acc[roundedPos] = (acc[roundedPos] || 0) + 1;
             return acc;
         }, {});
