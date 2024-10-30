@@ -164,6 +164,29 @@
         </div>
     </div>
 
+    <h3>Theory of Continuous Random Walk and Donsker’s Theorem</h3>
+    <p>
+        This simulation illustrates a <strong>continuous random walk</strong>, a stochastic process where each “walker” moves either left or 
+        right with equal probability at very small time intervals. Each step length is proportional to <em>sqrt(dt)</em>, where <em>dt</em> 
+        represents the time interval, and each step is determined randomly. This model is widely used in physics, finance, and other fields 
+        to describe random processes over time.
+    </p>
+    <p>
+        According to <strong>Donsker’s Theorem</strong>, also known as the functional central limit theorem, as the number of steps in a random 
+        walk increases to infinity, the process converges to a Brownian motion (or Wiener process). This allows us to approximate large, discrete 
+        random walks as continuous processes, which is especially useful in modeling phenomena like diffusion.
+    </p>
+    <p>
+        By plotting the mean distribution and final distribution of the walkers, we can observe how the values begin to resemble a normal 
+        distribution, especially as the number of walkers and time steps increase. This characteristic is due to the central limit theorem, 
+        where the distribution of independent random variables tends toward normality as the sample size increases.
+    </p>
+    <p>
+        The final chart on the right represents the <strong>distribution of positions</strong> of all walkers at the end of the simulation, 
+        illustrating how randomness accumulates over time. In line with Donsker’s Theorem, this distribution approximates a Gaussian (normal) 
+        distribution, especially with a high number of steps and walkers.
+    </p>
+
     <script>
         let charts = {};
 
@@ -253,7 +276,13 @@
                 options: {
                     indexAxis: 'y',
                     scales: {
-                        x: { beginAtZero: true },
+                        x: { beginAtZero: true,
+                        ticks: {
+                         callback: function(value) {
+                            return value.toFixed(2); // Formatta a due decimali
+                            }
+                         }
+                        },
                         y: {
                             title: {
                                 display: true,
