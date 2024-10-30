@@ -180,7 +180,7 @@
             const maxPos = Math.max(...finalPositions);
 
             plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
-            plotDistribution(finalPositions, minPos, maxPos, 'distributionChart');
+            plotDistribution(finalPositions, 'distributionChart');
         };
 
         const generateTrajectories = (numWalkers, steps, dt) => {
