@@ -145,21 +145,21 @@
             <li><a href="index.html">Home</a></li>
         </ul>
     </nav>
-    <h2>Simulazione del Random Walk Continuo</h2>
+    <h2>Continuous Ranmdom Walks - Donsker's Theorem</h2>
     <div id="controls">
-        <label for="walkers">Numero di Walkers:</label>
+        <label for="walkers">Number of Walkers:</label>
         <input type="number" id="walkers" value="30" min="1"><br><br>
 
-        <label for="time">Tempo Totale:</label>
+        <label for="time">Total Time:</label>
         <input type="number" id="time" value="1" step="0.1" min="0.1"><br><br>
 
-        <label for="dt">Intervallo di tempo (dt):</label>
+        <label for="dt">Time steps (dt):</label>
         <input type="number" id="dt" value="0.01" step="0.001" min="0.001"><br><br>
 
-        <button id="simulateButton">Esegui Simulazione</button>
+        <button id="simulateButton">Run Simulation</button>
     </div>
 
-    <h2>Traiettorie del Random Walk</h2>
+    <h2>Random Walk Trajectories</h2>
     <div id="chartContainer">
         <div id="canvasContainer">
             <canvas id="trajectoryChart"></canvas>
