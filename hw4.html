@@ -1,185 +1,263 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk Simulation - HW4</title>
+    <title>Simulazione Random Walk</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link al file CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* CSS for seamless chart alignment */
-        body {
-            font-family: Arial, sans-serif;
+        <style>
+        /* Stili per l'header e il layout */
+        header {
+            width: 100%;
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 0;
             margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        h2, h3 {
-            text-align: center;
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        main h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav a {
+            display: inline-block;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 0;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 300 300 px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
         }
 
         .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .desc-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 100%;
             display: flex;
-            align-items: stretch; /* Ensures charts are aligned vertically */
-            justify-content: center;
-            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
         }
 
-        .chart {
-            width: 70%;
-            height: 400px;
-            margin: 0; /* Remove space around charts */
-            padding-right: 0;
-            border-right: 1px solid #ddd; /* Optional: adds a subtle divider between the charts */
+        .concept-panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
         }
 
-        .histogram {
-            width: 30%;
-            height: 400px;
-            margin: 0; /* Remove space around charts */
-            padding-left: 0;
+        .concept-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
         }
 
-        p {
-            max-width: 800px;
-            margin: 20px auto;
-            line-height: 1.6;
-            text-align: justify;
+        @media (max-width: 768px) {
+            .concept-panel {
+                width: calc(50% - 20px);
+            }
         }
 
-
+        @media (max-width: 480px) {
+            .concept-panel {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <h2>Simulazione del Random Walk Continuo</h2>
+    <div id="controls">
+        <label for="walkers">Numero di Walkers:</label>
+        <input type="number" id="walkers" value="10" min="1"><br><br>
 
-<h2>Random Walk Simulation</h2>
-<div class="chart-container">
-    <canvas id="lineChart" class="chart"></canvas>
-    <canvas id="histogramChart" class="histogram"></canvas>
-</div>
+        <label for="time">Tempo Totale:</label>
+        <input type="number" id="time" value="1" step="0.1" min="0.1"><br><br>
 
-<h3>Theory of Continuous Random Walk and Donsker’s Theorem</h3>
-<p>
-    This simulation illustrates a <strong>continuous random walk</strong>, a stochastic process where each “walker” moves either left or 
-    right with equal probability at very small time intervals. Each step length is proportional to <em>sqrt(dt)</em>, where <em>dt</em> 
-    represents the time interval, and each step is determined randomly. This model is widely used in physics, finance, and other fields 
-    to describe random processes over time.
-</p>
-<p>
-    According to <strong>Donsker’s Theorem</strong>, also known as the functional central limit theorem, as the number of steps in a random 
-    walk increases to infinity, the process converges to a Brownian motion (or Wiener process). This allows us to approximate large, discrete 
-    random walks as continuous processes, which is especially useful in modeling phenomena like diffusion.
-</p>
-<p>
-    By plotting the mean distribution and final distribution of the walkers, we can observe how the values begin to resemble a normal 
-    distribution, especially as the number of walkers and time steps increase. This characteristic is due to the central limit theorem, 
-    where the distribution of independent random variables tends toward normality as the sample size increases.
-</p>
-<p>
-    The final chart on the right represents the <strong>distribution of positions</strong> of all walkers at the end of the simulation, 
-    illustrating how randomness accumulates over time. In line with Donsker’s Theorem, this distribution approximates a Gaussian (normal) 
-    distribution, especially with a high number of steps and walkers.
-</p>
+        <label for="dt">Intervallo di tempo \( dt \):</label>
+        <input type="number" id="dt" value="0.01" step="0.001" min="0.001"><br><br>
 
-<script>
-    // Parameters for the random walk
-    const numSteps = 1000;
-    const numWalkers = 500;
-    const dt = 0.1;
-    const stepSize = Math.sqrt(dt);
+        <button id="simulateButton">Esegui Simulazione</button>
+    </div>
 
-    // Arrays to hold walker positions at each step and final positions
-    const allPositions = Array.from({ length: numWalkers }, () => [0]);
-    const finalPositions = [];
+    <h2>Traiettorie del Random Walk</h2>
+    <div id="chartContainer">
+        <div id="canvasContainer">
+            <canvas id="trajectoryChart"></canvas>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="distributionChart"></canvas>
+        </div>
+    </div>
 
-    // Simulate random walk
-    for (let step = 1; step <= numSteps; step++) {
-        allPositions.forEach((positions, i) => {
-            const lastPosition = positions[positions.length - 1];
-            const stepDirection = Math.random() < 0.5 ? -1 : 1;
-            const newPosition = lastPosition + stepDirection * stepSize;
-            positions.push(newPosition);
-            if (step === numSteps) finalPositions.push(newPosition);
-        });
-    }
+    <script>
+        let charts = {};
 
-    // Prepare data for line chart
-    const avgPositions = Array.from({ length: numSteps + 1 }, (_, i) =>
-        allPositions.reduce((sum, positions) => sum + positions[i], 0) / numWalkers
-    );
+        // Funzione per la simulazione del random walk continuo
+        const simulateRandomWalk = () => {
+            const numWalkers = parseInt(document.getElementById('walkers').value);
+            const totalTime = parseFloat(document.getElementById('time').value);
+            const dt = parseFloat(document.getElementById('dt').value);
 
-    const lineChartData = {
-        labels: Array.from({ length: numSteps + 1 }, (_, i) => i),
-        datasets: [{
-            label: 'Average Position of Walkers',
-            data: avgPositions,
-            borderColor: 'blue',
-            fill: false,
-            borderWidth: 2,
-            tension: 0.2
-        }]
-    };
+            const steps = Math.ceil(totalTime / dt);
+            const trajectories = generateTrajectories(numWalkers, steps, dt);
 
-    // Render line chart
-    const lineChartCtx = document.getElementById('lineChart').getContext('2d');
-    new Chart(lineChartCtx, {
-        type: 'line',
-        data: lineChartData,
-        options: {
-            scales: {
-                x: { display: true, title: { display: true, text: 'Time Steps' } },
-                y: { display: true, title: { display: true, text: 'Average Position' } }
-            }
-        }
-    });
+            const finalPositions = trajectories.map(t => t[t.length - 1]);
+            const maxPos = Math.max(...finalPositions.map(Math.abs));
 
-    // Prepare histogram data
-    const bins = 20;
-    const binWidth = (Math.max(...finalPositions) - Math.min(...finalPositions)) / bins;
-    const histogramData = Array(bins).fill(0);
-    finalPositions.forEach(pos => {
-        const bin = Math.min(bins - 1, Math.floor((pos - Math.min(...finalPositions)) / binWidth));
-        histogramData[bin]++;
-    });
+            plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
+            plotDistribution(finalPositions, maxPos, 'distributionChart');
+        };
 
-    const histogramLabels = Array.from({ length: bins }, (_, i) =>
-        (Math.min(...finalPositions) + i * binWidth).toFixed(2)
-    );
-
-    // Render histogram
-    const histogramChartCtx = document.getElementById('histogramChart').getContext('2d');
-    new Chart(histogramChartCtx, {
-        type: 'bar',
-        data: {
-            labels: histogramLabels,
-            datasets: [{
-                label: 'Position Distribution',
-                data: histogramData,
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    display: true,
-                    title: { display: true, text: 'Number of Walkers' },
-                    position: 'top'
-                },
-                y: {
-                    display: true,
-                    title: { display: true, text: 'Position' }
+        // Funzione per generare le traiettorie dei walkers
+        const generateTrajectories = (numWalkers, steps, dt) => {
+            const trajectories = [];
+            for (let i = 0; i < numWalkers; i++) {
+                let position = 0;
+                const trajectory = [position];
+                for (let j = 0; j < steps; j++) {
+                    const jump = (Math.random() < 0.5 ? 1 : -1) * Math.sqrt(dt);
+                    position += jump;
+                    trajectory.push(position);
                 }
-            },
-            plugins: {
-                legend: { display: false }
+                trajectories.push(trajectory);
             }
-        }
-    });
-</script>
+            return trajectories;
+        };
 
+        // Funzione per graficare le traiettorie
+        const plotTrajectories = (data, steps, dt, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
+
+            const datasets = data.map((trajectory, index) => ({
+                label: `Walker ${index + 1}`,
+                data: trajectory.map((value, i) => ({ x: labels[i], y: value })),
+                fill: false,
+                borderColor: getRandomColor(),
+                borderWidth: 1,
+                pointRadius: 0,
+            }));
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { type: 'linear', position: 'bottom' }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // Funzione per graficare la distribuzione finale delle posizioni
+        const plotDistribution = (positions, maxPos, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const distribution = positions.reduce((acc, pos) => {
+                acc[pos] = (acc[pos] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Array.from({ length: Math.ceil(maxPos) * 2 + 1 }, (_, i) => (i - maxPos).toFixed(1));
+            const data = labels.map(label => distribution[label] || 0);
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ data, backgroundColor: '#007bff' }] },
+                options: {
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // Funzione per generare colori casuali
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            return '#' + Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('');
+        }
+
+        // Evento di click per avviare la simulazione
+        document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
+    </script>
 </body>
 </html>
