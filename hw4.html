@@ -249,8 +249,8 @@
         };
 
         const plotDistribution = (positions, chartId) => {
+
             const ctx = document.getElementById(chartId).getContext('2d');
-            
             // Conteggio delle posizioni finali
             const positionCounts = positions.reduce((acc, pos) => {
                 acc[pos] = (acc[pos] || 0) + 1;
@@ -260,7 +260,12 @@
             // Estrazione delle etichette e dei dati per l'istogramma
             const labels = Object.keys(positionCounts).sort((a, b) => a - b);
             const data = labels.map(label => positionCounts[label]);
-
+            const data2 = [];
+            for (let i = data.length - 1; i >= 0; i--) {
+                data2.push(parseFloat(data[i]).toFixed(2));
+            }
+            data = data2;
+            data = data2;
             // Creazione del grafico
             if (charts[chartId]) charts[chartId].destroy();
             charts[chartId] = new Chart(ctx, {
