@@ -291,7 +291,8 @@
         
         // Count the final positions
         const positionCounts = positions.reduce((acc, pos) => {
-            acc[pos] = (acc[pos] || 0) + 1;
+            const roundedPos = Math.round(pos); // Arrotonda a interi
+            acc[roundedPos] = (acc[roundedPos] || 0) + 1;
             return acc;
         }, {});
 
@@ -299,7 +300,7 @@
         const labels = Object.keys(positionCounts).sort((a, b) => b - a); // Sort labels in descending order
         let data = labels.map(label => positionCounts[label]);
         
-        data = data.map(value => Math.round(value * 100) / 100); // Round each value
+        data = data.map(value => Math.round(value)); // Round each value
 
         // Create the chart
         if (charts[chartId]) charts[chartId].destroy();
