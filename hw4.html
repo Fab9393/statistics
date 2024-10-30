@@ -287,6 +287,11 @@
                             title: {
                                 display: true,
                                 text: 'Posizioni finali'
+                            },
+                            ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2); // Formatta a due decimali
+                                }
                             }
                         }
                     },
