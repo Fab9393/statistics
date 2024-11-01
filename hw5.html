@@ -1,234 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 5</title>
-    <link rel="stylesheet" href="styles.css"> <!-- CSS link -->
+    <title>Homework 5: Analisi e Simulazione</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Base layout and styles */
+        /* Stili per l'header e il layout */
+        header, nav, footer {
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            width: 100%;
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
-
-        main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        section {
-            background-color: #fff;
-            padding: 20px;
-            margin: 10px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 800px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #007bff;
-        }
-
-        .concept {
-            margin-bottom: 15px;
         }
 
         #controls {
             margin-bottom: 20px;
             display: flex;
-            flex-direction: column;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        input[type="number"], button {
-            padding: 10px;
-            font-size: 1em;
-            margin: 5px;
-            border-radius: 4px;
+        .concept-panel {
             border: 1px solid #ccc;
+            padding: 15px;
+            width: 100%;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            max-width: 600px;
         }
 
         button {
             background-color: #007BFF;
-            color: #fff;
-            cursor: pointer;
+            color: white;
+            padding: 10px 20px;
             border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button:hover {
             background-color: #0056b3;
         }
 
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+
         .chart-container {
-            position: relative;
             width: 100%;
             max-width: 600px;
-            margin: 20px auto;
         }
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
 
-<header>
-    <h1>Homework 5 - Mathematical and Statistical Methods</h1>
-</header>
-
-<main>
-
-    <!-- Section 1: Cauchy-Schwarz Inequality Proof -->
-    <section>
-        <h2>1. Cauchy-Schwarz Inequality</h2>
-        <div class="concept">
-            <p>The Cauchy-Schwarz inequality states that for any vectors \( u \) and \( v \), the inequality
-            \( |u \cdot v| \leq \|u\| \|v\| \) holds. The equality holds if and only if \( u \) and \( v \) are linearly dependent.</p>
-            <p>This can be shown by considering the non-negative quadratic form \( |u + \lambda v|^2 \geq 0 \) for all real \( \lambda \).</p>
-            <button onclick="showCSProof()">Show Simple Proof</button>
-            <div id="cs-proof" style="display:none;">
-                <p><strong>Proof:</strong> By expanding \( |u + \lambda v|^2 \) and setting the discriminant to zero, we arrive at the inequality.</p>
+    <main>
+        <h2>Homework 5: Analisi delle Disuguaglianze e Simulazione SDE</h2>
+        <section class="desc-content">
+            <div class="concept-panel">
+                <h3>1. Disuguaglianza di Cauchy-Schwarz</h3>
+                <p>La disuguaglianza di Cauchy-Schwarz è fondamentale in matematica e afferma che per tutti i vettori x e y vale:</p>
+                <pre> |x·y| ≤ ||x|| ||y||</pre>
+                <p>Da dimostrare nel modo più semplice possibile utilizzando il coefficiente di normalizzazione r.</p>
             </div>
+
+            <div class="concept-panel">
+                <h3>2. Indipendenza e Non Correlazione</h3>
+                <p>Riflettere sulle differenze tra indipendenza e non correlazione. La non correlazione implica indipendenza? Identificare le misure adeguate per ciascun concetto.</p>
+            </div>
+
+            <div class="concept-panel">
+                <h3>3. Simulatore E-M: Implementazione Generale</h3>
+                <p>Migliorare il simulatore di Euler-Maruyama creando una struttura centrale e generale che possa gestire diversi tipi di equazioni differenziali stocastiche (SDE).</p>
+            </div>
+
+            <div class="concept-panel">
+                <h3>4. [Opzionale] Derivazione dei Coefficienti di Regressione</h3>
+                <p>Derivare i coefficienti delle due rette di regressione usando il metodo dei minimi quadrati, e mostrare le relazioni con R².</p>
+            </div>
+        </section>
+
+        <!-- Area di Controllo per Simulazione -->
+        <h3>Controlli Simulatore E-M</h3>
+        <div id="controls">
+            <label for="walkers">Numero di Simulazioni:</label>
+            <input type="number" id="walkers" value="30" min="1">
+
+            <label for="time">Tempo Totale:</label>
+            <input type="number" id="time" value="1" step="0.1" min="0.1">
+
+            <label for="dt">Passo temporale (dt):</label>
+            <input type="number" id="dt" value="0.01" step="0.001" min="0.001">
+
+            <button id="simulateButton">Avvia Simulazione</button>
         </div>
-    </section>
 
-    <!-- Section 2: Independence and Uncorrelation -->
-    <section>
-        <h2>2. Independence vs Uncorrelation</h2>
-        <div class="concept">
-            <p><strong>Independence:</strong> Two variables are independent if knowing the value of one provides no information about the other.</p>
-            <p><strong>Uncorrelation:</strong> Two variables are uncorrelated if their covariance is zero, implying no linear relationship.</p>
-            <p>While independence implies uncorrelation, uncorrelation does not imply independence. Independence is a stronger condition.</p>
-            <button onclick="showIndepUncorrExample()">Show Example</button>
-            <div id="indep-uncorr-example" style="display:none;">
-                <p><strong>Example:</strong> Consider \( X \sim N(0, 1) \) and \( Y = X^2 \). Here, \( X \) and \( Y \) are uncorrelated but not independent.</p>
-            </div>
+        <!-- Grafici di Simulazione -->
+        <h3>Risultati della Simulazione</h3>
+        <div class="chart-container">
+            <canvas id="trajectoryChart"></canvas>
         </div>
-    </section>
-
-    <!-- Section 3: Euler-Maruyama Simulator Enhancement -->
-    <section>
-        <h2>3. Enhanced Euler-Maruyama Simulator</h2>
-        <div class="concept">
-            <p>Below is an enhanced simulator capable of handling various SDEs with a unified class structure.</p>
-            <div id="controls">
-                <label for="time">Simulation Time:</label>
-                <input type="number" id="time" value="1" step="0.1">
-                <label for="dt">Time Step \( dt \):</label>
-                <input type="number" id="dt" value="0.01" step="0.001">
-                <label for="mu">Drift \( \mu \):</label>
-                <input type="number" id="mu" value="0.1" step="0.01">
-                <label for="sigma">Volatility \( \sigma \):</label>
-                <input type="number" id="sigma" value="0.2" step="0.01">
-                <button onclick="runSimulation()">Run Simulation</button>
-            </div>
-            <div class="chart-container">
-                <canvas id="emChart"></canvas>
-            </div>
+        <div class="chart-container">
+            <canvas id="distributionChart"></canvas>
         </div>
-    </section>
 
-    <!-- Optional Section: Regression Coefficients -->
-    <section>
-        <h2>4. [Optional] Regression Coefficients and \( R^2 \)</h2>
-        <div class="concept">
-            <p>Derive coefficients \( a \) and \( b \) for the regression lines using least squares and explore the relationship with \( R^2 \).</p>
-            <button onclick="calculateRegression()">Calculate Regression</button>
-            <div id="regression-output" style="display:none;">
-                <p><strong>Regression Equation:</strong> \( y = ax + b \)</p>
-                <p><strong>Coefficient of Determination \( R^2 \):</strong> Shows the goodness of fit of the model.</p>
-            </div>
-        </div>
-    </section>
+        <footer>
+            <p>&copy;2024 Fabio Figara - Homework 5</p>
+        </footer>
+    </main>
 
-</main>
+    <script>
+        let charts = {};
 
-<script>
-    function showCSProof() {
-        const proof = document.getElementById('cs-proof');
-        proof.style.display = proof.style.display === 'none' ? 'block' : 'none';
-    }
+        const simulateRandomWalk = () => {
+            const numWalkers = parseInt(document.getElementById('walkers').value);
+            const totalTime = parseFloat(document.getElementById('time').value);
+            const dt = parseFloat(document.getElementById('dt').value);
 
-    function showIndepUncorrExample() {
-        const example = document.getElementById('indep-uncorr-example');
-        example.style.display = example.style.display === 'none' ? 'block' : 'none';
-    }
+            const steps = Math.ceil(totalTime / dt);
+            const trajectories = generateTrajectories(numWalkers, steps, dt);
 
-    // Enhanced Euler-Maruyama Simulation Class
-    class SDE {
-        constructor(mu, sigma, dt) {
-            this.mu = mu;
-            this.sigma = sigma;
-            this.dt = dt;
-        }
+            const finalPositions = trajectories.map(t => t[t.length - 1]);
 
-        nextStep(value) {
-            const noise = Math.sqrt(this.dt) * this.sigma * (Math.random() * 2 - 1);
-            return value + this.mu * this.dt + noise;
-        }
-    }
+            plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
+            plotDistribution(finalPositions, 'distributionChart');
+        };
 
-    function runSimulation() {
-        const time = parseFloat(document.getElementById('time').value);
-        const dt = parseFloat(document.getElementById('dt').value);
-        const mu = parseFloat(document.getElementById('mu').value);
-        const sigma = parseFloat(document.getElementById('sigma').value);
-        const steps = Math.floor(time / dt);
-
-        const sde = new SDE(mu, sigma, dt);
-        let value = 0;
-        const trajectory = [value];
-        
-        for (let i = 0; i < steps; i++) {
-            value = sde.nextStep(value);
-            trajectory.push(value);
-        }
-
-        plotTrajectory(trajectory, dt, 'emChart');
-    }
-
-    function plotTrajectory(data, dt, chartId) {
-        const ctx = document.getElementById(chartId).getContext('2d');
-        const labels = Array.from({ length: data.length }, (_, i) => (i * dt).toFixed(2));
-
-        if (window.chart) window.chart.destroy();
-        window.chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    label: "Euler-Maruyama Simulation",
-                    borderColor: "#007bff",
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: { title: { display: true, text: 'Time' } },
-                    y: { title: { display: true, text: 'Position' } }
+        const generateTrajectories = (numWalkers, steps, dt) => {
+            const trajectories = [];
+            for (let i = 0; i < numWalkers; i++) {
+                let position = 0;
+                const trajectory = [position];
+                for (let j = 0; j < steps; j++) {
+                    const jump = (Math.random() < 0.5 ? 1 : -1) * Math.sqrt(dt);
+                    position += jump;
+                    trajectory.push(position);
                 }
+                trajectories.push(trajectory);
             }
-        });
-    }
+            return trajectories;
+        };
 
-    function calculateRegression() {
-        // Dummy function to represent regression calculation
-        const output = document.getElementById('regression-output');
-        output.style.display = output.style.display === 'none' ? 'block' : 'none';
-    }
-</script>
+        const plotTrajectories = (data, steps, dt, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
+
+            const datasets = data.map((trajectory, index) => ({
+                label: `Sim ${index + 1}`,
+                data: trajectory,
+                fill: false,
+                borderColor: getRandomColor(),
+                pointRadius: 0,
+            }));
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: { scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+            });
+        };
+
+        const plotDistribution = (positions, chartId) => {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const positionCounts = positions.reduce((acc, pos) => {
+                const roundedPos = pos.toFixed(2);
+                acc[roundedPos] = (acc[roundedPos] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(positionCounts).sort();
+            const data = labels.map(label => positionCounts[label]);
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'Distribuzione Finale', data, backgroundColor: '#007bff' }] },
+                options: { scales: { y: { beginAtZero: true } } }
+            });
+        };
+
+        function getRandomColor() {
+            return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        }
+
+        document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
+    </script>
 </body>
 </html>
