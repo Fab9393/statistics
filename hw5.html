@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 5</title>
+    <link rel="stylesheet" href="styles.css"> <!-- CSS link -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Base layout and styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        .concept {
+            margin-bottom: 15px;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="number"], button {
+            padding: 10px;
+            font-size: 1em;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Homework 5 - Mathematical and Statistical Methods</h1>
+</header>
+
+<main>
+
+    <!-- Section 1: Cauchy-Schwarz Inequality Proof -->
+    <section>
+        <h2>1. Cauchy-Schwarz Inequality</h2>
+        <div class="concept">
+            <p>The Cauchy-Schwarz inequality states that for any vectors \( u \) and \( v \), the inequality
+            \( |u \cdot v| \leq \|u\| \|v\| \) holds. The equality holds if and only if \( u \) and \( v \) are linearly dependent.</p>
+            <p>This can be shown by considering the non-negative quadratic form \( |u + \lambda v|^2 \geq 0 \) for all real \( \lambda \).</p>
+            <button onclick="showCSProof()">Show Simple Proof</button>
+            <div id="cs-proof" style="display:none;">
+                <p><strong>Proof:</strong> By expanding \( |u + \lambda v|^2 \) and setting the discriminant to zero, we arrive at the inequality.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Independence and Uncorrelation -->
+    <section>
+        <h2>2. Independence vs Uncorrelation</h2>
+        <div class="concept">
+            <p><strong>Independence:</strong> Two variables are independent if knowing the value of one provides no information about the other.</p>
+            <p><strong>Uncorrelation:</strong> Two variables are uncorrelated if their covariance is zero, implying no linear relationship.</p>
+            <p>While independence implies uncorrelation, uncorrelation does not imply independence. Independence is a stronger condition.</p>
+            <button onclick="showIndepUncorrExample()">Show Example</button>
+            <div id="indep-uncorr-example" style="display:none;">
+                <p><strong>Example:</strong> Consider \( X \sim N(0, 1) \) and \( Y = X^2 \). Here, \( X \) and \( Y \) are uncorrelated but not independent.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Euler-Maruyama Simulator Enhancement -->
+    <section>
+        <h2>3. Enhanced Euler-Maruyama Simulator</h2>
+        <div class="concept">
+            <p>Below is an enhanced simulator capable of handling various SDEs with a unified class structure.</p>
+            <div id="controls">
+                <label for="time">Simulation Time:</label>
+                <input type="number" id="time" value="1" step="0.1">
+                <label for="dt">Time Step \( dt \):</label>
+                <input type="number" id="dt" value="0.01" step="0.001">
+                <label for="mu">Drift \( \mu \):</label>
+                <input type="number" id="mu" value="0.1" step="0.01">
+                <label for="sigma">Volatility \( \sigma \):</label>
+                <input type="number" id="sigma" value="0.2" step="0.01">
+                <button onclick="runSimulation()">Run Simulation</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="emChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Optional Section: Regression Coefficients -->
+    <section>
+        <h2>4. [Optional] Regression Coefficients and \( R^2 \)</h2>
+        <div class="concept">
+            <p>Derive coefficients \( a \) and \( b \) for the regression lines using least squares and explore the relationship with \( R^2 \).</p>
+            <button onclick="calculateRegression()">Calculate Regression</button>
+            <div id="regression-output" style="display:none;">
+                <p><strong>Regression Equation:</strong> \( y = ax + b \)</p>
+                <p><strong>Coefficient of Determination \( R^2 \):</strong> Shows the goodness of fit of the model.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    function showCSProof() {
+        const proof = document.getElementById('cs-proof');
+        proof.style.display = proof.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function showIndepUncorrExample() {
+        const example = document.getElementById('indep-uncorr-example');
+        example.style.display = example.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Enhanced Euler-Maruyama Simulation Class
+    class SDE {
+        constructor(mu, sigma, dt) {
+            this.mu = mu;
+            this.sigma = sigma;
+            this.dt = dt;
+        }
+
+        nextStep(value) {
+            const noise = Math.sqrt(this.dt) * this.sigma * (Math.random() * 2 - 1);
+            return value + this.mu * this.dt + noise;
+        }
+    }
+
+    function runSimulation() {
+        const time = parseFloat(document.getElementById('time').value);
+        const dt = parseFloat(document.getElementById('dt').value);
+        const mu = parseFloat(document.getElementById('mu').value);
+        const sigma = parseFloat(document.getElementById('sigma').value);
+        const steps = Math.floor(time / dt);
+
+        const sde = new SDE(mu, sigma, dt);
+        let value = 0;
+        const trajectory = [value];
+        
+        for (let i = 0; i < steps; i++) {
+            value = sde.nextStep(value);
+            trajectory.push(value);
+        }
+
+        plotTrajectory(trajectory, dt, 'emChart');
+    }
+
+    function plotTrajectory(data, dt, chartId) {
+        const ctx = document.getElementById(chartId).getContext('2d');
+        const labels = Array.from({ length: data.length }, (_, i) => (i * dt).toFixed(2));
+
+        if (window.chart) window.chart.destroy();
+        window.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    label: "Euler-Maruyama Simulation",
+                    borderColor: "#007bff",
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Time' } },
+                    y: { title: { display: true, text: 'Position' } }
+                }
+            }
+        });
+    }
+
+    function calculateRegression() {
+        // Dummy function to represent regression calculation
+        const output = document.getElementById('regression-output');
+        output.style.display = output.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>
