@@ -234,7 +234,10 @@
                 scales: {
                     x: { 
                         beginAtZero: true,
-                        title: { display: true, text: 'Frequency' }
+                        title: { display: true, text: 'Frequency' },
+                        ticks: {
+                            stepSize: 0.1  // Adjust this value as needed
+                         }
                     },
                     y: { 
                         title: { display: true, text: 'Position' }
