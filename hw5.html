@@ -197,7 +197,7 @@
         const binSize = 0.1;  // Adjust bin size as needed for distribution clarity
         const minPosition = Math.min(...positions);
         const maxPosition = Math.max(...positions);
-        
+
         // Generate bins based on min and max positions
         const binCount = Math.ceil((maxPosition - minPosition) / binSize);
         const bins = new Array(binCount).fill(0);
@@ -211,7 +211,7 @@
         // Create labels for bins (centered around bin intervals)
         const labels = bins.map((_, i) => (minPosition + (i * binSize) + binSize / 2).toFixed(2));
 
-        // Plot the histogram
+        // Plot the rotated histogram
         if (charts[chartId]) charts[chartId].destroy();
         charts[chartId] = new Chart(ctx, {
             type: 'bar',
@@ -224,18 +224,20 @@
                 }]
             },
             options: {
+                indexAxis: 'y',  // Rotates the chart so bars grow horizontally
                 scales: {
                     x: { 
-                        title: { display: true, text: 'Position' }
-                    },
-                    y: { 
                         beginAtZero: true,
                         title: { display: true, text: 'Frequency' }
+                    },
+                    y: { 
+                        title: { display: true, text: 'Position' }
                     }
                 }
             }
         });
     };
+
 
 
         function getRandomColor() {
