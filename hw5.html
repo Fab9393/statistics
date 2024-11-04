@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 5: Analisi e Simulazione</title>
+    <title>Homework 5: Analysis and Simulation</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Stili per l'header e il layout */
-        header, nav, footer {
+        header {
             background-color: #333;
             color: #ffffff;
             text-align: center;
@@ -83,54 +83,55 @@
     </nav>
 
     <main>
-        <h2>Homework 5: Analisi delle Disuguaglianze e Simulazione SDE</h2>
-        <section class="desc-content">
-            <div class="concept-panel">
-                <h3>1. Disuguaglianza di Cauchy-Schwarz</h3>
-                <p>La disuguaglianza di Cauchy-Schwarz è fondamentale in matematica e afferma che per tutti i vettori x e y vale:</p>
-                <pre> |x·y| ≤ ||x|| ||y||</pre>
-                <p>Da dimostrare nel modo più semplice possibile utilizzando il coefficiente di normalizzazione r.</p>
-            </div>
-
-            <div class="concept-panel">
-                <h3>2. Indipendenza e Non Correlazione</h3>
-                <p>Riflettere sulle differenze tra indipendenza e non correlazione. La non correlazione implica indipendenza? Identificare le misure adeguate per ciascun concetto.</p>
-            </div>
-
-            <div class="concept-panel">
-                <h3>3. Simulatore E-M: Implementazione Generale</h3>
-                <p>Migliorare il simulatore di Euler-Maruyama creando una struttura centrale e generale che possa gestire diversi tipi di equazioni differenziali stocastiche (SDE).</p>
-            </div>
-
-            <div class="concept-panel">
-                <h3>4. [Opzionale] Derivazione dei Coefficienti di Regressione</h3>
-                <p>Derivare i coefficienti delle due rette di regressione usando il metodo dei minimi quadrati, e mostrare le relazioni con R².</p>
-            </div>
-        </section>
+        <h2>Homework 5: Inequality Analysis and SDE Simulation</h2>
 
         <!-- Area di Controllo per Simulazione -->
-        <h3>Controlli Simulatore E-M</h3>
+        <h3>Controls Simulator E-M</h3>
         <div id="controls">
-            <label for="walkers">Numero di Simulazioni:</label>
+            <label for="walkers">Siumlations Number:</label>
             <input type="number" id="walkers" value="30" min="1">
 
-            <label for="time">Tempo Totale:</label>
+            <label for="time">Total Time:</label>
             <input type="number" id="time" value="1" step="0.1" min="0.1">
 
-            <label for="dt">Passo temporale (dt):</label>
+            <label for="dt">Time Step (dt):</label>
             <input type="number" id="dt" value="0.01" step="0.001" min="0.001">
 
             <button id="simulateButton">Avvia Simulazione</button>
         </div>
 
         <!-- Grafici di Simulazione -->
-        <h3>Risultati della Simulazione</h3>
+        <h3>Simulation Results</h3>
         <div class="chart-container">
             <canvas id="trajectoryChart"></canvas>
         </div>
         <div class="chart-container">
             <canvas id="distributionChart"></canvas>
         </div>
+
+        <section class="desc-content">
+            <div class="concept-panel">
+                <h3>1. Cauchy-Schwarz Inequality</h3>
+                <p>The Cauchy-Schwarz inequality is fundamental in mathematics and states that for all vectors x and y:</p>
+                <pre> |x·y| ≤ ||x|| ||y||</pre>
+                <p>Prove it in the simplest way possible using the normalization coefficient r.</p>
+            </div>
+
+            <div class="concept-panel">
+                <h3>2. Independence and Non-Correlation</h3>
+                <p>Reflect on the differences between independence and non-correlation. Does non-correlation imply independence? Identify the appropriate measures for each concept.</p>
+            </div>
+
+            <div class="concept-panel">
+                <h3>3. E-M Simulator: General Implementation</h3>
+                <p>Enhance the Euler-Maruyama simulator by creating a central and general structure that can handle various types of stochastic differential equations (SDEs).</p>
+            </div>
+
+            <div class="concept-panel">
+                <h3>4. [Optional] Derivation of Regression Coefficients</h3>
+                <p>Derive the coefficients of the two regression lines using the least squares method, and show the relationships with R².</p>
+            </div>
+        </section>
 
         <footer>
             <p>&copy;2024 Fabio Figara - Homework 5</p>
