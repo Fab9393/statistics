@@ -194,7 +194,7 @@
         const ctx = document.getElementById(chartId).getContext('2d');
 
         // Define bin size for the histogram
-        const binSize = 0.1;  // Adjust bin size as needed for distribution clarity
+        const binSize = 0.1;  // Adjust bin size as needed
         const minPosition = Math.min(...positions);
         const maxPosition = Math.max(...positions);
 
@@ -209,7 +209,13 @@
         });
 
         // Create labels for bins (centered around bin intervals)
-        const labels = bins.map((_, i) => (minPosition + (i * binSize) + binSize / 2).toFixed(2));
+        let labels = bins.map((_, i) => (minPosition + (i * binSize) + binSize / 2).toFixed(2));
+
+        // Sort labels and bins in descending order
+        const sortedData = labels.map((label, index) => ({ label, count: bins[index] }))
+                                .sort((a, b) => b.label - a.label);
+        labels = sortedData.map(item => item.label);
+        const sortedBins = sortedData.map(item => item.count);
 
         // Plot the rotated histogram
         if (charts[chartId]) charts[chartId].destroy();
@@ -219,7 +225,7 @@
                 labels,
                 datasets: [{
                     label: 'Final Distribution',
-                    data: bins,
+                    data: sortedBins,
                     backgroundColor: '#007bff'
                 }]
             },
