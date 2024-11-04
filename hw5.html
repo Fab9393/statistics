@@ -191,23 +191,52 @@
         };
 
         const plotDistribution = (positions, chartId) => {
-            const ctx = document.getElementById(chartId).getContext('2d');
-            const positionCounts = positions.reduce((acc, pos) => {
-                const roundedPos = pos.toFixed(2);
-                acc[roundedPos] = (acc[roundedPos] || 0) + 1;
-                return acc;
-            }, {});
+        const ctx = document.getElementById(chartId).getContext('2d');
 
-            const labels = Object.keys(positionCounts).sort();
-            const data = labels.map(label => positionCounts[label]);
+        // Define bin size for the histogram
+        const binSize = 0.1;  // Adjust bin size as needed for distribution clarity
+        const minPosition = Math.min(...positions);
+        const maxPosition = Math.max(...positions);
+        
+        // Generate bins based on min and max positions
+        const binCount = Math.ceil((maxPosition - minPosition) / binSize);
+        const bins = new Array(binCount).fill(0);
 
-            if (charts[chartId]) charts[chartId].destroy();
-            charts[chartId] = new Chart(ctx, {
-                type: 'bar',
-                data: { labels, datasets: [{ label: 'Distribuzione Finale', data, backgroundColor: '#007bff' }] },
-                options: { scales: { y: { beginAtZero: true } } }
-            });
-        };
+        // Count positions in each bin
+        positions.forEach(position => {
+            const binIndex = Math.floor((position - minPosition) / binSize);
+            bins[binIndex]++;
+        });
+
+        // Create labels for bins (centered around bin intervals)
+        const labels = bins.map((_, i) => (minPosition + (i * binSize) + binSize / 2).toFixed(2));
+
+        // Plot the histogram
+        if (charts[chartId]) charts[chartId].destroy();
+        charts[chartId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Final Distribution',
+                    data: bins,
+                    backgroundColor: '#007bff'
+                }]
+            },
+            options: {
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Position' }
+                    },
+                    y: { 
+                        beginAtZero: true,
+                        title: { display: true, text: 'Frequency' }
+                    }
+                }
+            }
+        });
+    };
+
 
         function getRandomColor() {
             return '#' + Math.floor(Math.random() * 16777215).toString(16);
