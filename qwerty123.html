@@ -8,8 +8,10 @@
         body {
             display: flex;
             margin: 0;
+            height: 100vh;
             font-family: Arial, sans-serif;
         }
+        /* Menu laterale */
         .sidebar {
             width: 150px;
             background-color: #f4f4f4;
@@ -24,12 +26,15 @@
             cursor: pointer;
             margin: 10px 0;
         }
+        /* Area di editing a schermo intero */
         .editing-area {
             flex: 1;
             position: relative;
             background-color: #eaeaea;
             overflow: hidden;
+            height: 100vh;
         }
+        /* Dispositivi e punti di connessione */
         .device {
             position: absolute;
             width: 60px;
@@ -49,10 +54,12 @@
         .right { top: 25px; right: -5px; }
         .bottom { bottom: -5px; left: 25px; }
         .left { top: 25px; left: -5px; }
+        /* Linea per collegamenti */
         .line {
             position: absolute;
             background-color: black;
             width: 2px;
+            transform-origin: top left;
             pointer-events: none;
         }
         .label {
@@ -68,7 +75,7 @@
     <!-- Menu Laterale -->
     <div class="sidebar">
         <h3>Menu</h3>
-        <img id="addDevice" src="device.png" alt="Aggiungi dispositivo">
+        <img id="addDevice" src="device-removebg-preview.png" alt="Aggiungi dispositivo">
         <button id="addLink">Aggiungi Collegamento</button>
         <button id="addLabel">Aggiungi Etichetta</button>
     </div>
@@ -86,14 +93,14 @@
         let selectedDevice = null;
         let selectedPoint = null;
         
-        // Aggiunge un dispositivo
+        // Funzione per aggiungere un dispositivo
         addDeviceButton.addEventListener('click', () => {
             let device = document.createElement('div');
             device.classList.add('device');
             device.style.left = '100px';
             device.style.top = '100px';
             device.innerHTML = `
-                <img src="device.png" width="100%">
+                <img src="device-removebg-preview.png" width="100%">
                 <div class="connector-point top" data-position="top"></div>
                 <div class="connector-point right" data-position="right"></div>
                 <div class="connector-point bottom" data-position="bottom"></div>
@@ -135,6 +142,7 @@
             element.querySelectorAll('.connector-point').forEach(point => {
                 point.addEventListener('click', (e) => {
                     if (!linkMode) return;
+
                     if (!selectedDevice) {
                         selectedDevice = element;
                         selectedPoint = point;
@@ -149,22 +157,7 @@
             });
         }
 
-        // Aggiunta di etichette di testo
-        addLabelButton.addEventListener('click', () => {
-            if (!labelMode) return;
-            let labelText = prompt("Inserisci il testo dell'etichetta:");
-            if (labelText) {
-                let label = document.createElement('div');
-                label.classList.add('label');
-                label.innerText = labelText;
-                label.style.left = '100px';
-                label.style.top = '100px';
-                makeDraggable(label);
-                editingArea.appendChild(label);
-            }
-        });
-
-        // Disegna una linea tra due punti
+        // Funzione per disegnare una linea tra due punti di connessione
         function drawLink(device1, point1, device2, point2) {
             let line = document.createElement('div');
             line.classList.add('line');
@@ -172,7 +165,7 @@
             updateLine(line, point1, point2);
         }
 
-        // Aggiorna la posizione della linea tra due punti
+        // Funzione aggiornata per calcolare la posizione e l'angolo della linea tra i punti
         function updateLine(line, point1, point2) {
             let rect1 = point1.getBoundingClientRect();
             let rect2 = point2.getBoundingClientRect();
@@ -180,13 +173,16 @@
             let y1 = rect1.top + rect1.height / 2 - editingArea.getBoundingClientRect().top;
             let x2 = rect2.left + rect2.width / 2 - editingArea.getBoundingClientRect().left;
             let y2 = rect2.top + rect2.height / 2 - editingArea.getBoundingClientRect().top;
+            let length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
+            let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+            line.style.width = `${length}px`;
             line.style.left = `${x1}px`;
             line.style.top = `${y1}px`;
-            line.style.height = `${Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)}px`;
-            line.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+            line.style.transform = `rotate(${angle}deg)`;
         }
 
-        // Aggiorna tutte le linee in caso di movimento dei dispositivi
+        // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
         function updateLines() {
             document.querySelectorAll('.line').forEach(line => {
                 let points = line.getAttribute('data-points').split(',');
