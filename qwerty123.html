@@ -157,30 +157,28 @@
             });
         }
 
-        // Funzione per disegnare una linea tra due punti di connessione
         function drawLink(device1, point1, device2, point2) {
             let line = document.createElement('div');
             line.classList.add('line');
+            // Assegna gli ID dei punti alla linea
+            line.setAttribute('data-points', `${point1.getAttribute('data-position')}-${point2.getAttribute('data-position')}`);
             editingArea.appendChild(line);
             updateLine(line, point1, point2);
         }
 
-        // Funzione aggiornata per calcolare la posizione e l'angolo della linea tra i punti
-        function updateLine(line, point1, point2) {
-            let rect1 = point1.getBoundingClientRect();
-            let rect2 = point2.getBoundingClientRect();
-            let x1 = rect1.left + rect1.width / 2 - editingArea.getBoundingClientRect().left;
-            let y1 = rect1.top + rect1.height / 2 - editingArea.getBoundingClientRect().top;
-            let x2 = rect2.left + rect2.width / 2 - editingArea.getBoundingClientRect().left;
-            let y2 = rect2.top + rect2.height / 2 - editingArea.getBoundingClientRect().top;
-            let length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
-            let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
 
-            line.style.width = `${length}px`;
-            line.style.left = `${x1}px`;
-            line.style.top = `${y1}px`;
-            line.style.transform = `rotate(${angle}deg)`;
+        // Funzione aggiornata per calcolare la posizione e l'angolo della linea tra i punti
+        function updateLines() {
+            document.querySelectorAll('.line').forEach(line => {
+                let [pos1, pos2] = line.getAttribute('data-points').split('-');
+                let point1 = document.querySelector(`.connector-point[data-position="${pos1}"]`);
+                let point2 = document.querySelector(`.connector-point[data-position="${pos2}"]`);
+                if (point1 && point2) {
+                    updateLine(line, point1, point2);
+                }
+            });
         }
+
 
         // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
         function updateLines() {
