@@ -59,8 +59,7 @@
             position: absolute;
             background-color: black;
             width: 2px;
-            transform-origin: top left;
-            pointer-events: none;
+            pointer-events: none; /* Per evitare che la linea interferisca con i clic */
         }
         .label {
             position: absolute;
@@ -115,13 +114,13 @@
         // Modalità collegamento
         addLinkButton.addEventListener('click', () => {
             linkMode = !linkMode;
-            linkMode ? addLinkButton.style.backgroundColor = 'lightblue' : addLinkButton.style.backgroundColor = '';
+            addLinkButton.style.backgroundColor = linkMode ? 'lightblue' : '';
         });
 
         // Modalità etichetta
         addLabelButton.addEventListener('click', () => {
             labelMode = !labelMode;
-            labelMode ? addLabelButton.style.backgroundColor = 'lightgreen' : addLabelButton.style.backgroundColor = '';
+            addLabelButton.style.backgroundColor = labelMode ? 'lightgreen' : '';
         });
 
         // Funzione per rendere un elemento trascinabile
@@ -163,13 +162,13 @@
         function drawLink(device1, point1, device2, point2) {
             let line = document.createElement('div');
             line.classList.add('line');
-            line.dataset.point1 = JSON.stringify({ device: device1, point: point1 });
-            line.dataset.point2 = JSON.stringify({ device: device2, point: point2 });
             editingArea.appendChild(line);
             updateLine(line, point1, point2);
+            line.dataset.point1 = `${device1.style.left},${device1.style.top},${point1.dataset.position}`;
+            line.dataset.point2 = `${device2.style.left},${device2.style.top},${point2.dataset.position}`;
         }
 
-        // Funzione aggiornata per calcolare la posizione e l'angolo della linea tra i punti
+        // Funzione per calcolare la posizione e l'angolo della linea tra i punti
         function updateLine(line, point1, point2) {
             let rect1 = point1.getBoundingClientRect();
             let rect2 = point2.getBoundingClientRect();
@@ -189,9 +188,14 @@
         // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
         function updateLines() {
             document.querySelectorAll('.line').forEach(line => {
-                let data1 = JSON.parse(line.dataset.point1);
-                let data2 = JSON.parse(line.dataset.point2);
-                updateLine(line, data1.point, data2.point);
+                let [x1, y1, position1] = line.dataset.point1.split(',').map(Number);
+                let [x2, y2, position2] = line.dataset.point2.split(',').map(Number);
+                // Trova i punti di connessione da posizioni
+                let point1 = document.querySelector(`.device[style*="left: ${x1}px"][style*="top: ${y1}px"] .connector-point.${position1}`);
+                let point2 = document.querySelector(`.device[style*="left: ${x2}px"][style*="top: ${y2}px"] .connector-point.${position2}`);
+                if (point1 && point2) {
+                    updateLine(line, point1, point2);
+                }
             });
         }
 
