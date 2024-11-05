@@ -68,6 +68,8 @@
             font-weight: bold;
             color: blue;
             cursor: move;
+            padding: 2px 5px;
+            border: 1px dashed gray;
         }
     </style>
 </head>
@@ -92,7 +94,7 @@
         let labelMode = false;
         let selectedDevice = null;
         let selectedPoint = null;
-        
+
         // Funzione per aggiungere un dispositivo
         addDeviceButton.addEventListener('click', () => {
             let device = document.createElement('div');
@@ -161,8 +163,8 @@
         function drawLink(device1, point1, device2, point2) {
             let line = document.createElement('div');
             line.classList.add('line');
-            line.setAttribute('data-point1', `${device1.dataset.id}-${point1.dataset.position}`);
-            line.setAttribute('data-point2', `${device2.dataset.id}-${point2.dataset.position}`);
+            line.dataset.point1 = JSON.stringify({ device: device1, point: point1 });
+            line.dataset.point2 = JSON.stringify({ device: device2, point: point2 });
             editingArea.appendChild(line);
             updateLine(line, point1, point2);
         }
@@ -187,11 +189,9 @@
         // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
         function updateLines() {
             document.querySelectorAll('.line').forEach(line => {
-                let point1 = document.querySelector(`[data-position="${line.getAttribute('data-point1')}"]`);
-                let point2 = document.querySelector(`[data-position="${line.getAttribute('data-point2')}"]`);
-                if (point1 && point2) {
-                    updateLine(line, point1, point2);
-                }
+                let data1 = JSON.parse(line.dataset.point1);
+                let data2 = JSON.parse(line.dataset.point2);
+                updateLine(line, data1.point, data2.point);
             });
         }
 
@@ -201,6 +201,7 @@
 
             let label = document.createElement('div');
             label.classList.add('label');
+            label.contentEditable = true; // Rende l'etichetta modificabile
             label.textContent = 'Etichetta';
             label.style.left = `${e.clientX - editingArea.getBoundingClientRect().left}px`;
             label.style.top = `${e.clientY - editingArea.getBoundingClientRect().top}px`;
