@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lavagna Grafica Elegante</title>
+    <title>Lavagna Grafica Avanzata</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #eaeaea;
+            background-color: #f0f4f8;
         }
         #canvas {
             border: 2px solid #333;
-            background-color: #f9f9f9;
+            background-color: #ffffff;
             position: absolute;
             z-index: 1;
         }
         .label {
             position: absolute;
             padding: 8px;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             cursor: move;
             user-select: none;
             z-index: 2;
@@ -33,9 +33,52 @@
             outline: none;
             background: rgba(255, 255, 200, 0.9);
         }
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        .toolbar button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toolbar button:hover {
+            background: #0056b3;
+        }
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu label {
+            margin-right: 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
+<div class="toolbar">
+    <div class="menu">
+        <label for="entityType">Seleziona Tipo:</label>
+        <select id="entityType">
+            <option value="circle">Cerchio</option>
+            <option value="label">Etichetta</option>
+        </select>
+    </div>
+    <button id="clearCanvasBtn">Pulisci Lavagna</button>
+</div>
 
 <canvas id="canvas"></canvas>
 
@@ -47,7 +90,8 @@
 
     const circles = [];
     const lines = [];
-    let draggingLabel = null;
+    let lastClickedEntity = null;
+    let currentMode = 'circle'; // Modalità attuale: cerchio o etichetta
 
     // Aggiunge un cerchio alla lavagna
     function addCircle(x, y, radius = 30) {
@@ -56,9 +100,9 @@
         draw();
     }
 
-    // Aggiunge una linea tra due cerchi
-    function addLine(fromCircle, toCircle) {
-        const line = { from: fromCircle, to: toCircle };
+    // Aggiunge una linea tra due entità
+    function addLine(fromEntity, toEntity) {
+        const line = { from: fromEntity, to: toEntity };
         lines.push(line);
         draw();
     }
@@ -67,7 +111,7 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = 'lightblue';
-        
+
         // Disegna cerchi
         circles.forEach(circle => {
             ctx.beginPath();
@@ -87,7 +131,7 @@
         });
     }
 
-    // Funzione per creare etichette
+    // Crea un'etichetta
     function createLabel(x, y, text) {
         const label = document.createElement('input');
         label.type = 'text';
@@ -105,21 +149,21 @@
         let offsetX, offsetY;
 
         label.addEventListener('mousedown', (e) => {
-            draggingLabel = label;
             offsetX = e.clientX - label.getBoundingClientRect().left;
             offsetY = e.clientY - label.getBoundingClientRect().top;
+            label.style.zIndex = 3; // Porta l'etichetta in cima
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (draggingLabel) {
-                draggingLabel.style.left = `${e.clientX - offsetX}px`;
-                draggingLabel.style.top = `${e.clientY - offsetY}px`;
+            if (label.style.zIndex === "3") {
+                label.style.left = `${e.clientX - offsetX}px`;
+                label.style.top = `${e.clientY - offsetY}px`;
                 drawLinesFromLabels();
             }
         });
 
         document.addEventListener('mouseup', () => {
-            draggingLabel = null;
+            label.style.zIndex = 2; // Ripristina lo z-index
         });
 
         label.addEventListener('focus', () => {
@@ -133,30 +177,81 @@
         const labels = document.querySelectorAll('.label');
         labels.forEach(label => {
             const rect = label.getBoundingClientRect();
-            const circle = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            const labelCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
             circles.forEach(c => {
-                if (Math.hypot(circle.x - c.x, circle.y - c.y) < c.radius) {
-                    addLine(circle, c);
+                if (Math.hypot(labelCenter.x - c.x, labelCenter.y - c.y) < c.radius) {
+                    addLine(labelCenter, c);
                 }
             });
         });
         draw();
     }
 
-    // Aggiunge cerchi ed etichette all'avvio
+    // Aggiungi cerchi ed etichette all'avvio
     window.onload = () => {
+        // Inizializza con un cerchio e un'etichetta
         addCircle(200, 200);
-        addCircle(400, 400);
-        createLabel(200, 180, 'Cerchio 1');
-        createLabel(400, 380, 'Cerchio 2');
+        createLabel(200, 160, 'Cerchio 1');
     };
 
-    // Aggiungi un cerchio con un clic
+    // Seleziona il tipo di entità da aggiungere
+    document.getElementById('entityType').addEventListener('change', (e) => {
+        currentMode = e.target.value;
+    });
+
+    // Aggiungi cerchi o etichette con il clic sinistro
     canvas.addEventListener('click', (e) => {
         const x = e.clientX;
         const y = e.clientY;
-        addCircle(x, y);
-        createLabel(x, y - 40, 'Nuovo Cerchio');
+        if (currentMode === 'circle') {
+            addCircle(x, y);
+            createLabel(x, y - 40, 'Nuovo Cerchio');
+        } else if (currentMode === 'label') {
+            createLabel(x, y, 'Nuova Etichetta');
+        }
+    });
+
+    // Aggiungi linee con il clic destro
+    canvas.addEventListener('contextmenu', (e) => {
+        e.preventDefault(); // Evita il menu contestuale del browser
+        const x = e.clientX;
+        const y = e.clientY;
+
+        if (currentMode === 'circle') {
+            const clickedCircle = circles.find(circle => Math.hypot(circle.x - x, circle.y - y) < circle.radius);
+            if (clickedCircle) {
+                if (lastClickedEntity && lastClickedEntity !== clickedCircle) {
+                    addLine(lastClickedEntity, clickedCircle);
+                    lastClickedEntity = null; // Reset dell'entità precedente
+                } else {
+                    lastClickedEntity = clickedCircle; // Salva l'entità corrente
+                }
+            }
+        } else if (currentMode === 'label') {
+            const clickedLabel = document.querySelectorAll('.label');
+            clickedLabel.forEach(label => {
+                const rect = label.getBoundingClientRect();
+                const labelCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+                if (Math.hypot(labelCenter.x - x, labelCenter.y - y) < 30) {
+                    if (lastClickedEntity && lastClickedEntity !== label) {
+                        const label1Center = { x: lastClickedEntity.getBoundingClientRect().left + lastClickedEntity.offsetWidth / 2,
+                                                y: lastClickedEntity.getBoundingClientRect().top + lastClickedEntity.offsetHeight / 2 };
+                        addLine(label1Center, labelCenter);
+                        lastClickedEntity = null; // Reset dell'etichetta precedente
+                    } else {
+                        lastClickedEntity = label; // Salva l'etichetta corrente
+                    }
+                }
+            });
+        }
+    });
+
+    // Pulisci la lavagna
+    document.getElementById('clearCanvasBtn').addEventListener('click', () => {
+        circles.length = 0;
+        lines.length = 0;
+        document.querySelectorAll('.label').forEach(label => label.remove());
+        draw();
     });
 </script>
 
