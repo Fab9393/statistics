@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramma Interattivo</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 150px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar img, .sidebar button {
+            width: 80px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .editing-area {
+            flex: 1;
+            position: relative;
+            background-color: #eaeaea;
+            overflow: hidden;
+        }
+        .device {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            cursor: move;
+            text-align: center;
+        }
+        .connector-point {
+            width: 10px;
+            height: 10px;
+            background-color: #007bff;
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .top { top: -5px; left: 25px; }
+        .right { top: 25px; right: -5px; }
+        .bottom { bottom: -5px; left: 25px; }
+        .left { top: 25px; left: -5px; }
+        .line {
+            position: absolute;
+            background-color: black;
+            width: 2px;
+            pointer-events: none;
+        }
+        .label {
+            position: absolute;
+            font-size: 18px;
+            font-weight: bold;
+            color: blue;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Laterale -->
+    <div class="sidebar">
+        <h3>Menu</h3>
+        <img id="addDevice" src="device.png" alt="Aggiungi dispositivo">
+        <button id="addLink">Aggiungi Collegamento</button>
+        <button id="addLabel">Aggiungi Etichetta</button>
+    </div>
+
+    <!-- Area di Editing -->
+    <div id="editingArea" class="editing-area"></div>
+
+    <script>
+        let editingArea = document.getElementById('editingArea');
+        let addDeviceButton = document.getElementById('addDevice');
+        let addLinkButton = document.getElementById('addLink');
+        let addLabelButton = document.getElementById('addLabel');
+        let linkMode = false;
+        let labelMode = false;
+        let selectedDevice = null;
+        let selectedPoint = null;
+        
+        // Aggiunge un dispositivo
+        addDeviceButton.addEventListener('click', () => {
+            let device = document.createElement('div');
+            device.classList.add('device');
+            device.style.left = '100px';
+            device.style.top = '100px';
+            device.innerHTML = `
+                <img src="device.png" width="100%">
+                <div class="connector-point top" data-position="top"></div>
+                <div class="connector-point right" data-position="right"></div>
+                <div class="connector-point bottom" data-position="bottom"></div>
+                <div class="connector-point left" data-position="left"></div>
+            `;
+            makeDraggable(device);
+            editingArea.appendChild(device);
+        });
+
+        // Modalità collegamento
+        addLinkButton.addEventListener('click', () => {
+            linkMode = !linkMode;
+            linkMode ? addLinkButton.style.backgroundColor = 'lightblue' : addLinkButton.style.backgroundColor = '';
+        });
+
+        // Modalità etichetta
+        addLabelButton.addEventListener('click', () => {
+            labelMode = !labelMode;
+            labelMode ? addLabelButton.style.backgroundColor = 'lightgreen' : addLabelButton.style.backgroundColor = '';
+        });
+
+        // Funzione per rendere un elemento trascinabile
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+            element.onmousedown = (e) => {
+                offsetX = e.clientX - element.offsetLeft;
+                offsetY = e.clientY - element.offsetTop;
+                document.onmousemove = (e) => {
+                    element.style.left = `${e.clientX - offsetX}px`;
+                    element.style.top = `${e.clientY - offsetY}px`;
+                    updateLines();
+                };
+                document.onmouseup = () => {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                };
+            };
+
+            element.querySelectorAll('.connector-point').forEach(point => {
+                point.addEventListener('click', (e) => {
+                    if (!linkMode) return;
+                    if (!selectedDevice) {
+                        selectedDevice = element;
+                        selectedPoint = point;
+                        point.style.backgroundColor = 'red';
+                    } else {
+                        drawLink(selectedDevice, selectedPoint, element, point);
+                        selectedPoint.style.backgroundColor = '#007bff';
+                        selectedDevice = null;
+                        selectedPoint = null;
+                    }
+                });
+            });
+        }
+
+        // Aggiunta di etichette di testo
+        addLabelButton.addEventListener('click', () => {
+            if (!labelMode) return;
+            let labelText = prompt("Inserisci il testo dell'etichetta:");
+            if (labelText) {
+                let label = document.createElement('div');
+                label.classList.add('label');
+                label.innerText = labelText;
+                label.style.left = '100px';
+                label.style.top = '100px';
+                makeDraggable(label);
+                editingArea.appendChild(label);
+            }
+        });
+
+        // Disegna una linea tra due punti
+        function drawLink(device1, point1, device2, point2) {
+            let line = document.createElement('div');
+            line.classList.add('line');
+            editingArea.appendChild(line);
+            updateLine(line, point1, point2);
+        }
+
+        // Aggiorna la posizione della linea tra due punti
+        function updateLine(line, point1, point2) {
+            let rect1 = point1.getBoundingClientRect();
+            let rect2 = point2.getBoundingClientRect();
+            let x1 = rect1.left + rect1.width / 2 - editingArea.getBoundingClientRect().left;
+            let y1 = rect1.top + rect1.height / 2 - editingArea.getBoundingClientRect().top;
+            let x2 = rect2.left + rect2.width / 2 - editingArea.getBoundingClientRect().left;
+            let y2 = rect2.top + rect2.height / 2 - editingArea.getBoundingClientRect().top;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.height = `${Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)}px`;
+            line.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+        }
+
+        // Aggiorna tutte le linee in caso di movimento dei dispositivi
+        function updateLines() {
+            document.querySelectorAll('.line').forEach(line => {
+                let points = line.getAttribute('data-points').split(',');
+                let [point1, point2] = points.map(id => document.getElementById(id));
+                if (point1 && point2) {
+                    updateLine(line, point1, point2);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
