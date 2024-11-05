@@ -2,271 +2,67 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lavagna Grafica Avanzata</title>
+    <title>Lavagna Grafica Futuristica</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #f0f4f8;
-        }
-        #canvas {
-            border: 2px solid #333;
-            background-color: #ffffff;
-            position: absolute;
-            z-index: 1;
-        }
-        .label {
-            position: absolute;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            cursor: move;
-            user-select: none;
-            z-index: 2;
-            transition: background 0.3s;
-        }
-        .label:focus {
-            outline: none;
-            background: rgba(255, 255, 200, 0.9);
-        }
-        .toolbar {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-        .toolbar button {
-            margin: 0 5px;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            background: #007BFF;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .toolbar button:hover {
-            background: #0056b3;
-        }
-        .menu {
             display: flex;
+            justify-content: center;
             align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            color: #fff;
         }
-        .menu label {
-            margin-right: 5px;
-            font-weight: bold;
+        canvas {
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff, 0 0 80px #0ff;
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-<div class="toolbar">
-    <div class="menu">
-        <label for="entityType">Seleziona Tipo:</label>
-        <select id="entityType">
-            <option value="circle">Cerchio</option>
-            <option value="label">Etichetta</option>
-        </select>
-    </div>
-    <button id="clearCanvasBtn">Pulisci Lavagna</button>
-</div>
+        canvas.addEventListener('click', function (e) {
+            const x = e.offsetX;
+            const y = e.offsetY;
+            drawCircle(x, y);
+        });
 
-<canvas id="canvas"></canvas>
+        let circles = [];
 
-<script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const circles = [];
-    const lines = [];
-    let lastClickedEntity = null;
-    let currentMode = 'circle'; // Modalità attuale: cerchio o etichetta
-    let addingEntity = true; // Stato per controllare se aggiungere o interagire
-
-    // Aggiunge un cerchio alla lavagna
-    function addCircle(x, y, radius = 30) {
-        const circle = { x, y, radius };
-        circles.push(circle);
-        draw();
-    }
-
-    // Aggiunge una linea tra due entità
-    function addLine(fromEntity, toEntity) {
-        const line = { from: fromEntity, to: toEntity };
-        lines.push(line);
-        draw();
-    }
-
-    // Disegna cerchi e linee
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'lightblue';
-
-        // Disegna cerchi
-        circles.forEach(circle => {
+        function drawCircle(x, y) {
             ctx.beginPath();
-            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.arc(x, y, 20, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
             ctx.fill();
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
             ctx.stroke();
-        });
+            circles.push({ x, y });
+        }
 
-        // Disegna linee
-        ctx.strokeStyle = '#666';
-        lines.forEach(line => {
+        function drawLine(x1, y1, x2, y2) {
             ctx.beginPath();
-            ctx.moveTo(line.from.x, line.from.y);
-            ctx.lineTo(line.to.x, line.to.y);
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#0ff';
+            ctx.shadowBlur = 10;
             ctx.stroke();
-        });
-    }
-
-    // Crea un'etichetta
-    function createLabel(x, y, text) {
-        const label = document.createElement('input');
-        label.type = 'text';
-        label.value = text || 'Etichetta';
-        label.className = 'label';
-        label.style.left = `${x}px`;
-        label.style.top = `${y}px`;
-        document.body.appendChild(label);
-        makeLabelDraggable(label);
-        return label;
-    }
-
-    // Rende un'etichetta trascinabile
-    function makeLabelDraggable(label) {
-        let offsetX, offsetY;
-
-        label.addEventListener('mousedown', (e) => {
-            offsetX = e.clientX - label.getBoundingClientRect().left;
-            offsetY = e.clientY - label.getBoundingClientRect().top;
-            label.style.zIndex = 3; // Porta l'etichetta in cima
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (label.style.zIndex === "3") {
-                label.style.left = `${e.clientX - offsetX}px`;
-                label.style.top = `${e.clientY - offsetY}px`;
-                drawLinesFromLabels();
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            label.style.zIndex = 2; // Ripristina lo z-index
-        });
-
-        label.addEventListener('focus', () => {
-            label.select();
-        });
-    }
-
-    // Trascina le linee quando le etichette si muovono
-    function drawLinesFromLabels() {
-        lines.length = 0; // Pulisce le linee
-        const labels = document.querySelectorAll('.label');
-        labels.forEach(label => {
-            const rect = label.getBoundingClientRect();
-            const labelCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-            circles.forEach(c => {
-                if (Math.hypot(labelCenter.x - c.x, labelCenter.y - c.y) < c.radius) {
-                    addLine(labelCenter, c);
-                }
-            });
-        });
-        draw();
-    }
-
-    // Inizializza la lavagna
-    window.onload = () => {
-        // Inizializza con un cerchio e un'etichetta
-        addCircle(200, 200);
-        createLabel(200, 160, 'Cerchio 1');
-    };
-
-    // Seleziona il tipo di entità da aggiungere
-    document.getElementById('entityType').addEventListener('change', (e) => {
-        currentMode = e.target.value;
-    });
-
-    // Aggiungi cerchi o etichette con il clic sinistro
-    canvas.addEventListener('click', (e) => {
-        const x = e.clientX;
-        const y = e.clientY;
-        if (addingEntity) {
-            if (currentMode === 'circle') {
-                addCircle(x, y);
-                createLabel(x, y - 40, 'Nuovo Cerchio');
-            } else if (currentMode === 'label') {
-                createLabel(x, y, 'Nuova Etichetta');
-            }
-            addingEntity = false; // Passa allo stato di interazione
         }
-    });
 
-    // Aggiungi linee con il clic destro
-    canvas.addEventListener('contextmenu', (e) => {
-        e.preventDefault(); // Evita il menu contestuale del browser
-        const x = e.clientX;
-        const y = e.clientY;
-
-        if (currentMode === 'circle') {
-            const clickedCircle = circles.find(circle => Math.hypot(circle.x - x, circle.y - y) < circle.radius);
-            if (clickedCircle) {
-                if (lastClickedEntity && lastClickedEntity !== clickedCircle) {
-                    addLine(lastClickedEntity, clickedCircle);
-                    lastClickedEntity = null; // Reset dell'entità precedente
-                } else {
-                    lastClickedEntity = clickedCircle; // Salva l'entità corrente
-                }
-            }
-        } else if (currentMode === 'label') {
-            const clickedLabel = document.querySelectorAll('.label');
-            clickedLabel.forEach(label => {
-                const rect = label.getBoundingClientRect();
-                const labelCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-                if (Math.hypot(labelCenter.x - x, labelCenter.y - y) < 30) {
-                    if (lastClickedEntity && lastClickedEntity !== label) {
-                        const label1Center = { x: lastClickedEntity.getBoundingClientRect().left + lastClickedEntity.offsetWidth / 2,
-                                                y: lastClickedEntity.getBoundingClientRect().top + lastClickedEntity.offsetHeight / 2 };
-                        addLine(label1Center, labelCenter);
-                        lastClickedEntity = null; // Reset dell'etichetta precedente
-                    } else {
-                        lastClickedEntity = label; // Salva l'etichetta corrente
-                    }
-                }
-            });
-        }
-    });
-
-    // Pulisci la lavagna
-    document.getElementById('clearCanvasBtn').addEventListener('click', () => {
-        circles.length = 0;
-        lines.length = 0;
-        document.querySelectorAll('.label').forEach(label => label.remove());
-        draw();
-        addingEntity = true; // Ripristina lo stato di aggiunta
-    });
-
-    // Permette di interagire con gli elementi esistenti
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            addingEntity = true; // Torna allo stato di aggiunta
-        }
-    });
-
-</script>
-
+        canvas.addEventListener('dblclick', function (e) {
+            if (circles.length < 2) return;
+            const lastCircle = circles[circles.length - 1];
+            const secondLastCircle = circles[circles.length - 2];
+            drawLine(secondLastCircle.x, secondLastCircle.y, lastCircle.x, lastCircle.y);
+        });
+    </script>
 </body>
 </html>
