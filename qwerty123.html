@@ -3,85 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagramma Interattivo</title>
+    <title>Diagramma Interattivo Moderno</title>
     <style>
         body {
-            display: flex;
             margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
         }
-        /* Menu laterale */
+        /* Stili per la sidebar */
         .sidebar {
-            width: 150px;
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-right: 1px solid #ccc;
+            width: 200px;
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
         .sidebar img, .sidebar button {
-            width: 80px;
-            cursor: pointer;
+            width: 100px;
             margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        /* Area di editing a schermo intero */
+        .sidebar img:hover, .sidebar button:hover {
+            transform: scale(1.1);
+        }
+        button {
+            background-color: #2980b9;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            color: #ecf0f1;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #3498db;
+        }
+        /* Area di editing */
         .editing-area {
             flex: 1;
             position: relative;
-            background-color: #eaeaea;
+            background-color: #ecf0f1;
             overflow: hidden;
-            height: 100vh;
         }
-        /* Dispositivi e punti di connessione */
+        /* Stili per i dispositivi */
         .device {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             cursor: move;
             text-align: center;
+            transition: transform 0.2s;
+        }
+        .device:hover {
+            transform: scale(1.05);
         }
         .connector-point {
-            width: 10px;
-            height: 10px;
-            background-color: #007bff;
+            width: 12px;
+            height: 12px;
+            background-color: #3498db;
             position: absolute;
             border-radius: 50%;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
-        .top { top: -5px; left: 25px; }
-        .right { top: 25px; right: -5px; }
-        .bottom { bottom: -5px; left: 25px; }
-        .left { top: 25px; left: -5px; }
-        /* Linea per collegamenti */
+        .connector-point:hover {
+            background-color: #2980b9;
+        }
+        .top { top: -6px; left: 50%; transform: translateX(-50%); }
+        .right { top: 50%; right: -6px; transform: translateY(-50%); }
+        .bottom { bottom: -6px; left: 50%; transform: translateX(-50%); }
+        .left { top: 50%; left: -6px; transform: translateY(-50%); }
+        /* Linee di collegamento */
         .line {
             position: absolute;
-            background-color: black;
-            width: 2px;
-            pointer-events: none; /* Per evitare che la linea interferisca con i clic */
+            background-color: #2c3e50;
+            pointer-events: none;
+            transition: background-color 0.2s;
         }
+        /* Etichette */
         .label {
             position: absolute;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: blue;
+            color: #2980b9;
             cursor: move;
-            padding: 2px 5px;
-            border: 1px dashed gray;
+            background-color: #ecf0f1;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            padding: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Menu Laterale -->
     <div class="sidebar">
         <h3>Menu</h3>
         <img id="addDevice" src="device-removebg-preview.png" alt="Aggiungi dispositivo">
-        <button id="addLink">Aggiungi Collegamento</button>
-        <button id="addLabel">Aggiungi Etichetta</button>
+        <button id="addLink">Collegamento</button>
+        <button id="addLabel">Etichetta</button>
     </div>
 
-    <!-- Area di Editing -->
     <div id="editingArea" class="editing-area"></div>
 
     <script>
@@ -114,13 +142,13 @@
         // Modalità collegamento
         addLinkButton.addEventListener('click', () => {
             linkMode = !linkMode;
-            addLinkButton.style.backgroundColor = linkMode ? 'lightblue' : '';
+            addLinkButton.style.backgroundColor = linkMode ? '#2980b9' : '#3498db';
         });
 
         // Modalità etichetta
         addLabelButton.addEventListener('click', () => {
             labelMode = !labelMode;
-            addLabelButton.style.backgroundColor = labelMode ? 'lightgreen' : '';
+            addLabelButton.style.backgroundColor = labelMode ? '#2980b9' : '#3498db';
         });
 
         // Funzione per rendere un elemento trascinabile
@@ -142,15 +170,16 @@
 
             element.querySelectorAll('.connector-point').forEach(point => {
                 point.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Impedisce il click di propagarsi al documento
                     if (!linkMode) return;
 
                     if (!selectedDevice) {
                         selectedDevice = element;
                         selectedPoint = point;
-                        point.style.backgroundColor = 'red';
+                        point.style.backgroundColor = '#e74c3c'; // Rosso per il punto selezionato
                     } else {
                         drawLink(selectedDevice, selectedPoint, element, point);
-                        selectedPoint.style.backgroundColor = '#007bff';
+                        selectedPoint.style.backgroundColor = '#3498db'; // Ripristina il colore originale
                         selectedDevice = null;
                         selectedPoint = null;
                     }
@@ -164,8 +193,8 @@
             line.classList.add('line');
             editingArea.appendChild(line);
             updateLine(line, point1, point2);
-            line.dataset.point1 = `${device1.style.left},${device1.style.top},${point1.dataset.position}`;
-            line.dataset.point2 = `${device2.style.left},${device2.style.top},${point2.dataset.position}`;
+            line.dataset.device1 = `${device1.style.left},${device1.style.top},${point1.dataset.position}`;
+            line.dataset.device2 = `${device2.style.left},${device2.style.top},${point2.dataset.position}`;
         }
 
         // Funzione per calcolare la posizione e l'angolo della linea tra i punti
@@ -188,32 +217,15 @@
         // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
         function updateLines() {
             document.querySelectorAll('.line').forEach(line => {
-                let [x1, y1, position1] = line.dataset.point1.split(',').map(Number);
-                let [x2, y2, position2] = line.dataset.point2.split(',').map(Number);
-                // Trova i punti di connessione da posizioni
-                let point1 = document.querySelector(`.device[style*="left: ${x1}px"][style*="top: ${y1}px"] .connector-point.${position1}`);
-                let point2 = document.querySelector(`.device[style*="left: ${x2}px"][style*="top: ${y2}px"] .connector-point.${position2}`);
+                let [x1, y1, position1] = line.dataset.device1.split(',').map(Number);
+                let [x2, y2, position2] = line.dataset.device2.split(',').map(Number);
+                let point1 = document.querySelector(`.connector-point[data-position="${position1}"]`);
+                let point2 = document.querySelector(`.connector-point[data-position="${position2}"]`);
                 if (point1 && point2) {
                     updateLine(line, point1, point2);
                 }
             });
         }
-
-        // Funzione per aggiungere una nuova etichetta
-        editingArea.addEventListener('click', (e) => {
-            if (!labelMode) return;
-
-            let label = document.createElement('div');
-            label.classList.add('label');
-            label.contentEditable = true; // Rende l'etichetta modificabile
-            label.textContent = 'Etichetta';
-            label.style.left = `${e.clientX - editingArea.getBoundingClientRect().left}px`;
-            label.style.top = `${e.clientY - editingArea.getBoundingClientRect().top}px`;
-            makeDraggable(label);
-            editingArea.appendChild(label);
-            labelMode = false;
-            addLabelButton.style.backgroundColor = '';
-        });
     </script>
 </body>
 </html>
