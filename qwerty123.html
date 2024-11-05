@@ -92,6 +92,7 @@
     const lines = [];
     let lastClickedEntity = null;
     let currentMode = 'circle'; // Modalità attuale: cerchio o etichetta
+    let addingEntity = true; // Stato per controllare se aggiungere o interagire
 
     // Aggiunge un cerchio alla lavagna
     function addCircle(x, y, radius = 30) {
@@ -187,7 +188,7 @@
         draw();
     }
 
-    // Aggiungi cerchi ed etichette all'avvio
+    // Inizializza la lavagna
     window.onload = () => {
         // Inizializza con un cerchio e un'etichetta
         addCircle(200, 200);
@@ -203,11 +204,14 @@
     canvas.addEventListener('click', (e) => {
         const x = e.clientX;
         const y = e.clientY;
-        if (currentMode === 'circle') {
-            addCircle(x, y);
-            createLabel(x, y - 40, 'Nuovo Cerchio');
-        } else if (currentMode === 'label') {
-            createLabel(x, y, 'Nuova Etichetta');
+        if (addingEntity) {
+            if (currentMode === 'circle') {
+                addCircle(x, y);
+                createLabel(x, y - 40, 'Nuovo Cerchio');
+            } else if (currentMode === 'label') {
+                createLabel(x, y, 'Nuova Etichetta');
+            }
+            addingEntity = false; // Passa allo stato di interazione
         }
     });
 
@@ -252,7 +256,16 @@
         lines.length = 0;
         document.querySelectorAll('.label').forEach(label => label.remove());
         draw();
+        addingEntity = true; // Ripristina lo stato di aggiunta
     });
+
+    // Permette di interagire con gli elementi esistenti
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            addingEntity = true; // Torna allo stato di aggiunta
+        }
+    });
+
 </script>
 
 </body>
