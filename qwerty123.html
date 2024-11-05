@@ -3,229 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagramma Interattivo Moderno</title>
+    <title>Lavagna Grafica Elegante</title>
     <style>
         body {
-            margin: 0;
             font-family: 'Arial', sans-serif;
-            display: flex;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        /* Stili per la sidebar */
-        .sidebar {
-            width: 200px;
-            background-color: #34495e;
-            color: #ecf0f1;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-        .sidebar img, .sidebar button {
-            width: 100px;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .sidebar img:hover, .sidebar button:hover {
-            transform: scale(1.1);
-        }
-        button {
-            background-color: #2980b9;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            color: #ecf0f1;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #3498db;
-        }
-        /* Area di editing */
-        .editing-area {
-            flex: 1;
-            position: relative;
-            background-color: #ecf0f1;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
+            background-color: #eaeaea;
         }
-        /* Stili per i dispositivi */
-        .device {
+        #canvas {
+            border: 2px solid #333;
+            background-color: #f9f9f9;
             position: absolute;
-            width: 70px;
-            height: 70px;
-            cursor: move;
-            text-align: center;
-            transition: transform 0.2s;
+            z-index: 1;
         }
-        .device:hover {
-            transform: scale(1.05);
-        }
-        .connector-point {
-            width: 12px;
-            height: 12px;
-            background-color: #3498db;
-            position: absolute;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .connector-point:hover {
-            background-color: #2980b9;
-        }
-        .top { top: -6px; left: 50%; transform: translateX(-50%); }
-        .right { top: 50%; right: -6px; transform: translateY(-50%); }
-        .bottom { bottom: -6px; left: 50%; transform: translateX(-50%); }
-        .left { top: 50%; left: -6px; transform: translateY(-50%); }
-        /* Linee di collegamento */
-        .line {
-            position: absolute;
-            background-color: #2c3e50;
-            pointer-events: none;
-            transition: background-color 0.2s;
-        }
-        /* Etichette */
         .label {
             position: absolute;
-            font-size: 16px;
-            font-weight: bold;
-            color: #2980b9;
-            cursor: move;
-            background-color: #ecf0f1;
-            border: 1px solid #3498db;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 5px;
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: move;
+            user-select: none;
+            z-index: 2;
+            transition: background 0.3s;
+        }
+        .label:focus {
+            outline: none;
+            background: rgba(255, 255, 200, 0.9);
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Menu</h3>
-        <img id="addDevice" src="device-removebg-preview.png" alt="Aggiungi dispositivo">
-        <button id="addLink">Collegamento</button>
-        <button id="addLabel">Etichetta</button>
-    </div>
 
-    <div id="editingArea" class="editing-area"></div>
+<canvas id="canvas"></canvas>
 
-    <script>
-        let editingArea = document.getElementById('editingArea');
-        let addDeviceButton = document.getElementById('addDevice');
-        let addLinkButton = document.getElementById('addLink');
-        let addLabelButton = document.getElementById('addLabel');
-        let linkMode = false;
-        let labelMode = false;
-        let selectedDevice = null;
-        let selectedPoint = null;
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-        // Funzione per aggiungere un dispositivo
-        addDeviceButton.addEventListener('click', () => {
-            let device = document.createElement('div');
-            device.classList.add('device');
-            device.style.left = '100px';
-            device.style.top = '100px';
-            device.innerHTML = `
-                <img src="device-removebg-preview.png" width="100%">
-                <div class="connector-point top" data-position="top"></div>
-                <div class="connector-point right" data-position="right"></div>
-                <div class="connector-point bottom" data-position="bottom"></div>
-                <div class="connector-point left" data-position="left"></div>
-            `;
-            makeDraggable(device);
-            editingArea.appendChild(device);
+    const circles = [];
+    const lines = [];
+    let draggingLabel = null;
+
+    // Aggiunge un cerchio alla lavagna
+    function addCircle(x, y, radius = 30) {
+        const circle = { x, y, radius };
+        circles.push(circle);
+        draw();
+    }
+
+    // Aggiunge una linea tra due cerchi
+    function addLine(fromCircle, toCircle) {
+        const line = { from: fromCircle, to: toCircle };
+        lines.push(line);
+        draw();
+    }
+
+    // Disegna cerchi e linee
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'lightblue';
+        
+        // Disegna cerchi
+        circles.forEach(circle => {
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.stroke();
         });
 
-        // Modalità collegamento
-        addLinkButton.addEventListener('click', () => {
-            linkMode = !linkMode;
-            addLinkButton.style.backgroundColor = linkMode ? '#2980b9' : '#3498db';
+        // Disegna linee
+        ctx.strokeStyle = '#666';
+        lines.forEach(line => {
+            ctx.beginPath();
+            ctx.moveTo(line.from.x, line.from.y);
+            ctx.lineTo(line.to.x, line.to.y);
+            ctx.stroke();
+        });
+    }
+
+    // Funzione per creare etichette
+    function createLabel(x, y, text) {
+        const label = document.createElement('input');
+        label.type = 'text';
+        label.value = text || 'Etichetta';
+        label.className = 'label';
+        label.style.left = `${x}px`;
+        label.style.top = `${y}px`;
+        document.body.appendChild(label);
+        makeLabelDraggable(label);
+        return label;
+    }
+
+    // Rende un'etichetta trascinabile
+    function makeLabelDraggable(label) {
+        let offsetX, offsetY;
+
+        label.addEventListener('mousedown', (e) => {
+            draggingLabel = label;
+            offsetX = e.clientX - label.getBoundingClientRect().left;
+            offsetY = e.clientY - label.getBoundingClientRect().top;
         });
 
-        // Modalità etichetta
-        addLabelButton.addEventListener('click', () => {
-            labelMode = !labelMode;
-            addLabelButton.style.backgroundColor = labelMode ? '#2980b9' : '#3498db';
+        document.addEventListener('mousemove', (e) => {
+            if (draggingLabel) {
+                draggingLabel.style.left = `${e.clientX - offsetX}px`;
+                draggingLabel.style.top = `${e.clientY - offsetY}px`;
+                drawLinesFromLabels();
+            }
         });
 
-        // Funzione per rendere un elemento trascinabile
-        function makeDraggable(element) {
-            let offsetX, offsetY;
-            element.onmousedown = (e) => {
-                offsetX = e.clientX - element.offsetLeft;
-                offsetY = e.clientY - element.offsetTop;
-                document.onmousemove = (e) => {
-                    element.style.left = `${e.clientX - offsetX}px`;
-                    element.style.top = `${e.clientY - offsetY}px`;
-                    updateLines();
-                };
-                document.onmouseup = () => {
-                    document.onmousemove = null;
-                    document.onmouseup = null;
-                };
-            };
+        document.addEventListener('mouseup', () => {
+            draggingLabel = null;
+        });
 
-            element.querySelectorAll('.connector-point').forEach(point => {
-                point.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Impedisce il click di propagarsi al documento
-                    if (!linkMode) return;
+        label.addEventListener('focus', () => {
+            label.select();
+        });
+    }
 
-                    if (!selectedDevice) {
-                        selectedDevice = element;
-                        selectedPoint = point;
-                        point.style.backgroundColor = '#e74c3c'; // Rosso per il punto selezionato
-                    } else {
-                        drawLink(selectedDevice, selectedPoint, element, point);
-                        selectedPoint.style.backgroundColor = '#3498db'; // Ripristina il colore originale
-                        selectedDevice = null;
-                        selectedPoint = null;
-                    }
-                });
-            });
-        }
-
-        // Funzione per disegnare una linea tra due punti di connessione
-        function drawLink(device1, point1, device2, point2) {
-            let line = document.createElement('div');
-            line.classList.add('line');
-            editingArea.appendChild(line);
-            updateLine(line, point1, point2);
-            line.dataset.device1 = `${device1.style.left},${device1.style.top},${point1.dataset.position}`;
-            line.dataset.device2 = `${device2.style.left},${device2.style.top},${point2.dataset.position}`;
-        }
-
-        // Funzione per calcolare la posizione e l'angolo della linea tra i punti
-        function updateLine(line, point1, point2) {
-            let rect1 = point1.getBoundingClientRect();
-            let rect2 = point2.getBoundingClientRect();
-            let x1 = rect1.left + rect1.width / 2 - editingArea.getBoundingClientRect().left;
-            let y1 = rect1.top + rect1.height / 2 - editingArea.getBoundingClientRect().top;
-            let x2 = rect2.left + rect2.width / 2 - editingArea.getBoundingClientRect().left;
-            let y2 = rect2.top + rect2.height / 2 - editingArea.getBoundingClientRect().top;
-            let length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
-            let angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-
-            line.style.width = `${length}px`;
-            line.style.left = `${x1}px`;
-            line.style.top = `${y1}px`;
-            line.style.transform = `rotate(${angle}deg)`;
-        }
-
-        // Funzione per aggiornare tutte le linee quando i dispositivi si spostano
-        function updateLines() {
-            document.querySelectorAll('.line').forEach(line => {
-                let [x1, y1, position1] = line.dataset.device1.split(',').map(Number);
-                let [x2, y2, position2] = line.dataset.device2.split(',').map(Number);
-                let point1 = document.querySelector(`.connector-point[data-position="${position1}"]`);
-                let point2 = document.querySelector(`.connector-point[data-position="${position2}"]`);
-                if (point1 && point2) {
-                    updateLine(line, point1, point2);
+    // Trascina le linee quando le etichette si muovono
+    function drawLinesFromLabels() {
+        lines.length = 0; // Pulisce le linee
+        const labels = document.querySelectorAll('.label');
+        labels.forEach(label => {
+            const rect = label.getBoundingClientRect();
+            const circle = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            circles.forEach(c => {
+                if (Math.hypot(circle.x - c.x, circle.y - c.y) < c.radius) {
+                    addLine(circle, c);
                 }
             });
-        }
-    </script>
+        });
+        draw();
+    }
+
+    // Aggiunge cerchi ed etichette all'avvio
+    window.onload = () => {
+        addCircle(200, 200);
+        addCircle(400, 400);
+        createLabel(200, 180, 'Cerchio 1');
+        createLabel(400, 380, 'Cerchio 2');
+    };
+
+    // Aggiungi un cerchio con un clic
+    canvas.addEventListener('click', (e) => {
+        const x = e.clientX;
+        const y = e.clientY;
+        addCircle(x, y);
+        createLabel(x, y - 40, 'Nuovo Cerchio');
+    });
+</script>
+
 </body>
 </html>
