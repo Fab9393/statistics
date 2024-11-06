@@ -72,6 +72,9 @@
             position: absolute;
             cursor: move;
             transition: box-shadow 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .shape:hover {
@@ -88,21 +91,26 @@
         .shape.circle {
             width: 100px;
             height: 100px;
-            background: #5ee7df;
+            background: #2763a2;
             border-radius: 50%;
         }
 
         .shape.line {
             width: 150px;
             height: 5px;
-            background: #fc466b;
+            background: #000000;
             border-radius: 2px;
         }
 
-        /* Per rendere le forme ridimensionabili */
-        .shape.resizable {
-            resize: both;
-            overflow: hidden;
+        /* Stile delle maniglie di ridimensionamento */
+        .resize-handle {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            position: absolute;
+            cursor: nwse-resize;
+            right: 0;
+            bottom: 0;
         }
     </style>
 </head>
@@ -123,14 +131,20 @@
             const shape = document.createElement("div");
             
             // Aggiungi classi in base al tipo di forma
-            shape.classList.add("shape", type, "resizable");
+            shape.classList.add("shape", type);
 
             // Imposta la posizione iniziale
             shape.style.top = `${Math.random() * (canvas.clientHeight - 100)}px`;
             shape.style.left = `${Math.random() * (canvas.clientWidth - 100)}px`;
 
-            // Aggiungi evento di trascinamento
+            // Crea maniglia di ridimensionamento e aggiungila alla forma
+            const resizeHandle = document.createElement("div");
+            resizeHandle.classList.add("resize-handle");
+            shape.appendChild(resizeHandle);
+
+            // Aggiungi evento di trascinamento e ridimensionamento
             makeDraggable(shape);
+            makeResizable(shape, resizeHandle);
 
             // Aggiungi la forma al canvas
             canvas.appendChild(shape);
@@ -140,6 +154,7 @@
         function makeDraggable(element) {
             let offsetX, offsetY;
             element.onmousedown = function(e) {
+                if (e.target.classList.contains("resize-handle")) return;
                 e.preventDefault();
                 offsetX = e.clientX - element.offsetLeft;
                 offsetY = e.clientY - element.offsetTop;
@@ -158,15 +173,25 @@
             }
         }
 
-        // Rendi le forme ridimensionabili
-        document.addEventListener("DOMContentLoaded", () => {
-            const shapes = document.querySelectorAll(".shape.resizable");
-            shapes.forEach((shape) => {
-                shape.addEventListener("mousedown", function(e) {
-                    e.stopPropagation();
-                });
-            });
-        });
+        // Funzione per rendere le forme ridimensionabili tramite la maniglia
+        function makeResizable(element, handle) {
+            handle.onmousedown = function(e) {
+                e.preventDefault();
+                document.onmousemove = resizeElement;
+                document.onmouseup = stopResize;
+            };
+
+            function resizeElement(e) {
+                const rect = element.getBoundingClientRect();
+                element.style.width = `${e.clientX - rect.left}px`;
+                element.style.height = `${e.clientY - rect.top}px`;
+            }
+
+            function stopResize() {
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        }
     </script>
 </body>
 </html>
