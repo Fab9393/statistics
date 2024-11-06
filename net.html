@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strumento Grafico - Generatore di Forme</title>
+    <style>
+        /* Stile generico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Stile della sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(135deg, #5b86e5, #36d1dc);
+            color: #fff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .sidebar p {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar button {
+            background: #fff;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background: #36d1dc;
+            color: #fff;
+        }
+
+        /* Stile dell'area di disegno */
+        .canvas {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+            height: 100vh;
+            background-color: #f3f4f6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Stile delle forme */
+        .shape {
+            position: absolute;
+            cursor: move;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .shape:hover {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .shape.square {
+            width: 100px;
+            height: 100px;
+            background: #f093fb;
+            border-radius: 8px;
+        }
+
+        .shape.circle {
+            width: 100px;
+            height: 100px;
+            background: #5ee7df;
+            border-radius: 50%;
+        }
+
+        .shape.line {
+            width: 150px;
+            height: 5px;
+            background: #fc466b;
+            border-radius: 2px;
+        }
+
+        /* Per rendere le forme ridimensionabili */
+        .shape.resizable {
+            resize: both;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Strumento Grafico</h2>
+        <p>Seleziona una forma per aggiungerla alla tela:</p>
+        <button onclick="createShape('square')">Quadrato</button>
+        <button onclick="createShape('circle')">Cerchio</button>
+        <button onclick="createShape('line')">Linea</button>
+    </div>
+    <div class="canvas" id="canvas"></div>
+    
+    <script>
+        // Funzione per creare una forma e aggiungerla alla tela
+        function createShape(type) {
+            const canvas = document.getElementById("canvas");
+            const shape = document.createElement("div");
+            
+            // Aggiungi classi in base al tipo di forma
+            shape.classList.add("shape", type, "resizable");
+
+            // Imposta la posizione iniziale
+            shape.style.top = `${Math.random() * (canvas.clientHeight - 100)}px`;
+            shape.style.left = `${Math.random() * (canvas.clientWidth - 100)}px`;
+
+            // Aggiungi evento di trascinamento
+            makeDraggable(shape);
+
+            // Aggiungi la forma al canvas
+            canvas.appendChild(shape);
+        }
+
+        // Funzione per rendere le forme trascinabili
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+            element.onmousedown = function(e) {
+                e.preventDefault();
+                offsetX = e.clientX - element.offsetLeft;
+                offsetY = e.clientY - element.offsetTop;
+                document.onmousemove = onMouseMove;
+                document.onmouseup = onMouseUp;
+            };
+
+            function onMouseMove(e) {
+                element.style.left = `${e.clientX - offsetX}px`;
+                element.style.top = `${e.clientY - offsetY}px`;
+            }
+
+            function onMouseUp() {
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        }
+
+        // Rendi le forme ridimensionabili
+        document.addEventListener("DOMContentLoaded", () => {
+            const shapes = document.querySelectorAll(".shape.resizable");
+            shapes.forEach((shape) => {
+                shape.addEventListener("mousedown", function(e) {
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
