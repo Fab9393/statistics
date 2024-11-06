@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 5 - Enhanced Simulation</title>
+    <title>Simulatore SDE - Euler-Maruyama</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,27 +17,33 @@
             text-align: center;
             padding-bottom: 10px;
         }
-        .section {
-            margin-bottom: 20px;
-            padding: 20px;
+        .container {
+            max-width: 800px;
+            margin: auto;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
-        h2 {
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 10px;
+            display: block;
+            margin-bottom: 5px;
         }
-        .output, .input-section {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #e8f5e9;
-            border-radius: 5px;
-            font-size: 1rem;
-            color: #333;
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         button {
-            margin-top: 10px;
+            margin-top: 20px;
             padding: 10px 20px;
             font-size: 1rem;
             color: white;
@@ -45,117 +51,135 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            display: block;
+            width: 100%;
         }
         button:hover {
             background-color: #2980b9;
         }
-        .chart-container {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        #chart-container {
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
-<h1>Homework 5 - Enhanced Simulation</h1>
+<div class="container">
+    <h1>Simulatore SDE - Metodo di Euler-Maruyama</h1>
+    
+    <!-- Input parameters -->
+    <div class="input-group">
+        <label for="steps">Numero di passi:</label>
+        <input type="number" id="steps" value="100" min="1">
+    </div>
+    <div class="input-group">
+        <label for="dt">Dimensione di ogni passo (dt):</label>
+        <input type="number" id="dt" value="0.01" step="0.001" min="0.001">
+    </div>
+    <div class="input-group">
+        <label for="X0">Valore iniziale (X0):</label>
+        <input type="number" id="X0" value="0.5" step="0.1">
+    </div>
+    <div class="input-group">
+        <label for="mu">Drift (μ):</label>
+        <input type="number" id="mu" value="0.1" step="0.1">
+    </div>
+    <div class="input-group">
+        <label for="sigma">Volatilità (σ):</label>
+        <input type="number" id="sigma" value="0.2" step="0.1">
+    </div>
+    <div class="input-group">
+        <label for="numPaths">Numero di cammini:</label>
+        <input type="number" id="numPaths" value="3" min="1">
+    </div>
+    
+    <!-- Button to run simulation -->
+    <button onclick="simulateSDE()">Esegui Simulazione</button>
 
-<div class="section input-section">
-    <h2>Set Simulation Parameters</h2>
-    <label>Steps: <input type="number" id="steps" value="100"></label><br>
-    <label>dt: <input type="number" id="dt" value="0.01" step="0.01"></label><br>
-    <label>X0: <input type="number" id="X0" value="0.5" step="0.1"></label><br>
-    <label>mu: <input type="number" id="mu" value="0.1" step="0.1"></label><br>
-    <label>sigma: <input type="number" id="sigma" value="0.2" step="0.1"></label><br>
-    <label>Number of Paths: <input type="number" id="numPaths" value="5" min="1"></label><br>
-    <button onclick="simulateSDE()">Run Simulation</button>
+    <!-- Chart container -->
+    <div id="chart-container">
+        <canvas id="sdeChart"></canvas>
+    </div>
 </div>
 
-<div class="section chart-container">
-    <canvas id="sdeChart" width="800" height="400"></canvas>
-</div>
-
+<!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Function to simulate the SDE and plot multiple paths
-// Function to simulate the SDE and plot multiple paths
-function simulateSDE() {
-    // Retrieve user input
-    const steps = parseInt(document.getElementById("steps").value);
-    const dt = parseFloat(document.getElementById("dt").value);
-    const X0 = parseFloat(document.getElementById("X0").value);
-    const mu = parseFloat(document.getElementById("mu").value);
-    const sigma = parseFloat(document.getElementById("sigma").value);
-    const numPaths = parseInt(document.getElementById("numPaths").value);
+    // Function to simulate the SDE and plot multiple paths
+    function simulateSDE() {
+        // Retrieve user input
+        const steps = parseInt(document.getElementById("steps").value);
+        const dt = parseFloat(document.getElementById("dt").value);
+        const X0 = parseFloat(document.getElementById("X0").value);
+        const mu = parseFloat(document.getElementById("mu").value);
+        const sigma = parseFloat(document.getElementById("sigma").value);
+        const numPaths = parseInt(document.getElementById("numPaths").value);
 
-    // Data structure to hold paths
-    const allPaths = [];
+        // Data structure to hold paths
+        const allPaths = [];
 
-    for (let j = 0; j < numPaths; j++) {
-        let X = X0;
-        let path = [X];
+        for (let j = 0; j < numPaths; j++) {
+            let X = X0;
+            let path = [X];
 
-        for (let i = 1; i <= steps; i++) {
-            const dW = Math.sqrt(dt) * (Math.random() * 2 - 1);
-            X += mu * X * dt + sigma * X * dW;
-            path.push(X);
+            for (let i = 1; i <= steps; i++) {
+                const dW = Math.sqrt(dt) * (Math.random() * 2 - 1);
+                X += mu * X * dt + sigma * X * dW;
+                path.push(X);
+            }
+            allPaths.push(path);
         }
-        allPaths.push(path);
-    }
 
-    // Prepare data for Chart.js
-    const datasets = allPaths.map((path, index) => ({
-        label: `Path ${index + 1}`,
-        data: path,
-        borderColor: `hsl(${(index * 360) / numPaths}, 70%, 50%)`,
-        fill: false,
-        tension: 0.1,
-        pointRadius: 0,
-    }));
+        // Prepare data for Chart.js
+        const datasets = allPaths.map((path, index) => ({
+            label: `Path ${index + 1}`,
+            data: path,
+            borderColor: `hsl(${(index * 360) / numPaths}, 70%, 50%)`,
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0,
+        }));
 
-    // Chart.js line chart setup
-    const ctx = document.getElementById("sdeChart").getContext("2d");
+        // Chart.js line chart setup
+        const ctx = document.getElementById("sdeChart").getContext("2d");
 
-    // Check if a chart instance already exists, then destroy it
-    if (window.sdeChart) {
-        window.sdeChart.destroy();
-    }
+        // Check if a chart instance already exists, then destroy it
+        if (window.sdeChart) {
+            window.sdeChart.destroy();
+        }
 
-    // Create a new chart instance
-    window.sdeChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length: steps + 1}, (_, i) => i),
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
+        // Create a new chart instance
+        window.sdeChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: steps + 1}, (_, i) => i),
+                datasets: datasets
             },
-            scales: {
-                x: {
-                    title: {
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Step'
-                    }
+                        position: 'top'
+                    },
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Value'
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Step'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
                     }
                 }
             }
-        }
-    });
-}
-
+        });
+    }
 </script>
 
 </body>
