@@ -91,14 +91,14 @@
         .shape.circle {
             width: 100px;
             height: 100px;
-            background: #2763a2;
+            background: #5ee7df;
             border-radius: 50%;
         }
 
         .shape.line {
             width: 150px;
             height: 5px;
-            background: #000000;
+            background: #fc466b;
             border-radius: 2px;
         }
 
@@ -144,7 +144,7 @@
 
             // Aggiungi evento di trascinamento e ridimensionamento
             makeDraggable(shape);
-            makeResizable(shape, resizeHandle);
+            makeResizable(shape, resizeHandle, type);
 
             // Aggiungi la forma al canvas
             canvas.appendChild(shape);
@@ -174,7 +174,7 @@
         }
 
         // Funzione per rendere le forme ridimensionabili tramite la maniglia
-        function makeResizable(element, handle) {
+        function makeResizable(element, handle, type) {
             handle.onmousedown = function(e) {
                 e.preventDefault();
                 document.onmousemove = resizeElement;
@@ -183,8 +183,15 @@
 
             function resizeElement(e) {
                 const rect = element.getBoundingClientRect();
-                element.style.width = `${e.clientX - rect.left}px`;
-                element.style.height = `${e.clientY - rect.top}px`;
+                
+                if (type === "line") {
+                    // Per le linee, modifica solo la larghezza
+                    element.style.width = `${e.clientX - rect.left}px`;
+                } else {
+                    // Per quadrati e cerchi, modifica sia la larghezza che l'altezza
+                    element.style.width = `${e.clientX - rect.left}px`;
+                    element.style.height = `${e.clientY - rect.top}px`;
+                }
             }
 
             function stopResize() {
