@@ -105,9 +105,9 @@
 <!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Function to simulate the SDE and plot multiple paths
-    function simulateSDE() {
-        // Retrieve user input
+    let charts = {}; // Object to hold Chart.js instances
+
+    const simulateSDE = () => {
         const steps = parseInt(document.getElementById("steps").value);
         const dt = parseFloat(document.getElementById("dt").value);
         const X0 = parseFloat(document.getElementById("X0").value);
@@ -115,54 +115,54 @@
         const sigma = parseFloat(document.getElementById("sigma").value);
         const numPaths = parseInt(document.getElementById("numPaths").value);
 
-        // Data structure to hold paths
-        const allPaths = [];
+        // Generate trajectories
+        const trajectories = generateTrajectories(numPaths, steps, dt, X0, mu, sigma);
 
-        for (let j = 0; j < numPaths; j++) {
+        // Plot the trajectories
+        plotTrajectories(trajectories, steps, dt, 'sdeChart');
+    };
+
+    // Function to generate trajectories based on SDE parameters
+    const generateTrajectories = (numPaths, steps, dt, X0, mu, sigma) => {
+        const trajectories = [];
+        for (let i = 0; i < numPaths; i++) {
             let X = X0;
-            let path = [X];
-
-            for (let i = 1; i <= steps; i++) {
+            const trajectory = [X];
+            for (let j = 1; j <= steps; j++) {
                 const dW = Math.sqrt(dt) * (Math.random() * 2 - 1);
                 X += mu * X * dt + sigma * X * dW;
-                path.push(X);
+                trajectory.push(X);
             }
-            allPaths.push(path);
+            trajectories.push(trajectory);
         }
+        return trajectories;
+    };
 
-        // Prepare data for Chart.js
-        const datasets = allPaths.map((path, index) => ({
+    // Function to plot trajectories on the chart
+    const plotTrajectories = (data, steps, dt, chartId) => {
+        const ctx = document.getElementById(chartId).getContext('2d');
+        const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
+
+        const datasets = data.map((trajectory, index) => ({
             label: `Path ${index + 1}`,
-            data: path,
-            borderColor: `hsl(${(index * 360) / numPaths}, 70%, 50%)`,
+            data: trajectory,
             fill: false,
-            tension: 0.1,
+            borderColor: getRandomColor(),
+            borderWidth: 1,
             pointRadius: 0,
         }));
 
-        // Chart.js line chart setup
-        const ctx = document.getElementById("sdeChart").getContext("2d");
+        // Destroy previous chart instance if it exists
+        if (charts[chartId]) charts[chartId].destroy();
 
-        // Check if a chart instance already exists, then destroy it
-        if (window.sdeChart) {
-            window.sdeChart.destroy();
-        }
-
-        // Create a new chart instance
-        window.sdeChart = new Chart(ctx, {
+        // Create a new chart
+        charts[chartId] = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({length: steps + 1}, (_, i) => i),
-                datasets: datasets
+                labels,
+                datasets
             },
             options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                },
                 scales: {
                     x: {
                         title: {
@@ -176,10 +176,22 @@
                             text: 'Value'
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
                 }
             }
         });
-    }
+    };
+
+    // Function to generate random colors for each path
+    const getRandomColor = () => {
+        const hue = Math.floor(Math.random() * 360);
+        return `hsl(${hue}, 70%, 50%)`;
+    };
 </script>
 
 </body>
