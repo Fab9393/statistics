@@ -1,198 +1,204 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 5: Analysis and Simulation</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Homework 5</title>
     <style>
-        /* Stili per l'header e il layout */
-        header {
-            background-color: #333;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        main {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        h2 {
-            font-size: 1.8em;
-        }
-
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
             color: #333;
         }
-
-        #controls {
+        h1 {
+            color: #444;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+        .section {
             margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        .concept-panel {
-            border: 1px solid #ccc;
-            padding: 15px;
-            width: 100%;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            max-width: 600px;
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
         }
-
+        .output {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: #333;
+        }
         button {
-            background-color: #007BFF;
-            color: white;
+            margin-top: 10px;
             padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #3498db;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
-
         button:hover {
-            background-color: #0056b3;
+            background-color: #2980b9;
         }
-
-        input[type="number"] {
-            width: 100px;
-            padding: 5px;
-        }
-
         .chart-container {
-            width: 100%;
-            max-width: 600px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-        </ul>
-    </nav>
 
-    <main>
-        <h2>Homework 5: Inequality Analysis and SDE Simulation</h2>
+<h1>Homework 5</h1>
 
-        <!-- Area di Controllo per Simulazione -->
-        <h3>Controls Simulator E-M</h3>
-        <div id="controls">
-            <label for="walkers">Siumlations Number:</label>
-            <input type="number" id="walkers" value="40" min="1">
+<div class="section">
+    <h2>Cauchy-Schwarz Inequality</h2>
+    <p>To prove the Cauchy-Schwarz inequality in the simplest possible way...</p>
+</div>
 
-            <label for="time">Total Time:</label>
-            <input type="number" id="time" value="10" step="1" min="0.1">
+<div class="section">
+    <h2>Independence vs. Uncorrelation</h2>
+    <p>Two random variables \( X \) and \( Y \) are <b>uncorrelated</b> if \( Cov(X, Y) = 0 \), which implies no linear relationship...</p>
+</div>
 
-            <label for="dt">Time Step (dt):</label>
-            <input type="number" id="dt" value="0.5" step="0.001" min="0.001">
+<div class="section">
+    <h2>Euler-Maruyama Simulator Enhancement</h2>
+    <button onclick="simulateSDE()">Run Simulation</button>
+    <div class="output" id="em-output">Simulation output will appear here.</div>
 
-            <button id="simulateButton">Avvia Simulazione</button>
-        </div>
+    <div class="chart-container">
+        <canvas id="lineChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="histogramChart"></canvas>
+    </div>
+</div>
 
-        <!-- Grafici di Simulazione -->
-        <h3>Simulation Results</h3>
-        <div class="chart-container">
-            <canvas id="trajectoryChart"></canvas>
-        </div>
+<div class="section">
+    <h2>[Optional] Regression Coefficients</h2>
+    <button onclick="calculateRegression()">Calculate Regression Coefficients</button>
+    <div class="output" id="regression-output">Regression output will appear here.</div>
+</div>
 
-        <section class="desc-content">
-            <div class="concept-panel">
-                <h3>1. Cauchy-Schwarz Inequality</h3>
-                <p>The Cauchy-Schwarz inequality is fundamental in mathematics and states that for all vectors x and y:</p>
-                <pre> |x·y| ≤ ||x|| ||y||</pre>
-                <p>Prove it in the simplest way possible using the normalization coefficient r.</p>
-            </div>
+<script>
+    // Setup charts globally
+    let lineChart, histogramChart;
 
-            <div class="concept-panel">
-                <h3>2. Independence and Non-Correlation</h3>
-                <p>Reflect on the differences between independence and non-correlation. Does non-correlation imply independence? Identify the appropriate measures for each concept.</p>
-            </div>
+    function simulateSDE() {
+        const steps = 100;
+        const dt = 0.01;
+        const X0 = 0.5;
+        const mu = 0.1;
+        const sigma = 0.2;
+        let X = X0;
+        let results = [];
+        let timeLabels = [];
 
-            <div class="concept-panel">
-                <h3>3. E-M Simulator: General Implementation</h3>
-                <p>Enhance the Euler-Maruyama simulator by creating a central and general structure that can handle various types of stochastic differential equations (SDEs).</p>
-            </div>
-
-            <div class="concept-panel">
-                <h3>4. [Optional] Derivation of Regression Coefficients</h3>
-                <p>Derive the coefficients of the two regression lines using the least squares method, and show the relationships with R².</p>
-            </div>
-        </section>
-
-        <footer>
-            <p>&copy;2024 Fabio Figara - Homework 5</p>
-        </footer>
-    </main>
-
-    <script>
-        let charts = {};
-
-        const simulateRandomWalk = () => {
-            const numWalkers = parseInt(document.getElementById('walkers').value);
-            const totalTime = parseFloat(document.getElementById('time').value);
-            const dt = parseFloat(document.getElementById('dt').value);
-
-            const steps = Math.ceil(totalTime / dt);
-            const trajectories = generateTrajectories(numWalkers, steps, dt);
-
-            const finalPositions = trajectories.map(t => t[t.length - 1]);
-
-            plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
-        };
-
-        const generateTrajectories = (numWalkers, steps, dt) => {
-            const trajectories = [];
-            for (let i = 0; i < numWalkers; i++) {
-                let position = 0;
-                const trajectory = [position];
-                for (let j = 0; j < steps; j++) {
-                    const jump = (Math.random() < 0.5 ? 1 : -1) * Math.sqrt(dt);
-                    position += jump;
-                    trajectory.push(position);
-                }
-                trajectories.push(trajectory);
-            }
-            return trajectories;
-        };
-
-        const plotTrajectories = (data, steps, dt, chartId) => {
-            const ctx = document.getElementById(chartId).getContext('2d');
-            const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
-
-            const datasets = data.map((trajectory, index) => ({
-                label: `Sim ${index + 1}`,
-                data: trajectory,
-                fill: false,
-                borderColor: getRandomColor(),
-                pointRadius: 0,
-            }));
-
-            if (charts[chartId]) charts[chartId].destroy();
-            charts[chartId] = new Chart(ctx, {
-                type: 'line',
-                data: { labels, datasets },
-                options: { scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
-            });
-        };
-
-
-
-        function getRandomColor() {
-            return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        // Generate data points
+        for (let i = 0; i < steps; i++) {
+            const dW = Math.sqrt(dt) * (Math.random() * 2 - 1); // Brownian motion
+            X += mu * X * dt + sigma * X * dW;
+            results.push(X.toFixed(4));
+            timeLabels.push((i * dt).toFixed(2));
         }
 
-        document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
-    </script>
+        document.getElementById("em-output").innerHTML = `Final Position: ${X.toFixed(4)}`;
+        
+        plotLineChart(timeLabels, results);
+        plotHistogram(results);
+    }
+
+    function plotLineChart(labels, data) {
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        
+        if (lineChart) lineChart.destroy();  // Destroy the old chart if it exists
+
+        lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'SDE Simulation Path',
+                    data: data,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Time' } },
+                    y: { title: { display: true, text: 'Value' }, beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    function plotHistogram(data) {
+        const ctx = document.getElementById('histogramChart').getContext('2d');
+
+        // Compute frequency of rounded values
+        const frequency = data.reduce((acc, val) => {
+            const roundedVal = Math.round(val * 10) / 10;
+            acc[roundedVal] = (acc[roundedVal] || 0) + 1;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(frequency).sort((a, b) => a - b);
+        const counts = labels.map(label => frequency[label]);
+
+        if (histogramChart) histogramChart.destroy();  // Destroy old chart if it exists
+
+        histogramChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Final Position Distribution',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: { beginAtZero: true, title: { display: true, text: 'Frequency' } },
+                    y: { title: { display: true, text: 'Final Position' } }
+                }
+            }
+        });
+    }
+
+    function calculateRegression() {
+        const X = [1, 2, 3, 4, 5];
+        const Y = [2.1, 2.9, 3.8, 4.2, 5.1];
+        const n = X.length;
+        const meanX = X.reduce((a, b) => a + b, 0) / n;
+        const meanY = Y.reduce((a, b) => a + b, 0) / n;
+
+        let numerator = 0;
+        let denominator = 0;
+        for (let i = 0; i < n; i++) {
+            numerator += (X[i] - meanX) * (Y[i] - meanY);
+            denominator += (X[i] - meanX) ** 2;
+        }
+        const b = numerator / denominator;
+        const a = meanY - b * meanX;
+
+        document.getElementById("regression-output").innerHTML = `Regression Coefficients: a = ${a.toFixed(2)}, b = ${b.toFixed(2)}`;
+    }
+</script>
+
 </body>
 </html>
