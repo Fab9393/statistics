@@ -146,6 +146,14 @@
             makeDraggable(shape);
             makeResizable(shape, resizeHandle, type);
 
+            // Aggiungi l'evento di clic con il tasto destro per cambiare la direzione della linea
+            if (type === "line") {
+                shape.addEventListener("contextmenu", function(e) {
+                    e.preventDefault();
+                    changeLineDirection(shape);
+                });
+            }
+
             // Aggiungi la forma al canvas
             canvas.appendChild(shape);
         }
@@ -197,6 +205,20 @@
             function stopResize() {
                 document.onmousemove = null;
                 document.onmouseup = null;
+            }
+        }
+
+        // Funzione per cambiare la direzione della linea da orizzontale a verticale
+        function changeLineDirection(line) {
+            const rect = line.getBoundingClientRect();
+            if (line.style.width > line.style.height) {
+                // Se la linea è orizzontale, la cambiamo in verticale
+                line.style.width = '5px';
+                line.style.height = `${rect.width}px`;
+            } else {
+                // Se la linea è verticale, la cambiamo in orizzontale
+                line.style.height = '5px';
+                line.style.width = `${rect.height}px`;
             }
         }
     </script>
