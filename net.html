@@ -112,23 +112,6 @@
             right: 0;
             bottom: 0;
         }
-
-        /* Stile dei cardini */
-        .anchor {
-            width: 10px;
-            height: 10px;
-            background-color: #333;
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        /* Linea */
-        .line-path {
-            position: absolute;
-            stroke: #fc466b;
-            stroke-width: 2;
-            fill: none;
-        }
     </style>
 </head>
 <body>
@@ -142,9 +125,6 @@
     <div class="canvas" id="canvas"></div>
     
     <script>
-        let selectedAnchor = null;
-        let selectedShape = null;
-
         // Funzione per creare una forma e aggiungerla alla tela
         function createShape(type) {
             const canvas = document.getElementById("canvas");
@@ -157,90 +137,33 @@
             shape.style.top = `${Math.random() * (canvas.clientHeight - 100)}px`;
             shape.style.left = `${Math.random() * (canvas.clientWidth - 100)}px`;
 
-            // Imposta le dimensioni iniziali per le forme
-            if (type === 'line') {
-                shape.style.width = '150px';
-            }
+            // Crea maniglia di ridimensionamento e aggiungila alla forma
+            const resizeHandle = document.createElement("div");
+            resizeHandle.classList.add("resize-handle");
+            shape.appendChild(resizeHandle);
 
-            // Crea i cardini (punti di interazione) sulle figure
-            createAnchors(shape);
-
-            // Crea maniglia di ridimensionamento
-            createResizeHandle(shape);
-
-            // Aggiungi evento di trascinamento
+            // Aggiungi evento di trascinamento e ridimensionamento
             makeDraggable(shape);
+            makeResizable(shape, resizeHandle, type);
 
-            // Aggiungi l'elemento alla tela
-            canvas.appendChild(shape);
-        }
-
-        // Crea cardini (maniglie di interazione) per ciascuna forma
-        function createAnchors(shape) {
-            const shapeRect = shape.getBoundingClientRect();
-            const anchors = [
-                { top: shapeRect.top - 5, left: shapeRect.left + shapeRect.width / 2 - 5 }, // Top center
-                { top: shapeRect.top + shapeRect.height - 5, left: shapeRect.left + shapeRect.width / 2 - 5 }, // Bottom center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left - 5 }, // Left center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left + shapeRect.width - 5 }, // Right center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left + shapeRect.width / 2 - 5 } // Center
-            ];
-
-            // Creare e posizionare ogni cardine
-            anchors.forEach(anchor => {
-                const anchorElement = document.createElement("div");
-                anchorElement.classList.add("anchor");
-                anchorElement.style.top = `${anchor.top}px`;
-                anchorElement.style.left = `${anchor.left}px`;
-
-                anchorElement.addEventListener("click", () => onAnchorClick(shape, anchorElement));
-                shape.appendChild(anchorElement);
-            });
-        }
-
-        // Funzione per creare la maniglia di ridimensionamento
-        function createResizeHandle(shape) {
-            const handle = document.createElement("div");
-            handle.classList.add("resize-handle");
-            handle.addEventListener("mousedown", (e) => onResizeStart(e, shape));
-            shape.appendChild(handle);
-        }
-
-        // Gestione clic sui cardini
-        function onAnchorClick(shape, anchor) {
-            if (selectedAnchor && selectedShape !== shape) {
-                // Crea una linea tra il punto di ancoraggio selezionato e il nuovo
-                drawLine(selectedAnchor, anchor);
-                selectedAnchor = null;
-                selectedShape = null;
-            } else {
-                selectedAnchor = anchor;
-                selectedShape = shape;
+            // Aggiungi l'evento di clic con il tasto destro per cambiare la direzione della linea
+            if (type === "line") {
+                shape.addEventListener("contextmenu", function(e) {
+                    e.preventDefault();
+                    changeLineDirection(shape);
+                });
             }
-        }
 
-        // Funzione per disegnare la linea curva
-        function drawLine(anchor1, anchor2) {
-            const canvas = document.getElementById("canvas");
-
-            const x1 = anchor1.offsetLeft + anchor1.offsetWidth / 2;
-            const y1 = anchor1.offsetTop + anchor1.offsetHeight / 2;
-            const x2 = anchor2.offsetLeft + anchor2.offsetWidth / 2;
-            const y2 = anchor2.offsetTop + anchor2.offsetHeight / 2;
-
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", `M ${x1} ${y1} C ${x1 + 100} ${y1} ${x2 - 100} ${y2} ${x2} ${y2}`);
-            path.classList.add("line-path");
-
-            line.appendChild(path);
-            canvas.appendChild(line);
+            // Aggiungi la forma al canvas
+            canvas.appendChild(shape);
         }
 
         // Funzione per rendere le forme trascinabili
         function makeDraggable(element) {
             let offsetX, offsetY;
-            element.onmousedown = (e) => {
+            element.onmousedown = function(e) {
+                if (e.target.classList.contains("resize-handle")) return;
+                e.preventDefault();
                 offsetX = e.clientX - element.offsetLeft;
                 offsetY = e.clientY - element.offsetTop;
                 document.onmousemove = onMouseMove;
@@ -250,7 +173,6 @@
             function onMouseMove(e) {
                 element.style.left = `${e.clientX - offsetX}px`;
                 element.style.top = `${e.clientY - offsetY}px`;
-                updateAnchors(element); // Ricalcola la posizione dei cardini
             }
 
             function onMouseUp() {
@@ -259,46 +181,45 @@
             }
         }
 
-        // Funzione per aggiornare la posizione dei cardini
-        function updateAnchors(element) {
-            const anchors = element.querySelectorAll(".anchor");
-            const shapeRect = element.getBoundingClientRect();
-            const anchorsData = [
-                { top: shapeRect.top - 5, left: shapeRect.left + shapeRect.width / 2 - 5 }, // Top center
-                { top: shapeRect.top + shapeRect.height - 5, left: shapeRect.left + shapeRect.width / 2 - 5 }, // Bottom center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left - 5 }, // Left center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left + shapeRect.width - 5 }, // Right center
-                { top: shapeRect.top + shapeRect.height / 2 - 5, left: shapeRect.left + shapeRect.width / 2 - 5 } // Center
-            ];
-
-            anchors.forEach((anchor, index) => {
-                anchor.style.top = `${anchorsData[index].top}px`;
-                anchor.style.left = `${anchorsData[index].left}px`;
-            });
-        }
-
-        // Funzione per ridimensionare la forma
-        function onResizeStart(e, shape) {
-            const initialWidth = shape.offsetWidth;
-            const initialHeight = shape.offsetHeight;
-            const initialMouseX = e.clientX;
-            const initialMouseY = e.clientY;
-
-            document.onmousemove = (moveEvent) => {
-                const newWidth = initialWidth + (moveEvent.clientX - initialMouseX);
-                const newHeight = initialHeight + (moveEvent.clientY - initialMouseY);
-
-                if (newWidth > 20 && newHeight > 20) {
-                    shape.style.width = `${newWidth}px`;
-                    shape.style.height = `${newHeight}px`;
-                    updateAnchors(shape); // Ricalcola la posizione dei cardini
-                }
+        // Funzione per rendere le forme ridimensionabili tramite la maniglia
+        function makeResizable(element, handle, type) {
+            handle.onmousedown = function(e) {
+                e.preventDefault();
+                document.onmousemove = resizeElement;
+                document.onmouseup = stopResize;
             };
 
-            document.onmouseup = () => {
+            function resizeElement(e) {
+                const rect = element.getBoundingClientRect();
+                
+                if (type === "line") {
+                    // Per le linee, modifica solo la larghezza
+                    element.style.width = `${e.clientX - rect.left}px`;
+                } else {
+                    // Per quadrati e cerchi, modifica sia la larghezza che l'altezza
+                    element.style.width = `${e.clientX - rect.left}px`;
+                    element.style.height = `${e.clientY - rect.top}px`;
+                }
+            }
+
+            function stopResize() {
                 document.onmousemove = null;
                 document.onmouseup = null;
-            };
+            }
+        }
+
+        // Funzione per cambiare la direzione della linea da orizzontale a verticale
+        function changeLineDirection(line) {
+            const rect = line.getBoundingClientRect();
+            if (line.style.width > line.style.height) {
+                // Se la linea è orizzontale, la cambiamo in verticale
+                line.style.width = '5px';
+                line.style.height = `${rect.width}px`;
+            } else {
+                // Se la linea è verticale, la cambiamo in orizzontale
+                line.style.height = '5px';
+                line.style.width = `${rect.height}px`;
+            }
         }
     </script>
 </body>
