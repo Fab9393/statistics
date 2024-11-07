@@ -164,6 +164,99 @@
             font-size: 0.9rem;
         }
 
+        /* Style for the entire section */
+        #code {
+            background-color: #f7f7f7; /* Light grey background for the code section */
+            padding: 20px; /* Add padding around the content */
+            border-radius: 8px; /* Rounded corners */
+            margin: 20px 0; /* Add space above and below */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        }
+
+        /* Heading Styles */
+        #code h3 {
+            font-size: 1.5em;
+            color: #333; /* Dark text for the main heading */
+            margin-bottom: 10px; /* Space below the main heading */
+        }
+
+        #code h4 {
+            font-size: 1.2em;
+            color: #555; /* Slightly lighter color for subheadings */
+            margin-top: 20px; /* Space before each subheading */
+        }
+
+        /* Paragraph and description text */
+        #code p {
+            font-size: 1em;
+            color: #444; /* Dark grey text */
+            line-height: 1.6; /* Space out the lines for readability */
+            margin-bottom: 10px; /* Space between paragraphs */
+        }
+
+        /* Strong emphasis for certain words */
+        #code strong {
+            font-weight: bold;
+            color: #2c3e50; /* Darker color for emphasis */
+        }
+
+        /* Emphasis for inline code or variables */
+        #code em {
+            font-style: italic;
+            color: #2980b9; /* Blue color for inline code */
+        }
+
+        /* List styles for functions description */
+        #code ul {
+            list-style-type: none; /* Remove default list style */
+            margin-left: 0; /* No indentation */
+            padding-left: 20px; /* Indentation for the list */
+        }
+
+        #code li {
+            font-size: 1em;
+            color: #333; /* Standard color for list items */
+            margin-bottom: 8px; /* Space between list items */
+        }
+
+        /* Style for the <code> block inside <pre> */
+        pre {
+            background-color: #2d2d2d; /* Dark background for code blocks */
+            color: #f8f8f2; /* Light text for code */
+            padding: 15px; /* Padding inside the code block */
+            border-radius: 5px; /* Rounded corners for the code block */
+            overflow-x: auto; /* Horizontal scroll for long lines */
+            font-family: 'Courier New', monospace; /* Monospaced font for code */
+            font-size: 1em;
+            line-height: 1.4; /* Line height for readability */
+            white-space: pre-wrap; /* Wrap long lines */
+        }
+
+        pre code {
+            display: block; /* Ensure code is displayed as block */
+            word-wrap: break-word; /* Wrap long words */
+        }
+
+        /* Styling for the <code> tag for inline code */
+        code {
+            background-color: #f4f4f4; /* Light background for inline code */
+            color: #c0392b; /* Red color for inline code */
+            padding: 2px 5px; /* Padding inside inline code */
+            border-radius: 4px; /* Rounded corners for inline code */
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Optional code block hover effect */
+        pre:hover {
+            background-color: #333; /* Darken background when hovering */
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        /* Styling for the entire section of the code block */
+        #code > p {
+            margin-bottom: 20px; /* Extra space after text descriptions */
+        }
+
     </style>
 </head>
 <body>
@@ -229,6 +322,72 @@
             <p>Calculate regression coefficients <em>a</em> and <em>b</em> for a dataset using the least squares method.</p>
             <button id="calculateRegression">Calculate Regression</button>
             <div id="regressionOutput"></div>
+        </section>
+
+        <section id="code">
+            <h3>Significant Code Fragments</h3>
+        
+            <h4>Regression Coefficients Calculation</h4>
+            <p>The following function is used to calculate the regression coefficients <em>a</em> and <em>b</em> using the least squares method:</p>
+            <pre>
+        <code>
+        function calculateRegression(data) {
+            const n = data.length;
+            const sumX = data.reduce((acc, p) => acc + p.x, 0);
+            const sumY = data.reduce((acc, p) => acc + p.y, 0);
+            const sumXY = data.reduce((acc, p) => acc + p.x * p.y, 0);
+            const sumX2 = data.reduce((acc, p) => acc + p.x * p.x, 0);
+            const meanX = sumX / n;
+            const meanY = sumY / n;
+        
+            const b = (sumXY - n * meanX * meanY) / (sumX2 - n * meanX * meanX);
+            const a = meanY - b * meanX;
+        
+            const ssTotal = data.reduce((acc, p) => acc + Math.pow(p.y - meanY, 2), 0);
+            const ssRes = data.reduce((acc, p) => acc + Math.pow(p.y - (a + b * p.x), 2), 0);
+            const rSquared = 1 - ssRes / ssTotal;
+        
+            return { a, b, rSquared };
+        }
+        </code>
+            </pre>
+            <p>This <strong>calculateRegression</strong> function takes an array of data points as input. It first computes the sums of <strong>x</strong> and <strong>y</strong> values, their products, and their squared values. Then, it calculates the slope (<strong>b</strong>) and intercept (<strong>a</strong>) using the least squares method, and computes the coefficient of determination (<em>R²</em>) to assess the goodness of fit of the regression model.</p>
+        
+            <h4>Enhanced Euler-Maruyama (E-M) Simulation</h4>
+            <p>The following function is crucial for generating the trajectories in the Euler-Maruyama simulation:</p>
+            <pre>
+        <code>
+        class SDE {
+            constructor(drift, diffusion) {
+                this.drift = drift;
+                this.diffusion = diffusion;
+            }
+        
+            step(y, dt) {
+                const driftTerm = this.drift(y) * dt;
+                const diffusionTerm = this.diffusion(y) * Math.sqrt(dt) * (Math.random() < 0.5 ? 1 : -1);
+                return y + driftTerm + diffusionTerm;
+            }
+        
+            simulate(y0, steps, dt) {
+                const path = [y0];
+                let y = y0;
+                for (let i = 0; i < steps; i++) {
+                    y = this.step(y, dt);
+                    path.push(y);
+                }
+                return path;
+            }
+        }
+        </code>
+            </pre>
+            <p>The <strong>SDE</strong> class is central to simulating a stochastic differential equation (SDE). It consists of two main functions:</p>
+            <ul>
+                <li><strong>step(y, dt)</strong>: Performs a single step of the simulation, updating the current value <strong>y</strong> based on the drift and diffusion terms.</li>
+                <li><strong>simulate(y0, steps, dt)</strong>: Runs the simulation for a specified number of steps, starting from initial value <strong>y0</strong>, and returns the full trajectory.</li>
+            </ul>
+            <p>The drift term represents the deterministic part of the SDE, and the diffusion term introduces randomness, modeled as a random walk with step sizes proportional to <em>sqrt(dt)</em>.</p>
+        
         </section>
     </main>
 
