@@ -1,198 +1,353 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulatore SDE - Euler-Maruyama</title>
+    <title>Simulation Homework - C-S (Cauchy-Schwarz) inequality, independence and uncorrelation </title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* styles.css */
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
             background-color: #f4f4f9;
             color: #333;
+            line-height: 1.6;
         }
-        h1 {
-            color: #444;
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 1rem;
             text-align: center;
-            padding-bottom: 10px;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+
+        header h1 {
+            font-size: 2rem;
         }
-        .input-group {
-            margin-bottom: 15px;
+
+        nav {
+            background-color: #0069d9;
+            padding: 0.5rem 1rem;
+            margin-top: 10px;
         }
-        label {
-            font-weight: bold;
-            color: #2c3e50;
-            display: block;
-            margin-bottom: 5px;
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
         }
-        input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+
+        nav ul li {
+            margin: 0.5rem;
         }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: white;
-            background-color: #3498db;
-            border: none;
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
             border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #0056b3;
+        }
+
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            color: #444;
+        }
+
+        section p,
+        section pre {
+            margin: 1rem 0;
+            font-size: 1rem;
+        }
+
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        #controls label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        #controls input,
+        #controls button {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #controls button {
+            background-color: #007bff;
+            color: #fff;
             cursor: pointer;
-            display: block;
+            transition: background-color 0.3s;
+        }
+
+        #controls button:hover {
+            background-color: #0056b3;
+        }
+
+        canvas {
+            max-width: 100%;
+            margin-top: 1rem;
+        }
+
+        #chartContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-around;
+        }
+
+        #emChart,
+        #trajectoryChart,
+        #distributionChart {
             width: 100%;
+            max-width: 500px;
         }
-        button:hover {
-            background-color: #2980b9;
+
+        #regressionOutput {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #007bff;
         }
-        #chart-container {
-            margin-top: 30px;
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 2rem;
         }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Simulatore SDE - Metodo di Euler-Maruyama</h1>
+    <header>
+        <h1>Simulation Homework - C-S (Cauchy-Schwarz) inequality, independence and uncorrelation </h1>
+    </header>
     
-    <!-- Input parameters -->
-    <div class="input-group">
-        <label for="steps">Numero di passi:</label>
-        <input type="number" id="steps" value="100" min="1">
-    </div>
-    <div class="input-group">
-        <label for="dt">Dimensione di ogni passo (dt):</label>
-        <input type="number" id="dt" value="0.01" step="0.001" min="0.001">
-    </div>
-    <div class="input-group">
-        <label for="X0">Valore iniziale (X0):</label>
-        <input type="number" id="X0" value="0.5" step="0.1">
-    </div>
-    <div class="input-group">
-        <label for="mu">Drift (μ):</label>
-        <input type="number" id="mu" value="0.1" step="0.1">
-    </div>
-    <div class="input-group">
-        <label for="sigma">Volatilità (σ):</label>
-        <input type="number" id="sigma" value="0.2" step="0.1">
-    </div>
-    <div class="input-group">
-        <label for="numPaths">Numero di cammini:</label>
-        <input type="number" id="numPaths" value="3" min="1">
-    </div>
-    
-    <!-- Button to run simulation -->
-    <button onclick="simulateSDE()">Esegui Simulazione</button>
+    <nav>
+        <ul>
+            <li><a href="#random-walk">Random Walk Simulation</a></li>
+            <li><a href="#theory">Theory</a></li>
+            <li><a href="#sde-simulator">Euler-Maruyama Simulator</a></li>
+            <li><a href="#regression">Regression Coefficients</a></li>
+        </ul>
+    </nav>
 
-    <!-- Chart container -->
-    <div id="chart-container">
-        <canvas id="sdeChart"></canvas>
-    </div>
-</div>
+    <main>
+        <section id="random-walk">
+            <h2>Random Walk Simulation</h2>
+            <!-- Random Walk Simulation Controls and Chart -->
+            <div id="controls">
+                <label for="walkers">Number of Walkers:</label>
+                <input type="number" id="walkers" value="30" min="1">
+                <label for="time">Total Time:</label>
+                <input type="number" id="time" value="1" step="0.1" min="0.1">
+                <label for="dt">Time Steps (dt):</label>
+                <input type="number" id="dt" value="0.01" step="0.001" min="0.001">
+                <button id="simulateButton">Run Simulation</button>
+            </div>
 
-<!-- Chart.js Library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    let charts = {}; // Object to hold Chart.js instances
+            <div id="chartContainer">
+                <canvas id="trajectoryChart"></canvas>
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </section>
 
-    const simulateSDE = () => {
-        const steps = parseInt(document.getElementById("steps").value);
-        const dt = parseFloat(document.getElementById("dt").value);
-        const X0 = parseFloat(document.getElementById("X0").value);
-        const mu = parseFloat(document.getElementById("mu").value);
-        const sigma = parseFloat(document.getElementById("sigma").value);
-        const numPaths = parseInt(document.getElementById("numPaths").value);
+        <section id="theory">
+            <h2>Theory</h2>
 
-        // Generate trajectories
-        const trajectories = generateTrajectories(numPaths, steps, dt, X0, mu, sigma);
+            <h3>Cauchy-Schwarz Inequality Proof</h3>
+            <p>The Cauchy-Schwarz inequality states that for any vectors <strong>u</strong> and <strong>v</strong>, we have:</p>
+            <pre>|⟨u, v⟩| ≤ ||u|| ||v||</pre>
+            <p>This inequality can be proved using a quadratic expression, ensuring that the discriminant is always non-negative.</p>
 
-        // Plot the trajectories
-        plotTrajectories(trajectories, steps, dt, 'sdeChart');
-    };
+            <h3>Independence vs. Uncorrelation</h3>
+            <p><strong>Independence</strong> implies no predictive relationship between two variables, while <strong>uncorrelation</strong> simply means a zero covariance. Uncorrelated variables may still have complex, non-linear relationships that would not make them independent.</p>
+        </section>
 
-    // Function to generate trajectories based on SDE parameters
-    const generateTrajectories = (numPaths, steps, dt, X0, mu, sigma) => {
-        const trajectories = [];
-        for (let i = 0; i < numPaths; i++) {
-            let X = X0;
-            const trajectory = [X];
-            for (let j = 1; j <= steps; j++) {
-                const dW = Math.sqrt(dt) * (Math.random() * 2 - 1);
-                X += mu * X * dt + sigma * X * dW;
-                trajectory.push(X);
-            }
-            trajectories.push(trajectory);
+        <section id="sde-simulator">
+            <h2>Enhanced Euler-Maruyama (E-M) Simulator</h2>
+            <p>This simulator supports various types of SDEs using a customizable central class.</p>
+            <button id="runEMSimulation">Run E-M Simulation</button>
+            <canvas id="emChart"></canvas>
+        </section>
+
+        <section id="regression">
+            <h2>Regression Coefficients Calculation</h2>
+            <p>Calculate regression coefficients <em>a</em> and <em>b</em> for a dataset using the least squares method.</p>
+            <button id="calculateRegression">Calculate Regression</button>
+            <div id="regressionOutput"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
+    </footer>
+
+    <script>
+        // Chart.js configurations
+        let charts = {};
+
+        // Random Walk Simulation (existing function)
+        document.getElementById('simulateButton').addEventListener('click', simulateRandomWalk);
+
+        function simulateRandomWalk() {
+            const numWalkers = parseInt(document.getElementById('walkers').value);
+            const totalTime = parseFloat(document.getElementById('time').value);
+            const dt = parseFloat(document.getElementById('dt').value);
+
+            const steps = Math.ceil(totalTime / dt);
+            const trajectories = generateTrajectories(numWalkers, steps, dt);
+
+            const finalPositions = trajectories.map(t => t[t.length - 1]);
+            plotTrajectories(trajectories, steps, dt, 'trajectoryChart');
+            plotDistribution(finalPositions, 'distributionChart');
         }
-        return trajectories;
-    };
 
-    // Function to plot trajectories on the chart
-    const plotTrajectories = (data, steps, dt, chartId) => {
-        const ctx = document.getElementById(chartId).getContext('2d');
-        const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
-
-        const datasets = data.map((trajectory, index) => ({
-            label: `Path ${index + 1}`,
-            data: trajectory,
-            fill: false,
-            borderColor: getRandomColor(),
-            borderWidth: 1,
-            pointRadius: 0,
-        }));
-
-        // Destroy previous chart instance if it exists
-        if (charts[chartId]) charts[chartId].destroy();
-
-        // Create a new chart
-        charts[chartId] = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels,
-                datasets
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Step'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                }
+        // Enhanced E-M Simulator Class
+        class SDE {
+            constructor(drift, diffusion) {
+                this.drift = drift;
+                this.diffusion = diffusion;
             }
-        });
-    };
+            
+            step(y, dt) {
+                const driftTerm = this.drift(y) * dt;
+                const diffusionTerm = this.diffusion(y) * Math.sqrt(dt) * (Math.random() < 0.5 ? 1 : -1);
+                return y + driftTerm + diffusionTerm;
+            }
 
-    // Function to generate random colors for each path
-    const getRandomColor = () => {
-        const hue = Math.floor(Math.random() * 360);
-        return `hsl(${hue}, 70%, 50%)`;
-    };
-</script>
+            simulate(y0, steps, dt) {
+                const path = [y0];
+                let y = y0;
+                for (let i = 0; i < steps; i++) {
+                    y = this.step(y, dt);
+                    path.push(y);
+                }
+                return path;
+            }
+        }
+
+        document.getElementById('runEMSimulation').addEventListener('click', () => {
+            const sde = new SDE(y => 0.05 * y, y => 0.2); // Example SDE
+            const trajectory = sde.simulate(0, 1000, 0.01);
+            plotEM(trajectory, 'emChart');
+        });
+
+        // Regression Coefficients Calculation
+        document.getElementById('calculateRegression').addEventListener('click', () => {
+            const data = [{ x: 1, y: 2 }, { x: 2, y: 3 }, { x: 3, y: 5 }];
+            const { a, b, rSquared } = calculateRegression(data);
+            document.getElementById('regressionOutput').innerText = `a: ${a}, b: ${b}, R²: ${rSquared}`;
+        });
+
+        function calculateRegression(data) {
+            const n = data.length;
+            const sumX = data.reduce((acc, p) => acc + p.x, 0);
+            const sumY = data.reduce((acc, p) => acc + p.y, 0);
+            const sumXY = data.reduce((acc, p) => acc + p.x * p.y, 0);
+            const sumX2 = data.reduce((acc, p) => acc + p.x * p.x, 0);
+            const meanX = sumX / n;
+            const meanY = sumY / n;
+
+            const b = (sumXY - n * meanX * meanY) / (sumX2 - n * meanX * meanX);
+            const a = meanY - b * meanX;
+
+            const ssTotal = data.reduce((acc, p) => acc + Math.pow(p.y - meanY, 2), 0);
+            const ssRes = data.reduce((acc, p) => acc + Math.pow(p.y - (a + b * p.x), 2), 0);
+            const rSquared = 1 - ssRes / ssTotal;
+
+            return { a, b, rSquared };
+        }
+
+        // Plot functions for E-M and random walk
+        function plotTrajectories(data, steps, dt, chartId) {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const labels = Array.from({ length: steps + 1 }, (_, i) => (i * dt).toFixed(2));
+            const datasets = data.map((trajectory, index) => ({
+                label: `Walker ${index + 1}`,
+                data: trajectory.map((value, i) => ({ x: labels[i], y: value })),
+                fill: false,
+                borderColor: getRandomColor(),
+                borderWidth: 1,
+                pointRadius: 0,
+            }));
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: { scales: { x: { type: 'linear' }, y: { beginAtZero: true } } }
+            });
+        }
+
+        function plotEM(data, chartId) {
+            const ctx = document.getElementById(chartId).getContext('2d');
+            const labels = Array.from({ length: data.length }, (_, i) => i);
+
+            if (charts[chartId]) charts[chartId].destroy();
+            charts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{ label: 'E-M Trajectory', data, borderColor: 'blue', fill: false }]
+                },
+                options: { scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function getRandomColor() {
+            return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        }
+
+
+    </script> <!-- JavaScript file for simulations and calculations -->
 
 </body>
 </html>
