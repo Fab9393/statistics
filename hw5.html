@@ -65,6 +65,30 @@
         canvas {
             width: 100%;
         }
+
+        .concept-panel {
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .concept-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .toggle-buttons {
+            margin-top: 1rem;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -100,8 +124,21 @@
 
         <section id="charts">
             <h2>Simulation Results</h2>
+            <div class="toggle-buttons">
+                <button id="toggleRegression" onclick="toggleRegression()">Toggle Regression Line</button>
+                <button id="toggleHistogram" onclick="toggleHistogram()">Toggle Distribution Histogram</button>
+            </div>
             <div id="trajectoryChartContainer">
                 <canvas id="trajectoryChart"></canvas>
+            </div>
+        </section>
+
+        <section class="concept-panel">
+            <h2 class="concept-title">Theory of Stochastic Differential Equations and Euler-Maruyama Method</h2>
+            <div class="concept-content">
+                <p><strong>Stochastic Differential Equations (SDEs)</strong> are used to model processes that evolve with both deterministic and random components, like stock prices or physical systems in noisy environments.</p>
+                <p>The <strong>Euler-Maruyama (E-M) Method</strong> is a numerical approach to solving SDEs by approximating the process through discrete steps. It estimates the next point based on the drift and diffusion terms, allowing simulations of paths with random perturbations at each time step.</p>
+                <p>This simulation shows paths generated under the Euler-Maruyama method, demonstrating how the process behaves over time given the specified drift and diffusion parameters.</p>
             </div>
         </section>
     </main>
@@ -115,6 +152,8 @@
         document.getElementById('simulateButton').addEventListener('click', runSimulation);
 
         let charts = {};
+        let regressionLineShown = false;
+        let histogramShown = false;
 
         function runSimulation() {
             const numPaths = parseInt(document.getElementById('numPaths').value);
@@ -177,6 +216,18 @@
                     plugins: { legend: { display: false } }
                 }
             });
+        }
+
+        function toggleRegression() {
+            // Dummy functionality for toggling regression line
+            regressionLineShown = !regressionLineShown;
+            alert(`Regression Line is now ${regressionLineShown ? 'shown' : 'hidden'}`);
+        }
+
+        function toggleHistogram() {
+            // Dummy functionality for toggling histogram display
+            histogramShown = !histogramShown;
+            alert(`Histogram is now ${histogramShown ? 'shown' : 'hidden'}`);
         }
 
         function getRandomColor() {
