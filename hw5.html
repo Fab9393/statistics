@@ -166,6 +166,11 @@
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
     <header>
         <h1>Simulation Homework - C-S (Cauchy-Schwarz) inequality, independence and uncorrelation </h1>
     </header>
@@ -227,7 +232,7 @@
     </main>
 
     <footer>
-        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 1</p>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 5</p>
     </footer>
 
     <script>
@@ -304,6 +309,21 @@
             const rSquared = 1 - ssRes / ssTotal;
 
             return { a, b, rSquared };
+        }
+
+         // Function to generate trajectories for the random walk
+         function generateTrajectories(numWalkers, steps, dt) {
+            const trajectories = [];
+            for (let i = 0; i < numWalkers; i++) {
+                let path = [0];  // Start each walker at position 0
+                for (let step = 1; step <= steps; step++) {
+                    const lastPosition = path[step - 1];
+                    const stepChange = (Math.random() < 0.5 ? -1 : 1) * Math.sqrt(dt);  // Random step
+                    path.push(lastPosition + stepChange);
+                }
+                trajectories.push(path);
+            }
+            return trajectories;
         }
 
         // Plot functions for E-M and random walk
