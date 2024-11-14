@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuzione e Simulazione con Media e Varianza</title>
+    <title>Distribution and Simulation with Mean and Variance</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-                /* styles.css */
+        /* styles.css */
 
-                * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -163,104 +163,11 @@
         footer p {
             font-size: 0.9rem;
         }
-
-        /* Style for the entire section */
-        #code {
-            background-color: #f7f7f7; /* Light grey background for the code section */
-            padding: 20px; /* Add padding around the content */
-            border-radius: 8px; /* Rounded corners */
-            margin: 20px 0; /* Add space above and below */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-        }
-
-        /* Heading Styles */
-        #code h3 {
-            font-size: 1.5em;
-            color: #333; /* Dark text for the main heading */
-            margin-bottom: 10px; /* Space below the main heading */
-        }
-
-        #code h4 {
-            font-size: 1.2em;
-            color: #555; /* Slightly lighter color for subheadings */
-            margin-top: 20px; /* Space before each subheading */
-        }
-
-        /* Paragraph and description text */
-        #code p {
-            font-size: 1em;
-            color: #444; /* Dark grey text */
-            line-height: 1.6; /* Space out the lines for readability */
-            margin-bottom: 10px; /* Space between paragraphs */
-        }
-
-        /* Strong emphasis for certain words */
-        #code strong {
-            font-weight: bold;
-            color: #2c3e50; /* Darker color for emphasis */
-        }
-
-        /* Emphasis for inline code or variables */
-        #code em {
-            font-style: italic;
-            color: #2980b9; /* Blue color for inline code */
-        }
-
-        /* List styles for functions description */
-        #code ul {
-            list-style-type: none; /* Remove default list style */
-            margin-left: 0; /* No indentation */
-            padding-left: 20px; /* Indentation for the list */
-        }
-
-        #code li {
-            font-size: 1em;
-            color: #333; /* Standard color for list items */
-            margin-bottom: 8px; /* Space between list items */
-        }
-
-        /* Style for the <code> block inside <pre> */
-        pre {
-            background-color: #2d2d2d; /* Dark background for code blocks */
-            color: #f8f8f2; /* Light text for code */
-            padding: 15px; /* Padding inside the code block */
-            border-radius: 5px; /* Rounded corners for the code block */
-            overflow-x: auto; /* Horizontal scroll for long lines */
-            font-family: 'Courier New', monospace; /* Monospaced font for code */
-            font-size: 1em;
-            line-height: 1.4; /* Line height for readability */
-            white-space: pre-wrap; /* Wrap long lines */
-        }
-
-        pre code {
-            display: block; /* Ensure code is displayed as block */
-            word-wrap: break-word; /* Wrap long words */
-        }
-
-        /* Styling for the <code> tag for inline code */
-        code {
-            background-color: #f4f4f4; /* Light background for inline code */
-            color: #c0392b; /* Red color for inline code */
-            padding: 2px 5px; /* Padding inside inline code */
-            border-radius: 4px; /* Rounded corners for inline code */
-            font-family: 'Courier New', monospace;
-        }
-
-        /* Optional code block hover effect */
-        pre:hover {
-            background-color: #333; /* Darken background when hovering */
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-        }
-
-        /* Styling for the entire section of the code block */
-        #code > p {
-            margin-bottom: 20px; /* Extra space after text descriptions */
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Simulazione Distribuzione con Media e Varianza</h1>
+        <h1>Simulation of Distribution with Mean and Variance</h1>
     </header>
 
     <nav>
@@ -270,12 +177,11 @@
     </nav>
 
     <main>
-        <!-- Sezione per generare campioni casuali e visualizzare grafici -->
         <section id="sample-generation">
-            <h2>Generazione Campioni Casuali</h2>
-            <label for="sampleSize">Numero di Campioni:</label>
+            <h2>Random Sample Generation</h2>
+            <label for="sampleSize">Number of Samples:</label>
             <input type="number" id="sampleSize" value="100" min="1">
-            <button id="generateBtn">Genera Campioni</button>
+            <button id="generateBtn">Generate Samples</button>
         </section>
     </main>
 
@@ -297,107 +203,60 @@
         </div>
     </section>
 
-    <section id="code-fragments">
-        <h3>Code Snippets</h3>
-        <p>This section provides JavaScript functions for generating random samples and calculating progressive mean and variance.</p>
-
-        <h4>Sample Generation Function</h4>
-        <pre><code>function generateRandomSample(sampleCount) {
-        const samples = [];
-        for (let i = 0; i < sampleCount; i++) {
-            const randomNum = Math.random();
-            let sampleValue;
-            for (let j = 0; j < cumulativeDistribution.length; j++) {
-                if (randomNum < cumulativeDistribution[j]) {
-                    sampleValue = distributionValues[j];
-                    break;
-                }
-            }
-            samples.push(sampleValue);
-        }
-        return samples;
-        }</code></pre>
-
-                <h4>Mean and Variance Calculation Function</h4>
-                <pre><code>function calculateMeanVariance(data) {
-        let n = 0, mean = 0, sumM2 = 0;
-        const meanProgressive = [], varianceProgressive = [];
-
-        data.forEach(value => {
-            n++;
-            const delta = value - mean;
-            mean += delta / n;
-            const delta2 = value - mean;
-            sumM2 += delta * delta2;
-            meanProgressive.push(mean);
-            varianceProgressive.push(sumM2 / n);
-        });
-
-        return { meanProgressive, varianceProgressive };
-        }</code></pre>
-    </section>
-
     <footer>
-        <p>&copy;2024 Distribuzione e Simulazione</p>
+        <p>&copy;2024 Distribution and Simulation</p>
     </footer>
 
     <script>
-        // Definire i valori e le probabilità
-        const valoriDistribuzione = [1, 2, 3, 4, 5];
-        const probabilitaTeoriche = [0.1, 0.2, 0.4, 0.2, 0.1];
+        const distributionValues = [1, 2, 3, 4, 5];
+        const theoreticalProbabilities = [0.1, 0.2, 0.4, 0.2, 0.1];
 
-        // Calcolo della funzione di distribuzione cumulativa (CDF)
-        const distribuzioneCumulativa = [];
-        probabilitaTeoriche.reduce((accumulatore, valoreCorrente, indice) => {
-            distribuzioneCumulativa[indice] = accumulatore + valoreCorrente;
-            return distribuzioneCumulativa[indice];
+        const cumulativeDistribution = [];
+        theoreticalProbabilities.reduce((acc, curr, idx) => {
+            cumulativeDistribution[idx] = acc + curr;
+            return cumulativeDistribution[idx];
         }, 0);
 
-        // Funzione per generare campioni casuali
-        function generaCampioneCasuale(numeroCampioni) {
-            const campioni = [];
-            for (let i = 0; i < numeroCampioni; i++) {
-                const numeroCasuale = Math.random();
-                let valoreCampione;
-                for (let j = 0; j < distribuzioneCumulativa.length; j++) {
-                    if (numeroCasuale < distribuzioneCumulativa[j]) {
-                        valoreCampione = valoriDistribuzione[j];
+        function generateRandomSample(sampleCount) {
+            const samples = [];
+            for (let i = 0; i < sampleCount; i++) {
+                const randomNum = Math.random();
+                let sampleValue;
+                for (let j = 0; j < cumulativeDistribution.length; j++) {
+                    if (randomNum < cumulativeDistribution[j]) {
+                        sampleValue = distributionValues[j];
                         break;
                     }
                 }
-                campioni.push(valoreCampione);
+                samples.push(sampleValue);
             }
-            return campioni;
+            return samples;
         }
 
-        // Algoritmo per media e varianza
-        function calcolaMediaVarianza(dati) {
-            let n = 0, media = 0, sommaM2 = 0;
-            const medieProgressive = [], varianzeProgressive = [];
+        function calculateMeanVariance(data) {
+            let n = 0, mean = 0, sumM2 = 0;
+            const meanProgressive = [], varianceProgressive = [];
 
-            dati.forEach(valore => {
+            data.forEach(value => {
                 n++;
-                const delta = valore - media;
-                media += delta / n;
-                const delta2 = valore - media;
-                sommaM2 += delta * delta2;
-                medieProgressive.push(media);
-                varianzeProgressive.push(sommaM2 / n);
+                const delta = value - mean;
+                mean += delta / n;
+                const delta2 = value - mean;
+                sumM2 += delta * delta2;
+                meanProgressive.push(mean);
+                varianceProgressive.push(sumM2 / n);
             });
 
-            return { medieProgressive, varianzeProgressive };
+            return { meanProgressive, varianceProgressive };
         }
 
-        // Variabili per i grafici
-        let graficoDistribuzione, graficoMedia, graficoVarianza;
+        let distributionChart, meanChart, varianceChart;
 
-        // Funzione per aggiornare i grafici
-        function aggiornaGrafici(numeroCampioni) {
-            const campioni = generaCampioneCasuale(numeroCampioni);
-            const probabilitaEmpiriche = valoriDistribuzione.map(valore => campioni.filter(c => c === valore).length / numeroCampioni);
+        function updateCharts(sampleCount) {
+            const samples = generateRandomSample(sampleCount);
+            const empiricalProbabilities = distributionValues.map(val => samples.filter(c => c === val).length / sampleCount);
 
-            // Configurazioni grafiche comuni
-            const opzioniGrafico = {
+            const chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
@@ -409,63 +268,58 @@
                 }
             };
 
-            // Aggiorna il grafico di distribuzione
-            if (graficoDistribuzione) graficoDistribuzione.destroy();
-            const ctxDistribuzione = document.getElementById('distributionChart').getContext('2d');
-            graficoDistribuzione = new Chart(ctxDistribuzione, {
+            if (distributionChart) distributionChart.destroy();
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(distributionCtx, {
                 type: 'bar',
                 data: {
-                    labels: valoriDistribuzione,
+                    labels: distributionValues,
                     datasets: [
                         {
-                            label: 'Probabilità Teoriche',
-                            data: probabilitaTeoriche,
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            label: 'Theoretical Probabilities',
+                            data: theoreticalProbabilities,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 1
                         },
                         {
-                            label: 'Probabilità Empiriche',
-                            data: probabilitaEmpiriche,
-                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
+                            label: 'Empirical Probabilities',
+                            data: empiricalProbabilities,
+                            backgroundColor: 'rgba(135, 206, 250, 0.5)',
+                            borderColor: 'rgba(135, 206, 250, 1)',
                             borderWidth: 1
                         }
                     ]
                 },
                 options: {
-                    ...opzioniGrafico,
+                    ...chartOptions,
                     scales: {
-                        x: { title: { display: true, text: 'Valore' } },
-                        y: { title: { display: true, text: 'Probabilità' }, beginAtZero: true, max: 0.5 }
+                        x: { title: { display: true, text: 'Value' } },
+                        y: { title: { display: true, text: 'Probability' }, beginAtZero: true, max: 0.5 }
                     }
                 }
             });
 
-            // Calcola media e varianza empiriche
-            const { medieProgressive, varianzeProgressive } = calcolaMediaVarianza(campioni);
+            const { meanProgressive, varianceProgressive } = calculateMeanVariance(samples);
+            const sampleLabels = Array.from({ length: sampleCount }, (_, i) => i + 1);
 
-            // Crea le etichette per i campioni
-            const etichetteCampioni = Array.from({ length: numeroCampioni }, (_, i) => i + 1);
-
-            // Aggiorna il grafico della media
-            if (graficoMedia) graficoMedia.destroy();
-            const ctxMedia = document.getElementById('meanChart').getContext('2d');
-            graficoMedia = new Chart(ctxMedia, {
+            if (meanChart) meanChart.destroy();
+            const meanCtx = document.getElementById('meanChart').getContext('2d');
+            meanChart = new Chart(meanCtx, {
                 type: 'line',
                 data: {
-                    labels: etichetteCampioni,
+                    labels: sampleLabels,
                     datasets: [
                         {
-                            label: 'Media Empirica',
-                            data: medieProgressive,
+                            label: 'Empirical Mean',
+                            data: meanProgressive,
                             borderColor: 'rgba(75, 192, 192, 1)',
                             fill: false,
                             pointRadius: 0
                         },
                         {
-                            label: 'Media Teorica',
-                            data: Array(numeroCampioni).fill(3),
+                            label: 'Theoretical Mean',
+                            data: Array(sampleCount).fill(3),
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderDash: [5, 5],
                             fill: false,
@@ -474,33 +328,32 @@
                     ]
                 },
                 options: {
-                    ...opzioniGrafico,
+                    ...chartOptions,
                     scales: {
-                        x: { title: { display: true, text: 'Numero di Campioni' } },
-                        y: { title: { display: true, text: 'Media' } }
+                        x: { title: { display: true, text: 'Sample Count' } },
+                        y: { title: { display: true, text: 'Mean' }, beginAtZero: false }
                     }
                 }
             });
 
-            // Aggiorna il grafico della varianza
-            if (graficoVarianza) graficoVarianza.destroy();
-            const ctxVarianza = document.getElementById('varianceChart').getContext('2d');
-            graficoVarianza = new Chart(ctxVarianza, {
+            if (varianceChart) varianceChart.destroy();
+            const varianceCtx = document.getElementById('varianceChart').getContext('2d');
+            varianceChart = new Chart(varianceCtx, {
                 type: 'line',
                 data: {
-                    labels: etichetteCampioni,
+                    labels: sampleLabels,
                     datasets: [
                         {
-                            label: 'Varianza Empirica',
-                            data: varianzeProgressive,
-                            borderColor: 'rgba(255, 206, 86, 1)',
+                            label: 'Empirical Variance',
+                            data: varianceProgressive,
+                            borderColor: 'rgba(255, 159, 64, 1)',
                             fill: false,
                             pointRadius: 0
                         },
                         {
-                            label: 'Varianza Teorica',
-                            data: Array(numeroCampioni).fill(1.2),
-                            borderColor: 'rgba(201, 203, 207, 1)',
+                            label: 'Theoretical Variance',
+                            data: Array(sampleCount).fill(2),
+                            borderColor: 'rgba(255, 99, 132, 1)',
                             borderDash: [5, 5],
                             fill: false,
                             pointRadius: 0
@@ -508,30 +361,21 @@
                     ]
                 },
                 options: {
-                    ...opzioniGrafico,
+                    ...chartOptions,
                     scales: {
-                        x: { title: { display: true, text: 'Numero di Campioni' } },
-                        y: { title: { display: true, text: 'Varianza' } }
+                        x: { title: { display: true, text: 'Sample Count' } },
+                        y: { title: { display: true, text: 'Variance' }, beginAtZero: true, max: 3 }
                     }
                 }
             });
         }
 
-        // Evento per il bottone di generazione
         document.getElementById('generateBtn').addEventListener('click', () => {
-            const numeroCampioni = parseInt(document.getElementById('sampleSize').value);
-            if (numeroCampioni > 0) {
-                aggiornaGrafici(numeroCampioni);
-            } else {
-                alert('Inserisci un numero valido di campioni.');
-            }
+            const sampleSize = parseInt(document.getElementById('sampleSize').value);
+            updateCharts(sampleSize);
         });
 
-        // Rendering iniziale dei grafici con la dimensione di campionamento predefinita
-        window.onload = () => {
-            const numeroCampioniDefault = parseInt(document.getElementById('sampleSize').value);
-            aggiornaGrafici(numeroCampioniDefault);
-        };
+        updateCharts(100);
     </script>
 </body>
 </html>
