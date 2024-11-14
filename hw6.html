@@ -180,7 +180,7 @@
         <section id="sample-generation">
             <h2>Random Sample Generation</h2>
             <label for="sampleSize">Number of Samples:</label>
-            <input type="number" id="sampleSize" value="100" min="1">
+            <input type="number" id="sampleSize" value="100" step="1" min="1">
             <button id="generateBtn">Generate Samples</button>
         </section>
     </main>
@@ -201,6 +201,109 @@
         <div id="chartContainer">
             <canvas id="varianceChart"></canvas>
         </div>
+    </section>
+
+    <section id="fundamental-theorem">
+        <h2>The Fundamental Theorem of Calculus and Its Relationship with Density Functions and Cumulative Distribution Functions</h2>
+        
+        <p>The Fundamental Theorem of Calculus (FTC) connects the concepts of differentiation and integration. In probability theory, the FTC establishes an important link between probability density functions (PDFs) and cumulative distribution functions (CDFs). This section explores that relationship.</p>
+        
+        <h3>The Fundamental Theorem of Calculus (FTC)</h3>
+        <p>The FTC consists of two parts:</p>
+        <ul>
+            <li><strong>First Part (FTC1):</strong> Relates the integral of a function to its antiderivative.</li>
+            <li><strong>Second Part (FTC2):</strong> States that the derivative of the integral of a function is the original function.</li>
+        </ul>
+        
+        <h3>Relationship with Density Functions and Cumulative Distribution Functions</h3>
+        <p>In probability theory, the cumulative distribution function (CDF) of a continuous random variable <strong>X</strong> is defined as:</p>
+        <pre><code>CDF(x) = ∫(from -∞ to x) PDF(t) dt</code></pre>
+        <p>where <strong>PDF(t)</strong> is the probability density function of the variable.</p>
+        
+        <h3>Applying the FTC to Probability Distributions</h3>
+        <p>Using the FTC, we can establish the following relationships:</p>
+        <ul>
+            <li><strong>From PDF to CDF:</strong> The CDF is the integral of the PDF:</li>
+            <pre><code>CDF(x) = ∫(from -∞ to x) PDF(t) dt</code></pre>
+            <li><strong>From CDF to PDF:</strong> The PDF is the derivative of the CDF:</li>
+            <pre><code>PDF(x) = d/dx (CDF(x))</code></pre>
+        </ul>
+    
+        <h3>Example: Standard Normal Distribution</h3>
+        <p>Consider the standard normal distribution, where the PDF is:</p>
+        <pre><code>PDF(x) = (1 / √(2π)) * exp(-x² / 2)</code></pre>
+        <p>The CDF of the standard normal distribution does not have a closed-form expression, but its derivative gives the original PDF.</p>
+        
+        <h3>Generating Realizations from a Discrete Univariate Distribution</h3>
+        <p>This exercise covers:</p>
+        <ul>
+            <li>Generating realizations from a discrete univariate probability distribution with arbitrary probabilities.</li>
+            <li>Graphically showing the convergence of the empirical distribution to the theoretical distribution as sample size increases.</li>
+            <li>Calculating the mean and variance using recursive algorithms and comparing them with theoretical values.</li>
+        </ul>
+        
+        <h4>Defining the Arbitrary Discrete Distribution</h4>
+        <p>Consider a discrete random variable <strong>X</strong> with values:</p>
+        <pre><code>1, 2, 3, 4, 5</code></pre>
+        <p>with corresponding probabilities:</p>
+        <pre><code>0.1, 0.2, 0.4, 0.2, 0.1</code></pre>
+    
+        <h4>Theoretical Mean and Variance</h4>
+        <p>The theoretical mean and variance for this distribution are:</p>
+        <pre><code>Mean = 3, Variance = 2</code></pre>
+        
+        <h4>Generating Random Samples</h4>
+        <p>Using the inverse transform sampling method, we generate random samples from the defined discrete distribution.</p>
+        <ul>
+            <li>Compute the cumulative distribution function (CDF).</li>
+            <li>Generate a uniform random number in [0, 1].</li>
+            <li>Find the smallest index <strong>i</strong> such that <strong>CDF(i) ≥ random number</strong>.</li>
+            <li>Assign this <strong>i</strong> as the generated value.</li>
+        </ul>
+    
+        <h4>Empirical vs. Theoretical Distribution</h4>
+        <p>As we generate samples of increasing size, we will graphically show how the empirical distribution converges to the theoretical distribution.</p>
+    </section>
+    
+
+    <section id="code-fragments">
+        <h3>Code Fragments</h3>
+        <p>This section provides JavaScript functions for generating random samples and calculating progressive mean and variance.</p>
+
+        <h4>Sample Generation Function</h4>
+        <pre><code>function generateRandomSample(sampleCount) {
+        const samples = [];
+        for (let i = 0; i < sampleCount; i++) {
+            const randomNum = Math.random();
+            let sampleValue;
+            for (let j = 0; j < cumulativeDistribution.length; j++) {
+                if (randomNum < cumulativeDistribution[j]) {
+                    sampleValue = distributionValues[j];
+                    break;
+                }
+            }
+            samples.push(sampleValue);
+        }
+        return samples;
+        }</code></pre>
+
+                <h4>Mean and Variance Calculation Function</h4>
+                <pre><code>function calculateMeanVariance(data) {
+        let n = 0, mean = 0, sumM2 = 0;
+        const meanProgressive = [], varianceProgressive = [];
+
+        data.forEach(value => {
+            n++;
+            const delta = value - mean;
+            mean += delta / n;
+            const delta2 = value - mean;
+            sumM2 += delta * delta2;
+            meanProgressive.push(mean);
+            varianceProgressive.push(sumM2 / n);
+        });
+
+        return { meanProgressive, varianceProgressive };
+        }</code></pre>
     </section>
 
     <footer>
