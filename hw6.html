@@ -263,6 +263,12 @@
         <h1>Simulazione Distribuzione con Media e Varianza</h1>
     </header>
 
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+
     <main>
         <!-- Sezione per generare campioni casuali e visualizzare grafici -->
         <section id="sample-generation">
@@ -270,16 +276,23 @@
             <label for="sampleSize">Numero di Campioni:</label>
             <input type="number" id="sampleSize" value="100" min="1">
             <button id="generateBtn">Genera Campioni</button>
-
-            <div id="chartContainer">
-                <canvas id="distributionChart"></canvas>
-            </div>
         </section>
     </main>
 
     <section id="sample-generation">
         <div id="chartContainer">
+            <canvas id="distributionChart"></canvas>
+        </div>
+    </section>
+
+    <section id="sample-generation">
+        <div id="chartContainer">
             <canvas id="meanChart"></canvas>
+        </div>
+    </section>
+
+    <section id="sample-generation">
+        <div id="chartContainer">
             <canvas id="varianceChart"></canvas>
         </div>
     </section>
