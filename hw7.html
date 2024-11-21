@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #controls {
+            margin-bottom: 20px;
+        }
+        #controls label, #controls input, #controls button {
+            margin-right: 10px;
+        }
+        canvas {
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulation of Distribution with Mean and Variance</h1>
+    
+    <div id="controls">
+        <label for="m">Number of Subsets (m):</label>
+        <input type="number" id="m" value="5" step="1" min="1">
+
+        <label for="n">Number of Samples per Subset (n):</label>
+        <input type="number" id="n" value="100" step="1" min="1">
+
+        <label for="intervals">Number of Intervals:</label>
+        <input type="number" id="intervals" value="10" step="1" min="1">
+
+        <button onclick="simulate()">Simulate</button>
+    </div>
+
+    <p>
+        <strong>Mean of Means:</strong> <span id="meanOfMeans">N/A</span> <br>
+        <strong>Variance of Means:</strong> <span id="varianceOfMeans">N/A</span>
+    </p>
+
+    <canvas id="chartCanvas"></canvas>
+
+    <script>
+        // JavaScript functions here (simulate and drawChart)
+        function simulate() {
+            const m = parseInt(document.getElementById('m').value);  // Number of subsets
+            const n = parseInt(document.getElementById('n').value);  // Number of samples per subset
+            const intervals = parseInt(document.getElementById('intervals').value);  // Not used in the function, but preserved
+
+            const means = [];
+            const variances = [];
+            const allMeans = [];
+            const allVariances = [];
+
+            const theoreticalMean = 0.5;
+            const theoreticalVariance = 1 / 12;
+
+            for (let i = 0; i < m; i++) {
+                const randomNumbers = Array.from({ length: n }, () => Math.random());
+                const mean = randomNumbers.reduce((sum, val) => sum + val, 0) / n;
+                const variance = randomNumbers.reduce((sum, val) => sum + (val - mean) ** 2, 0) / n;
+
+                means.push(mean);
+                variances.push(variance);
+
+                allMeans.push(parseFloat(mean));
+                allVariances.push(parseFloat(variance));
+            }
+
+            const meanOfMeans = (allMeans.reduce((sum, val) => sum + val, 0) / m).toFixed(4);
+            const varianceOfMeans = (allVariances.reduce((sum, val) => sum + val, 0) / m).toFixed(4);
+
+            document.getElementById('meanOfMeans').textContent = meanOfMeans;
+            document.getElementById('varianceOfMeans').textContent = varianceOfMeans;
+
+            drawChart(means, variances, theoreticalMean, theoreticalVariance);
+        }
+
+        function drawChart(means, variances, theoreticalMean, theoreticalVariance) {
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: means.map((_, i) => `Subset ${i + 1}`),
+                    datasets: [
+                        {
+                            label: 'Empirical Mean',
+                            data: means,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Empirical Variance',
+                            data: variances,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Theoretical Mean',
+                            data: Array(means.length).fill(theoreticalMean),
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            type: 'line'
+                        },
+                        {
+                            label: 'Theoretical Variance',
+                            data: Array(variances.length).fill(theoreticalVariance),
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            type: 'line'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { title: { display: true, text: 'Subset Index' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
