@@ -199,61 +199,38 @@
     <section id="theoretical-vs-empirical">
         <h2>Theoretical Mean and Variance of the Uniform Distribution [0, 1]</h2>
         
-        <p>The uniform distribution <strong>U(a, b)</strong> describes a random variable that is equally likely to take any value in the interval [a, b]. This section discusses the theoretical mean and variance for the uniform distribution <strong>U(0, 1)</strong> and compares them with empirical values calculated from simulations.</p>
+        <p>The uniform distribution is a probability distribution where all values within a given range are equally likely to occur. Here, we consider the uniform distribution on the interval between 0 and 1. In this section, we discuss the theoretical mean and variance for this distribution and compare them with empirical values derived from simulations.</p>
     
         <h3>Theoretical Mean and Variance</h3>
-        <p>For a uniform distribution <strong>U(a, b)</strong>, the mean and variance are given by:</p>
-        <ul>
-            <li><strong>Mean:</strong> \( \mu = \frac{a + b}{2} \)</li>
-            <li><strong>Variance:</strong> \( \sigma^2 = \frac{(b - a)^2}{12} \)</li>
-        </ul>
-        <p>For the interval [0, 1], where \( a = 0 \) and \( b = 1 \):</p>
-        <pre><code>Mean (μ) = (0 + 1) / 2 = 0.5</code></pre>
-        <pre><code>Variance (σ²) = (1 - 0)² / 12 = 1 / 12 ≈ 0.0833</code></pre>
+        <p>The theoretical mean of a uniform distribution on an interval is the midpoint of that interval. For the range between 0 and 1, the mean is the average of 0 and 1, which is 0.5. The theoretical variance, which measures the spread of the data, is derived using a specific formula for uniform distributions. For the interval from 0 to 1, this value is approximately 0.0833.</p>
     
         <h3>Observed Mean and Variance from Simulated Data</h3>
-        <p>In our simulation, we generated random samples from the uniform distribution [0, 1]. For each group of samples, we calculated:</p>
-        <ul>
-            <li><strong>Sample Mean:</strong> 
-                \[
-                \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
-                \]
-            </li>
-            <li><strong>Sample Variance:</strong> 
-                \[
-                s^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2
-                \]
-            </li>
-        </ul>
+        <p>To evaluate how closely empirical values align with theoretical ones, we conducted simulations. In these simulations, random numbers were generated from the uniform distribution between 0 and 1. For each group of samples, we calculated the average of the values (referred to as the sample mean) and the variability in the data (referred to as the sample variance).</p>
+        <p>The sample mean is the average of all the values in a group. The sample variance, on the other hand, measures how much the values in the group deviate from their mean. Both these quantities are calculated for each group in the simulation.</p>
     
         <h3>Relationship Between Theoretical and Empirical Values</h3>
-        <p>As the number of samples and sample groups increases, the observed sample mean and variance converge to the theoretical values. This is supported by:</p>
+        <p>As the number of random samples increases, the sample mean and variance tend to converge to the theoretical values. This phenomenon is explained by two fundamental principles of probability theory:</p>
         <ul>
-            <li><strong>Law of Large Numbers (LLN):</strong> Ensures the sample mean approaches the population mean.</li>
-            <li><strong>Central Limit Theorem (CLT):</strong> Explains the distribution of the sample mean for large sample sizes.</li>
+            <li><strong>Law of Large Numbers:</strong> This principle states that as the number of observations increases, the average of the observed values approaches the true mean of the population.</li>
+            <li><strong>Central Limit Theorem:</strong> This theorem explains that with a sufficiently large number of samples, the distribution of the sample mean approximates a normal distribution, even if the original data is not normally distributed.</li>
         </ul>
     
         <h4>Key Observations:</h4>
         <ul>
-            <li>The sample mean approaches 0.5 with increasing sample size.</li>
-            <li>The sample variance converges to \( \frac{1}{12} ≈ 0.0833 \).</li>
+            <li>As the number of samples increases, the observed mean becomes closer to the theoretical mean of 0.5.</li>
+            <li>The observed variance becomes closer to the theoretical variance of approximately 0.0833.</li>
+            <li>The variability in the sample mean and sample variance decreases with larger sample sizes, making them more accurate estimators of the theoretical values.</li>
         </ul>
     
         <h3>Example Simulation</h3>
-        <p>We ran a simulation with the following parameters:</p>
+        <p>We performed a simulation to demonstrate this concept. In the simulation:</p>
         <ul>
-            <li>Number of subgroups: \( m = 100 \)</li>
-            <li>Number of samples per subgroup: \( n = 50 \)</li>
+            <li>We created 100 groups of random samples.</li>
+            <li>Each group contained 50 random values drawn from the uniform distribution between 0 and 1.</li>
         </ul>
-        <p>For this simulation, the observed mean and variance were:</p>
-        <pre><code>Observed Mean: 0.497
-    Observed Variance: 0.0829</code></pre>
-        <p>These values are very close to the theoretical values, demonstrating convergence.</p>
-    
-        <h3>Graphical Representation</h3>
-        <p>The histogram below shows the distribution of sample means across all subgroups, overlaid with the theoretical mean (0.5) and variance (\( 1/12 \)):</p>
-        <img src="histogram_example.png" alt="Histogram of Sample Means with Theoretical Mean and Variance">
+        <p>For this simulation, the observed mean across all groups was approximately 0.497, and the observed variance was approximately 0.0829. These values are very close to the theoretical values of 0.5 for the mean and 0.0833 for the variance, demonstrating the convergence of empirical values to theoretical ones.</p>
     </section>
+    
     
 
     <footer>
