@@ -24,6 +24,11 @@
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
     <h1>Simulation of Distribution with Mean and Variance</h1>
     
     <div id="controls">
@@ -44,7 +49,15 @@
         <strong>Variance of Means:</strong> <span id="varianceOfMeans">N/A</span>
     </p>
 
-    <canvas id="chartCanvas"></canvas>
+    <section id="sample-generation">
+        <div id="chartContainer">
+            <canvas id="chartCanvas"></canvas>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 6</p>
+    </footer>
 
     <script>
         // JavaScript functions here (simulate and drawChart)
