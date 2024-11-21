@@ -196,6 +196,57 @@
         </div>
     </section>
 
+    <section id="theoretical-vs-empirical">
+        <h2>Theoretical Mean and Variance of the Uniform Distribution [0, 1]</h2>
+        
+        <p>The uniform distribution <strong>U(a, b)</strong> describes a random variable that is equally likely to take any value in the interval [a, b]. This section discusses the theoretical mean and variance for the uniform distribution <strong>U(0, 1)</strong> and compares them with empirical values calculated from simulations.</p>
+    
+        <h3>Theoretical Mean and Variance</h3>
+        <p>For a uniform distribution <strong>U(a, b)</strong>, the mean and variance are given by:</p>
+        <ul>
+            <li><strong>Mean:</strong> \( \mu = \frac{a + b}{2} \)</li>
+            <li><strong>Variance:</strong> \( \sigma^2 = \frac{(b - a)^2}{12} \)</li>
+        </ul>
+        <p>For the interval [0, 1], where \( a = 0 \) and \( b = 1 \):</p>
+        <pre><code>Mean (μ) = (0 + 1) / 2 = 0.5</code></pre>
+        <pre><code>Variance (σ²) = (1 - 0)² / 12 = 1 / 12 ≈ 0.0833</code></pre>
+    
+        <h3>Observed Mean and Variance from Simulated Data</h3>
+        <p>In our simulation, we generated random samples from the uniform distribution [0, 1]. For each group of samples, we calculated:</p>
+        <ul>
+            <li><strong>Sample Mean:</strong> \( \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i \)</li>
+            <li><strong>Sample Variance:</strong> \( s^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2 \)</li>
+        </ul>
+    
+        <h3>Relationship Between Theoretical and Empirical Values</h3>
+        <p>As the number of samples and sample groups increases, the observed sample mean and variance converge to the theoretical values. This is supported by:</p>
+        <ul>
+            <li><strong>Law of Large Numbers (LLN):</strong> Ensures the sample mean approaches the population mean.</li>
+            <li><strong>Central Limit Theorem (CLT):</strong> Explains the distribution of the sample mean for large sample sizes.</li>
+        </ul>
+    
+        <h4>Key Observations:</h4>
+        <ul>
+            <li>The sample mean approaches 0.5 with increasing sample size.</li>
+            <li>The sample variance converges to \( \frac{1}{12} ≈ 0.0833 \).</li>
+        </ul>
+    
+        <h3>Example Simulation</h3>
+        <p>We ran a simulation with the following parameters:</p>
+        <ul>
+            <li>Number of subgroups: \( m = 100 \)</li>
+            <li>Number of samples per subgroup: \( n = 50 \)</li>
+        </ul>
+        <p>For this simulation, the observed mean and variance were:</p>
+        <pre><code>Observed Mean: 0.497
+    Observed Variance: 0.0829</code></pre>
+        <p>These values are very close to the theoretical values, demonstrating convergence.</p>
+    
+        <h3>Graphical Representation</h3>
+        <p>The histogram below shows the distribution of sample means across all subgroups, overlaid with the theoretical mean (0.5) and variance (\( 1/12 \)):</p>
+        <img src="histogram_example.png" alt="Histogram of Sample Means with Theoretical Mean and Variance">
+    </section>
+
     <footer>
         <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 6</p>
     </footer>
