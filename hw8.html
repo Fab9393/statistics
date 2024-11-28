@@ -187,6 +187,11 @@
             <canvas id="lineCanvas"></canvas>
             <canvas id="cypherCanvas"></canvas>
         </section>
+
+        <section>
+            <h2>Shannon Entropy of Encrypted Text</h2>
+            <p>Calculated Entropy: <span id="entropy">N/A</span></p>
+        </section>
     </main>
 
     <footer>
@@ -220,7 +225,8 @@
 
             // Cifra il testo
             const cypherText = caesarCipher(text, shift);
-            calculateFrequency(cypherText, "cypher");
+            const lecters = calculateFrequency(cypherText, "cypher");
+            calculateEntropy(lecters);
 
             // Visualizza il testo cifrato
             const testocifrato = document.getElementById("cryptedText");
@@ -375,6 +381,20 @@
             }
 
             return moda[0];
+        }
+
+        function calculateEntropy(letterCounts) {
+            const total = letterCounts.reduce((sum, count) => sum + count, 0);
+            let entropy = 0;
+
+            letterCounts.forEach(count => {
+                if (count > 0) {
+                    const probability = count / total;
+                    entropy -= probability * Math.log2(probability);
+                }
+            });
+
+            document.getElementById("entropy").textContent = entropy.toFixed(4);
         }
 
     </script>
