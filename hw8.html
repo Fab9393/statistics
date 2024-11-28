@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caesar Cipher, Frequency Analysis</title>
+    <title>Caesar Cipher & Frequency Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Aggiungi il tuo stile CSS qui */
         * {
             margin: 0;
             padding: 0;
@@ -118,7 +117,7 @@
 
         #lineCanvas, #cypherCanvas {
             width: 100%;
-            height: 200px;
+            height: 300px;
         }
 
     </style>
@@ -227,20 +226,48 @@
             const canvasHeight = canvas.height;
 
             // Disegna ogni barra
-            alphabet.split("").forEach((letter, index) => {
-                const frequency = letterCounts[letter];
-                const barHeight = (frequency / maxFrequency) * (canvasHeight - 20);
+            const labels = alphabet.split("");
+            const data = alphabet.split("").map(letter => letterCounts[letter] / maxFrequency * canvasHeight);
 
-                const x = index * barWidth;
-                const y = canvasHeight - barHeight;
-
-                ctx.fillStyle = "#4CAF50";
-                ctx.fillRect(x, y, barWidth - 5, barHeight);
-
-                ctx.fillStyle = "#000";
-                ctx.font = "12px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText(letter, x + barWidth / 2, canvasHeight - 5);
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: type === "plain" ? "Plain Text Frequency" : "Cipher Text Frequency",
+                        data: data,
+                        borderColor: type === "plain" ? 'rgba(0, 123, 255, 1)' : 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Letters'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Frequency'
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: type === "plain" ? "Plain Text Frequency Distribution" : "Cipher Text Frequency Distribution"
+                        }
+                    }
+                }
             });
         }
 
@@ -262,10 +289,10 @@
             return letterCounts;
         }
 
-        // Funzione per decriptare il testo
+        // Funzione per decriptare il testo cifrato
         function decrypt(cypherText) {
             const topN = 4;
-            const languageFrequency = "eaionlrtscdpumvghfbqz"; // Frequenza in italiano o inglese
+            const languageFrequency = "eaionlrtscdpumvghfbqz";
 
             const letterCounts = calculateF(cypherText);
             const sortedLetters = Object.keys(letterCounts).sort(
