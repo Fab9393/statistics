@@ -215,14 +215,32 @@ footer p {
         }
 
         function calculateFrequency(text) {
-            const counts = Array(26).fill(0);
-            for (const char of text) {
-                if (alphabet.includes(char)) {
-                    counts[char.charCodeAt(0) - 97]++;
-                }
-            }
-            return counts;
+    const counts = Array(26).fill(0);
+    let totalLetters = 0;
+    
+    for (const char of text) {
+        if (alphabet.includes(char)) {
+            counts[char.charCodeAt(0) - 97]++;
+            totalLetters++;
         }
+    }
+    
+    return { counts, totalLetters };
+}
+
+function decryptText() {
+    const encryptedText = document.getElementById("encryptedText").textContent;
+    const decryptedTextElement = document.getElementById("decryptedText");
+
+    const { counts, totalLetters } = calculateFrequency(encryptedText);
+    const mostFrequent = counts.indexOf(Math.max(...counts));
+
+    const commonLetter = 'e'; // Letter most frequent in English
+    const shift = (mostFrequent - alphabet.indexOf(commonLetter) + 26) % 26;
+
+    const decryptedText = caesarCipher(encryptedText, 26 - shift);
+    decryptedTextElement.textContent = decryptedText || "Decryption failed.";
+}
 
         let chartInstance = null;
 
@@ -254,21 +272,6 @@ footer p {
                     }
                 }
             });
-        }
-
-        function decryptText() {
-            const encryptedText = document.getElementById("encryptedText").textContent;
-            const decryptedTextElement = document.getElementById("decryptedText");
-
-            // Attempt decryption using frequency analysis
-            const letterCounts = calculateFrequency(encryptedText);
-            const mostFrequent = letterCounts.indexOf(Math.max(...letterCounts));
-
-            const commonLetter = 'e'; // Most frequent letter in English
-            const shift = (mostFrequent - alphabet.indexOf(commonLetter) + 26) % 26;
-
-            const decryptedText = caesarCipher(encryptedText, 26 - shift);
-            decryptedTextElement.textContent = decryptedText || "Decryption failed.";
         }
 
         function calculateEntropy(letterCounts) {
