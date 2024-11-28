@@ -192,6 +192,63 @@
             <h2>Shannon Entropy of Encrypted Text</h2>
             <p>Calculated Entropy: <span id="entropy">N/A</span></p>
         </section>
+
+        <section id="shannon-entropy-and-other-diversity-measures">
+            <h2>Shannon Entropy</h2>
+        
+            <p>Shannon Entropy is a key concept in information theory used to quantify uncertainty in a probability distribution. It measures the average amount of information produced by a random variable, with higher entropy indicating greater uncertainty.</p>
+        
+            <h3>Shannon Entropy</h3>
+            <p>For a discrete probability distribution with probabilities p1, p2, ..., pn, Shannon entropy (H) is defined as:</p>
+            <p><strong>H = - ∑ (pi * log₂(pi))</strong></p>
+            <p>Entropy is highest when the distribution is uniform, meaning all events have the same probability, reflecting maximum uncertainty.</p>
+        
+            <h3>Other Measures of Diversity</h3>
+            <p>Other diversity measures include the Gini Index, which quantifies inequality in a distribution, and Rényi entropy, which generalizes Shannon entropy by introducing a parameter to weigh probabilities differently. These measures have wide applications in fields like economics, biology, and cryptography.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>Shannon Entropy is maximized when all outcomes are equally likely.</li>
+                <li>The Gini Index measures inequality, with 0 indicating perfect equality and 1 indicating maximum inequality.</li>
+                <li>Rényi entropy provides flexibility by allowing different weights for probabilities.</li>
+            </ul>
+        
+            <h3>Applications</h3>
+            <p>These measures are widely used in fields such as cryptography (to assess randomness), ecology (for species diversity), and communication theory (to determine channel capacity).</p>
+        </section>
+        
+        <section id="primitive-roots-modulo-p">
+            <h2>Primitive Roots Modulo p</h2>
+        
+            <p>A primitive root modulo p is an integer that generates all numbers coprime to p through its powers. For a prime p, a primitive root g produces the complete set of numbers from 1 to p-1 by taking successive powers of g modulo p.</p>
+        
+            <h3>Definition of Primitive Roots</h3>
+            <p>Formally, g is a primitive root modulo p if the integers g¹, g², ..., g^(p−1) modulo p generate all numbers from 1 to p-1 without repetition, meaning they form a complete residue system modulo p.</p>
+        
+            <h3>Applications in Cryptography</h3>
+            <p>Primitive roots are fundamental in cryptographic systems like Diffie-Hellman for secure key exchange. Their ability to generate long, non-repeating sequences makes them useful in pseudorandom number generation for cryptography.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>A primitive root modulo p generates all numbers from 1 to p-1.</li>
+                <li>It is used in cryptographic protocols like Diffie-Hellman for secure key exchange.</li>
+                <li>In pseudorandom number generation, it ensures long periods without repetition, important for cryptographic security.</li>
+            </ul>
+        
+            <h3>Example Calculation</h3>
+            <p>For p = 7, the number 3 is a primitive root because the powers of 3 modulo 7 are:</p>
+            <ul>
+                <li>3^1 mod 7 = 3</li>
+                <li>3^2 mod 7 = 2</li>
+                <li>3^3 mod 7 = 6</li>
+                <li>3^4 mod 7 = 4</li>
+                <li>3^5 mod 7 = 5</li>
+                <li>3^6 mod 7 = 1</li>
+            </ul>
+            <p>This shows that 3 generates all numbers from 1 to 6 modulo 7, confirming it as a primitive root modulo 7.</p>
+        </section>
+        
+        
     </main>
 
     <footer>
