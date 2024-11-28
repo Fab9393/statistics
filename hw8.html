@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caesar Cipher & Frequency Analysis</title>
+    <title>Caesar Cipher, Frequency Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Aggiungi il tuo stile CSS qui */
@@ -116,17 +116,16 @@
             margin: 0;
         }
 
-        #letterDistributionChart {
-            margin-top: 2rem;
+        #lineCanvas, #cypherCanvas {
             width: 100%;
-            height: 300px;
+            height: 200px;
         }
 
     </style>
 </head>
 <body>
     <header>
-        <h1>Caesar Cipher, Shannon Entropy and Frequency Analysis</h1>
+        <h1>Caesar Cipher & Frequency Analysis</h1>
     </header>
 
     <main>
@@ -138,39 +137,30 @@
             <label for="shiftValue">Shift Amount:</label>
             <input type="number" id="shiftValue" value="3" min="1" max="25">
 
-            <button onclick="encryptText()">Encrypt</button>
+            <button onclick="cifra()">Encrypt and Decrypt</button>
 
             <h3>Encrypted Text:</h3>
             <p id="cryptedText">N/A</p>
-        </section>
 
-        <section>
-            <h2>Letter Frequency Distribution</h2>
-            <canvas id="letterDistributionChart"></canvas>
-        </section>
-
-        <section>
-            <h2>Frequency Analysis Decryption</h2>
-            <button onclick="decryptText()">Attempt Decryption</button>
             <h3>Decrypted Text:</h3>
             <p id="decryptedText">N/A</p>
         </section>
 
         <section>
-            <h2>Shannon Entropy of Encrypted Text</h2>
-            <p>Calculated Entropy: <span id="entropy">N/A</span></p>
+            <h2>Letter Frequency Distribution</h2>
+            <canvas id="lineCanvas"></canvas>
+            <canvas id="cypherCanvas"></canvas>
         </section>
     </main>
 
     <footer>
-        <p style="text-align: center; margin-top: 2rem;">&copy; 2024 Fabio Figara - Caesar Cipher Analysis</p>
+        <p>&copy; 2024 Caesar Cipher Analysis</p>
     </footer>
 
     <script>
-        const alphabet = "abcdefghijklmnopqrstuvwxyz";
-
         // Funzione per cifrare il testo usando il cifrario di Cesare
         function caesarCipher(text, shift) {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
             let result = "";
 
             for (let char of text.toLowerCase()) {
@@ -181,112 +171,148 @@
                     result += char; // Mantiene i caratteri non alfabetici
                 }
             }
-
             return result;
         }
 
-        // Funzione per calcolare la frequenza delle lettere
-        function calculateFrequency(text) {
-            const counts = Array(26).fill(0);
-            let totalLetters = 0;
-
-            for (const char of text) {
-                if (alphabet.includes(char)) {
-                    counts[char.charCodeAt(0) - 97]++;
-                    totalLetters++;
-                }
-            }
-
-            return { counts, totalLetters };
-        }
-
-        // Funzione per cifrare il testo
-        function encryptText() {
+        // Funzione per cifrare e decriptare il testo
+        function cifra() {
             const text = document.getElementById("inputText").value.toLowerCase();
-            const shiftElement = document.getElementById("shiftValue");
+            const shift = parseInt(document.getElementById("shiftValue").value, 10);
 
-            // Controlla se l'elemento esiste prima di continuare
-            if (!shiftElement) {
-                console.error("Elemento con ID 'shiftValue' non trovato!");
-                return;
-            }
+            // Calcola la frequenza del testo in chiaro
+            calculateFrequency(text, "plain");
 
-            const shift = parseInt(shiftElement.value, 10);
-            const encryptedTextElement = document.getElementById("cryptedText");
+            // Cifra il testo
+            const cypherText = caesarCipher(text, shift);
+            calculateFrequency(cypherText, "cypher");
 
-            const encryptedText = caesarCipher(text, shift);
-            encryptedTextElement.textContent = encryptedText;
+            // Visualizza il testo cifrato
+            const testocifrato = document.getElementById("cryptedText");
+            testocifrato.innerText = cypherText.slice(0, 250) + "...";
 
-            // Aggiorna la distribuzione delle lettere
-            const letterCounts = calculateFrequency(encryptedText);
-            updateChart(letterCounts);
-
-            // Calcola l'entropia di Shannon
-            calculateEntropy(letterCounts);
+            // Decripta il testo
+            let decryptedText = decrypt(cypherText);
+            const testo = document.getElementById("decryptedText");
+            testo.innerText = decryptedText.slice(0, 250) + "...";
         }
 
-        let chartInstance = null;
+        // Funzione per calcolare la frequenza delle lettere
+        function calculateFrequency(text, type) {
+            const letterCounts = {};
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-        // Funzione per aggiornare il grafico della distribuzione delle lettere
-        function updateChart(letterCounts) {
-            const ctx = document.getElementById("letterDistributionChart").getContext("2d");
-            const labels = alphabet.split("");
-
-            if (chartInstance) {
-                chartInstance.destroy();
+            // Inizializza il conteggio delle lettere a zero
+            for (let letter of alphabet) {
+                letterCounts[letter] = 0;
             }
 
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Letter Frequency',
-                        data: letterCounts.counts,
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true },
-                        x: { title: { display: true, text: "Letters" } }
-                    }
+            // Conta le occorrenze di ciascuna lettera
+            for (let char of text) {
+                if (alphabet.includes(char)) {
+                    letterCounts[char]++;
                 }
+            }
+
+            // Ottieni il massimo valore di frequenza per normalizzare il grafico
+            const maxFrequency = Math.max(...Object.values(letterCounts));
+
+            let canvas;
+            if (type == "plain") canvas = document.getElementById("lineCanvas");
+            else canvas = document.getElementById("cypherCanvas");
+
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Pulisci il canvas
+
+            const barWidth = canvas.width / alphabet.length;
+            const canvasHeight = canvas.height;
+
+            // Disegna ogni barra
+            alphabet.split("").forEach((letter, index) => {
+                const frequency = letterCounts[letter];
+                const barHeight = (frequency / maxFrequency) * (canvasHeight - 20);
+
+                const x = index * barWidth;
+                const y = canvasHeight - barHeight;
+
+                ctx.fillStyle = "#4CAF50";
+                ctx.fillRect(x, y, barWidth - 5, barHeight);
+
+                ctx.fillStyle = "#000";
+                ctx.font = "12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(letter, x + barWidth / 2, canvasHeight - 5);
             });
         }
 
-        // Funzione per calcolare l'entropia di Shannon
-        function calculateEntropy(letterCounts) {
-            const total = letterCounts.counts.reduce((sum, count) => sum + count, 0);
-            let entropy = 0;
+        // Funzione per calcolare la frequenza delle lettere nel testo cifrato
+        function calculateF(text) {
+            const letterCounts = {};
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-            letterCounts.counts.forEach(count => {
-                if (count > 0) {
-                    const probability = count / total;
-                    entropy -= probability * Math.log2(probability);
+            for (let letter of alphabet) {
+                letterCounts[letter] = 0;
+            }
+
+            for (let char of text.toLowerCase()) {
+                if (alphabet.includes(char)) {
+                    letterCounts[char]++;
                 }
-            });
+            }
 
-            document.getElementById("entropy").textContent = entropy.toFixed(4);
+            return letterCounts;
         }
 
-        // Funzione per decriptare il testo usando la frequenza delle lettere
-        function decryptText() {
-            const encryptedText = document.getElementById("cryptedText").textContent;
-            const { counts } = calculateFrequency(encryptedText);
-            const mostFrequentIndex = counts.indexOf(Math.max(...counts));
+        // Funzione per decriptare il testo
+        function decrypt(cypherText) {
+            const topN = 4;
+            const languageFrequency = "eaionlrtscdpumvghfbqz"; // Frequenza in italiano o inglese
 
-            // Lettera più frequente (presumibilmente "e" nella lingua inglese)
-            const commonLetter = 'e'; // "e" è la lettera più comune in inglese
-            const shift = (mostFrequentIndex - alphabet.indexOf(commonLetter) + 26) % 26;
+            const letterCounts = calculateF(cypherText);
+            const sortedLetters = Object.keys(letterCounts).sort(
+                (a, b) => letterCounts[b] - letterCounts[a]
+            );
 
-            const decryptedText = caesarCipher(encryptedText, 26 - shift);
+            const mostFrequentInCypher = sortedLetters.slice(0, topN);
+            const mostFrequentInLanguage = languageFrequency.slice(0, topN).split("");
 
-            document.getElementById("decryptedText").textContent = decryptedText;
+            var arrShift = [];
+            for (let i = 0; i < topN; i++) {
+                for (let j = 0; j < topN; j++) {
+                    const shift =
+                        (mostFrequentInCypher[i].charCodeAt(0) -
+                            mostFrequentInLanguage[j].charCodeAt(0) +
+                            26) %
+                        26;
+                    arrShift.push(shift);
+                }
+            }
+
+            const decryptedText = caesarCipher(cypherText, 26 - calcolaModa(arrShift));
+            return decryptedText;
         }
+
+        // Funzione per calcolare la moda degli shift
+        function calcolaModa(arr) {
+            const frequenze = {};
+            let moda = [];
+            let maxFreq = 0;
+
+            for (let num of arr) {
+                frequenze[num] = (frequenze[num] || 0) + 1;
+            }
+
+            for (let num in frequenze) {
+                if (frequenze[num] > maxFreq) {
+                    maxFreq = frequenze[num];
+                    moda = [num];
+                } else if (frequenze[num] === maxFreq) {
+                    moda.push(num);
+                }
+            }
+
+            return moda[0];
+        }
+
     </script>
 </body>
 </html>
