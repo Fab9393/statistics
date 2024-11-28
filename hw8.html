@@ -91,7 +91,7 @@
 </head>
 <body>
     <header>
-        <h1>Caesar Cipher & Frequency Analysis</h1>
+        <h1>Caesar Cipher, Shannon Entropy and Frequency Analysis</h1>
     </header>
 
     <main>
@@ -219,35 +219,53 @@
         }
 
         function decryptText() {
-            const encryptedText = document.getElementById("encryptedText").textContent.toLowerCase();
-            const decryptedTextElement = document.getElementById("decryptedText");
-            const letterCounts = Array(26).fill(0);
+    const encryptedText = document.getElementById("encryptedText").textContent.toLowerCase();
+    const decryptedTextElement = document.getElementById("decryptedText");
+    const letterCounts = Array(26).fill(0);
 
-            for (let i = 0; i < encryptedText.length; i++) {
-                const char = encryptedText[i];
-                if (char >= 'a' && char <= 'z') {
-                    letterCounts[char.charCodeAt(0) - 97]++;
-                }
-            }
-
-            // Guess the shift based on the most frequent letter (assuming it's 'e')
-            const mostFrequentIndex = letterCounts.indexOf(Math.max(...letterCounts));
-            const guessedShift = (mostFrequentIndex - ('e'.charCodeAt(0) - 97) + 26) % 26;
-
-            // Decrypt the text
-            let decryptedText = "";
-            for (let i = 0; i < encryptedText.length; i++) {
-                const char = encryptedText[i];
-                if (char >= 'a' && char <= 'z') {
-                    const decryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 - guessedShift + 26) % 26) + 97);
-                    decryptedText += decryptedChar;
-                } else if (char === " ") {
-                    decryptedText += " "; // Preserve spaces
-                }
-            }
-
-            decryptedTextElement.textContent = decryptedText;
+    // Contare le frequenze delle lettere nel testo cifrato
+    for (let i = 0; i < encryptedText.length; i++) {
+        const char = encryptedText[i];
+        if (char >= 'a' && char <= 'z') {
+            letterCounts[char.charCodeAt(0) - 97]++;
         }
+    }
+
+    // Trova l'indice della lettera più frequente
+    const mostFrequentIndex = letterCounts.indexOf(Math.max(...letterCounts));
+
+    // Lista delle lettere più comuni nella lingua italiana (approssimativa)
+    const commonLetters = ['e', 'a', 'i', 'o', 't', 'n', 'r'];
+    let guessedShift = null;
+
+    // Tentare decrittazioni con lettere comuni
+    for (const commonLetter of commonLetters) {
+        const commonIndex = commonLetter.charCodeAt(0) - 97;
+        guessedShift = (mostFrequentIndex - commonIndex + 26) % 26;
+
+        // Prova a decifrare con lo shift calcolato
+        let potentialDecryption = "";
+        for (let i = 0; i < encryptedText.length; i++) {
+            const char = encryptedText[i];
+            if (char >= 'a' && char <= 'z') {
+                const decryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 - guessedShift + 26) % 26) + 97);
+                potentialDecryption += decryptedChar;
+            } else if (char === " ") {
+                potentialDecryption += " "; // Conserva gli spazi
+            }
+        }
+
+        // Condizione per verificare che il testo abbia senso
+        if (potentialDecryption.includes(' ')) {
+            decryptedTextElement.textContent = potentialDecryption;
+            return;
+        }
+    }
+
+    // Se nessuna decifrazione sembra valida, mostra un messaggio generico
+    decryptedTextElement.textContent = "Unable to decrypt text reliably.";
+}
+
 
         function calculateEntropy(letterCounts) {
             const totalLetters = letterCounts.reduce((sum, count) => sum + count, 0);
