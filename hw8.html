@@ -225,19 +225,22 @@
 
             // Cifra il testo
             const cypherText = caesarCipher(text, shift);
-            const lecters = calculateFrequency(cypherText, "cypher");
-            calculateEntropy(lecters);
+            calculateFrequency(cypherText, "cypher");
 
             // Visualizza il testo cifrato
             const testocifrato = document.getElementById("cryptedText");
             testocifrato.innerText = cypherText.slice(0, 250) + "...";
+
+            // Calcola l'entropia del testo cifrato
+            const letterCountsCypher = calculateF(cypherText);
+            const countsArray = Object.values(letterCountsCypher);
+            calculateEntropy(countsArray);  // Chiama la funzione per calcolare l'entropia
 
             // Decripta il testo
             let decryptedText = decrypt(cypherText);
             const testo = document.getElementById("decryptedText");
             testo.innerText = decryptedText.slice(0, 250) + "...";
         }
-
         // Funzione per calcolare la frequenza delle lettere
         function calculateFrequency(text, type) {
             const letterCounts = {};
@@ -396,7 +399,6 @@
 
             document.getElementById("entropy").textContent = entropy.toFixed(4);
         }
-
     </script>
 </body>
 </html>
