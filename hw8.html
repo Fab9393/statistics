@@ -273,19 +273,19 @@
             document.getElementById("entropy").textContent = entropy.toFixed(4);
         }
 
-        // Funzione per tentare di decriptare il testo
+        // Funzione per decriptare il testo usando la frequenza delle lettere
         function decryptText() {
             const encryptedText = document.getElementById("cryptedText").textContent;
-            const decryptedTextElement = document.getElementById("decryptedText");
-
             const { counts } = calculateFrequency(encryptedText);
-            const mostFrequent = counts.indexOf(Math.max(...counts));
+            const mostFrequentIndex = counts.indexOf(Math.max(...counts));
 
-            const commonLetter = 'e'; // Letter most frequent in English
-            const shift = (mostFrequent - alphabet.indexOf(commonLetter) + 26) % 26;
+            // Lettera più frequente (presumibilmente "e" nella lingua inglese)
+            const commonLetter = 'e'; // "e" è la lettera più comune in inglese
+            const shift = (mostFrequentIndex - alphabet.indexOf(commonLetter) + 26) % 26;
 
             const decryptedText = caesarCipher(encryptedText, 26 - shift);
-            decryptedTextElement.textContent = decryptedText || "Decryption failed.";
+
+            document.getElementById("decryptedText").textContent = decryptedText;
         }
     </script>
 </body>
