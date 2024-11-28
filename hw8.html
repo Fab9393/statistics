@@ -183,38 +183,38 @@ footer p {
     </footer>
 
     <script>
-        const alphabet = "abcdefghijklmnopqrstuvwxyz";
+const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-        function encryptText() {
-            const text = document.getElementById("inputText").value.toLowerCase();
-            const shift = parseInt(document.getElementById("shift").value, 10);
-            const encryptedTextElement = document.getElementById("encryptedText");
+function encryptText() {
+    const text = document.getElementById("inputText").value.toLowerCase();
+    const shift = parseInt(document.getElementById("shift").value, 10);
+    const encryptedTextElement = document.getElementById("encryptedText");
 
-            const encryptedText = caesarCipher(text, shift);
-            encryptedTextElement.textContent = encryptedText;
+    const encryptedText = caesarCipher(text, shift);
+    encryptedTextElement.textContent = encryptedText;
 
-            // Update frequency distribution
-            const letterCounts = calculateFrequency(encryptedText);
-            updateChart(letterCounts);
+    // Update frequency distribution
+    const letterCounts = calculateFrequency(encryptedText);
+    updateChart(letterCounts);
 
-            // Calculate Shannon entropy
-            calculateEntropy(letterCounts);
-        }
+    // Calculate Shannon entropy
+    calculateEntropy(letterCounts);
+}
 
-        function caesarCipher(text, shift) {
-            return text
-                .split("")
-                .map(char => {
-                    if (alphabet.includes(char)) {
-                        return alphabet[(alphabet.indexOf(char) + shift) % alphabet.length];
-                    } else {
-                        return char; // Preserve spaces and punctuation
-                    }
-                })
-                .join("");
-        }
+function caesarCipher(text, shift) {
+    return text
+        .split("")
+        .map(char => {
+            if (alphabet.includes(char)) {
+                return alphabet[(alphabet.indexOf(char) + shift) % alphabet.length];
+            } else {
+                return char; // Preserve spaces and punctuation
+            }
+        })
+        .join("");
+}
 
-        function calculateFrequency(text) {
+function calculateFrequency(text) {
     const counts = Array(26).fill(0);
     let totalLetters = 0;
     
@@ -228,65 +228,122 @@ footer p {
     return { counts, totalLetters };
 }
 
+let chartInstance = null;
+
+function updateChart(letterCounts) {
+    const ctx = document.getElementById("letterDistributionChart").getContext("2d");
+    const labels = alphabet.split("");
+
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Letter Frequency',
+                data: letterCounts,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true },
+                x: { title: { display: true, text: "Letters" } }
+            }
+        }
+    });
+}
+
+function calculateEntropy(letterCounts) {
+    const total = letterCounts.reduce((sum, count) => sum + count, 0);
+    let entropy = 0;
+
+    letterCounts.forEach(count => {
+        if (count > 0) {
+            const probability = count / total;
+            entropy -= probability * Math.log2(probability);
+        }
+    });
+
+    document.getElementById("entropy").textContent = entropy.toFixed(4);
+}
+
 function decryptText() {
     const encryptedText = document.getElementById("encryptedText").textContent;
     const decryptedTextElement = document.getElementById("decryptedText");
 
+    // Attempt decryption using frequency analysis
     const { counts, totalLetters } = calculateFrequency(encryptedText);
     const mostFrequent = counts.indexOf(Math.max(...counts));
 
-    const commonLetter = 'e'; // Letter most frequent in English
+    const commonLetter = 'e'; // Most frequent letter in English
     const shift = (mostFrequent - alphabet.indexOf(commonLetter) + 26) % 26;
 
     const decryptedText = caesarCipher(encryptedText, 26 - shift);
     decryptedTextElement.textContent = decryptedText || "Decryption failed.";
 }
 
-        let chartInstance = null;
+function decrypt(cypherText) {
+    const languageFrequency = "eaionlrtscdpumvghfbqz"; // Frequenza in italiano o inglese
+    const topN = 4; // Analizza le prime N lettere più frequenti
 
-        function updateChart(letterCounts) {
-            const ctx = document.getElementById("letterDistributionChart").getContext("2d");
-            const labels = alphabet.split("");
+    // Calcola la distribuzione di frequenza delle lettere nel testo cifrato
+    const letterCounts = calculateFrequency(cypherText);
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+    // Ordina le lettere in base alla frequenza
+    const sortedLetters = Object.keys(letterCounts).sort((a, b) => letterCounts[b] - letterCounts[a]);
 
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Letter Frequency',
-                        data: letterCounts,
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true },
-                        x: { title: { display: true, text: "Letters" } }
-                    }
-                }
-            });
+    // Prendi le prime N lettere più frequenti nel testo cifrato
+    const mostFrequentInCypher = sortedLetters.slice(0, topN);
+
+    // Prendi le prime N lettere più frequenti nella lingua
+    const mostFrequentInLanguage = languageFrequency.slice(0, topN).split("");
+
+    var arrShift = [];
+    for (let i = 0; i < topN; i++) {
+        for (let j = 0; j < topN; j++) {
+            const shift = (mostFrequentInCypher[i].charCodeAt(0) - mostFrequentInLanguage[j].charCodeAt(0) + 26) % 26;
+            arrShift.push(shift);
         }
+    }
 
-        function calculateEntropy(letterCounts) {
-            const total = letterCounts.reduce((sum, count) => sum + count, 0);
-            let entropy = 0;
+    // Trova il shift più comune (la moda degli shift)
+    const bestShift = calcolaModa(arrShift);
 
-            letterCounts.forEach(count => {
-                if (count > 0) {
-                    const probability = count / total;
-                    entropy -= probability * Math.log2(probability);
-                }
-            });
+    // Usa lo shift calcolato per decriptare il testo
+    const decryptedText = caesarCipher(cypherText, 26 - bestShift); // Decrypt usando lo shift trovato
+    return decryptedText;
+}
 
-            document.getElementById("entropy").textContent = entropy.toFixed(4);
+function calcolaModa(arr) {
+    const frequenze = {};
+    let moda = [];
+    let maxFreq = 0;
+
+    // Conta la frequenza di ogni elemento
+    for (let num of arr) {
+        frequenze[num] = (frequenze[num] || 0) + 1;
+    }
+
+    // Trova la frequenza massima
+    for (let num in frequenze) {
+        if (frequenze[num] > maxFreq) {
+            maxFreq = frequenze[num];
+            moda = [num]; // Resetta la moda
+        } else if (frequenze[num] === maxFreq) {
+            moda.push(num); // Aggiungi alla moda in caso di pareggio
         }
+    }
+
+    return parseInt(moda[0], 10); // Restituisce il shift più comune
+}
+
     </script>
 </body>
 </html>
