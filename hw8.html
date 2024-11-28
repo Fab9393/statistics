@@ -247,6 +247,58 @@
             </ul>
             <p>This shows that 3 generates all numbers from 1 to 6 modulo 7, confirming it as a primitive root modulo 7.</p>
         </section>
+
+        <section id="significant-code-fragments">
+            <h2>Significant Code Fragments: JavaScript Functions for Encryption and Analysis</h2>
+        
+            <p>This section explains the key JavaScript functions used in the Caesar cipher implementation, focusing on encryption, decryption, frequency analysis, and entropy calculation.</p>
+        
+            <h3>Caesar Cipher Function</h3>
+            <p>The <code>caesarCipher</code> function is used to encrypt a given text using the Caesar cipher technique. It shifts each letter of the input text by a specified number of positions in the alphabet. Non-alphabetic characters remain unchanged. The function works by iterating over each character of the input string, applying the shift, and returning the encrypted text.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>The text is converted to lowercase to standardize input.</li>
+                <li>The shift value determines how many positions each letter is moved within the alphabet.</li>
+                <li>Non-alphabetical characters are not altered, preserving spaces, punctuation, etc.</li>
+            </ul>
+        
+            <h3>Frequency Calculation Function</h3>
+            <p>The <code>calculateFrequency</code> function analyzes the frequency of each letter in a given text. It counts how many times each letter from the alphabet appears and visualizes this data in a chart. The function normalizes the frequency values for display, ensuring that the chart is scaled properly for comparison between plaintext and ciphertext.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>Letter frequencies are calculated and stored in an object.</li>
+                <li>The frequency chart is drawn using the <code>Chart.js</code> library, displaying both plaintext and ciphertext distributions.</li>
+            </ul>
+        
+            <h3>Decryption Function</h3>
+            <p>The <code>decrypt</code> function attempts to decrypt a Caesar ciphered text by using frequency analysis. It compares the most frequent letters in the ciphertext to the expected frequency of letters in the language (in this case, English). Based on this comparison, it calculates the shift value and applies it to decrypt the message.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>The function identifies the most frequent letters in both the ciphertext and a reference language frequency.</li>
+                <li>It calculates possible shifts and uses the mode of these shifts to determine the correct decryption shift.</li>
+            </ul>
+        
+            <h3>Entropy Calculation</h3>
+            <p>The <code>calculateEntropy</code> function calculates the Shannon entropy of a text, which measures the unpredictability of the letter distribution. The entropy value provides insight into how random or structured the text is, with higher entropy indicating a more random distribution.</p>
+        
+            <h4>Key Observations:</h4>
+            <ul>
+                <li>Entropy is calculated by summing the negative probabilities of each letter’s occurrence multiplied by their logarithms.</li>
+                <li>The result is displayed as a value with four decimal places.</li>
+            </ul>
+        
+            <h3>Additional Functions</h3>
+            <ul>
+                <li><code>cifra</code>: A higher-level function that integrates the ciphering, frequency calculation, entropy calculation, and decryption process, updating the UI with results for each step.</li>
+                <li><code>calculateF</code>: A helper function that returns the frequency count of each letter in a given text, used for both frequency analysis and decryption.</li>
+                <li><code>calcolaModa</code>: This function calculates the mode of a list of numbers, used to determine the most likely shift for decryption based on letter frequency analysis.</li>
+            </ul>
+        
+        </section>
+        
         
         
     </main>
