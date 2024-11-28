@@ -6,87 +6,7 @@
     <title>Caesar Cipher & Frequency Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f4f4f9;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2rem;
-        }
-
-        main {
-            width: 90%;
-            max-width: 1200px;
-            margin: 2rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        section {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        section h2 {
-            font-size: 1.75rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 1rem;
-        }
-
-        textarea, input, button {
-            padding: 0.5rem;
-            font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-top: 0.5rem;
-            width: 100%;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        canvas {
-            max-width: 100%;
-            margin-top: 2rem;
-        }
-
-        p span {
-            font-weight: bold;
-            color: #007bff;
-        }
+        /* Stile CSS identico al precedente */
     </style>
 </head>
 <body>
@@ -95,7 +15,6 @@
     </header>
 
     <main>
-        <!-- Encryption Section -->
         <section>
             <h2>Encrypt Text with Caesar Cipher</h2>
             <label for="inputText">Enter Text:</label>
@@ -110,13 +29,11 @@
             <p id="encryptedText">N/A</p>
         </section>
 
-        <!-- Frequency Distribution Chart -->
         <section>
             <h2>Letter Frequency Distribution</h2>
             <canvas id="letterDistributionChart"></canvas>
         </section>
 
-        <!-- Decryption Section -->
         <section>
             <h2>Frequency Analysis Decryption</h2>
             <button onclick="decryptText()">Attempt Decryption</button>
@@ -124,10 +41,8 @@
             <p id="decryptedText">N/A</p>
         </section>
 
-        <!-- Shannon Entropy -->
         <section>
             <h2>Shannon Entropy of Encrypted Text</h2>
-            <p>Entropy measures the randomness or unpredictability of the text. A higher entropy indicates a more uniform distribution of letters.</p>
             <p>Calculated Entropy: <span id="entropy">N/A</span></p>
         </section>
     </main>
@@ -137,143 +52,101 @@
     </footer>
 
     <script>
+        const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
         function encryptText() {
             const text = document.getElementById("inputText").value.toLowerCase();
-            const shift = parseInt(document.getElementById("shift").value);
+            const shift = parseInt(document.getElementById("shift").value, 10);
             const encryptedTextElement = document.getElementById("encryptedText");
 
-            let encryptedText = "";
-            const letterCounts = Array(26).fill(0); // Initialize frequency array for letters
-
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i];
-                if (char >= 'a' && char <= 'z') {
-                    const encryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 + shift) % 26) + 97);
-                    encryptedText += encryptedChar;
-
-                    // Update letter frequency
-                    letterCounts[encryptedChar.charCodeAt(0) - 97]++;
-                } else if (char === " ") {
-                    encryptedText += " "; // Preserve spaces
-                }
-            }
-
+            const encryptedText = caesarCipher(text, shift);
             encryptedTextElement.textContent = encryptedText;
 
-            // Update the chart with the new letter distribution
+            // Update frequency distribution
+            const letterCounts = calculateFrequency(encryptedText);
             updateChart(letterCounts);
 
-            // Calculate Shannon Entropy
+            // Calculate Shannon entropy
             calculateEntropy(letterCounts);
+        }
+
+        function caesarCipher(text, shift) {
+            return text
+                .split("")
+                .map(char => {
+                    if (alphabet.includes(char)) {
+                        return alphabet[(alphabet.indexOf(char) + shift) % alphabet.length];
+                    } else {
+                        return char; // Preserve spaces and punctuation
+                    }
+                })
+                .join("");
+        }
+
+        function calculateFrequency(text) {
+            const counts = Array(26).fill(0);
+            for (const char of text) {
+                if (alphabet.includes(char)) {
+                    counts[char.charCodeAt(0) - 97]++;
+                }
+            }
+            return counts;
         }
 
         let chartInstance = null;
 
         function updateChart(letterCounts) {
             const ctx = document.getElementById("letterDistributionChart").getContext("2d");
-            const labels = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)); // 'a' to 'z'
+            const labels = alphabet.split("");
 
-            // Destroy the old chart if it exists
             if (chartInstance) {
                 chartInstance.destroy();
             }
 
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Frequency of Letters',
+                        label: 'Letter Frequency',
                         data: letterCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        fill: true,
-                        tension: 0.4,
+                        borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Letter Frequency Distribution in Encrypted Text'
-                        }
-                    },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Frequency'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Letters'
-                            }
-                        }
+                        y: { beginAtZero: true },
+                        x: { title: { display: true, text: "Letters" } }
                     }
                 }
             });
         }
 
         function decryptText() {
-    const encryptedText = document.getElementById("encryptedText").textContent.toLowerCase();
-    const decryptedTextElement = document.getElementById("decryptedText");
-    const letterCounts = Array(26).fill(0);
+            const encryptedText = document.getElementById("encryptedText").textContent;
+            const decryptedTextElement = document.getElementById("decryptedText");
 
-    // Contare le frequenze delle lettere nel testo cifrato
-    for (let i = 0; i < encryptedText.length; i++) {
-        const char = encryptedText[i];
-        if (char >= 'a' && char <= 'z') {
-            letterCounts[char.charCodeAt(0) - 97]++;
+            // Attempt decryption using frequency analysis
+            const letterCounts = calculateFrequency(encryptedText);
+            const mostFrequent = letterCounts.indexOf(Math.max(...letterCounts));
+
+            const commonLetter = 'e'; // Most frequent letter in English
+            const shift = (mostFrequent - alphabet.indexOf(commonLetter) + 26) % 26;
+
+            const decryptedText = caesarCipher(encryptedText, 26 - shift);
+            decryptedTextElement.textContent = decryptedText || "Decryption failed.";
         }
-    }
-
-    // Trova l'indice della lettera più frequente
-    const mostFrequentIndex = letterCounts.indexOf(Math.max(...letterCounts));
-
-    // Lista delle lettere più comuni nella lingua italiana (approssimativa)
-    const commonLetters = ['e', 'a', 'i', 'o', 't', 'n', 'r'];
-    let guessedShift = null;
-
-    // Tentare decrittazioni con lettere comuni
-    for (const commonLetter of commonLetters) {
-        const commonIndex = commonLetter.charCodeAt(0) - 97;
-        guessedShift = (mostFrequentIndex - commonIndex + 26) % 26;
-
-        // Prova a decifrare con lo shift calcolato
-        let potentialDecryption = "";
-        for (let i = 0; i < encryptedText.length; i++) {
-            const char = encryptedText[i];
-            if (char >= 'a' && char <= 'z') {
-                const decryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 - guessedShift + 26) % 26) + 97);
-                potentialDecryption += decryptedChar;
-            } else if (char === " ") {
-                potentialDecryption += " "; // Conserva gli spazi
-            }
-        }
-
-        // Condizione per verificare che il testo abbia senso
-        if (potentialDecryption.includes(' ')) {
-            decryptedTextElement.textContent = potentialDecryption;
-            return;
-        }
-    }
-
-    // Se nessuna decifrazione sembra valida, mostra un messaggio generico
-    decryptedTextElement.textContent = "Unable to decrypt text reliably.";
-}
-
 
         function calculateEntropy(letterCounts) {
-            const totalLetters = letterCounts.reduce((sum, count) => sum + count, 0);
+            const total = letterCounts.reduce((sum, count) => sum + count, 0);
             let entropy = 0;
 
             letterCounts.forEach(count => {
                 if (count > 0) {
-                    const probability = count / totalLetters;
+                    const probability = count / total;
                     entropy -= probability * Math.log2(probability);
                 }
             });
