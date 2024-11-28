@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 8: Caesar Cipher and Modular Transform</title>
+    <title>Caesar Cipher & Frequency Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* styles.css */
         * {
             margin: 0;
             padding: 0;
@@ -31,35 +30,6 @@
             font-size: 2rem;
         }
 
-        nav {
-            background-color: #333;
-            padding: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        nav ul li {
-            display: inline;
-        }
-
-        nav a {
-            display: inline-block;
-            color: white;
-            background-color: #007bff;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #0056b3;
-        }
-
         main {
             width: 90%;
             max-width: 1200px;
@@ -82,200 +52,215 @@
             color: #333;
         }
 
-        section h3 {
-            font-size: 1.5rem;
-            margin-top: 1rem;
-            color: #444;
-        }
-
-        section p,
-        section pre {
-            margin: 1rem 0;
-            font-size: 1rem;
-        }
-
-        #controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        #controls label {
+        label {
             font-weight: bold;
-            color: #333;
+            display: block;
+            margin-top: 1rem;
         }
 
-        #controls input,
-        #controls button {
+        textarea, input, button {
             padding: 0.5rem;
             font-size: 1rem;
             border: 1px solid #ddd;
             border-radius: 5px;
+            margin-top: 0.5rem;
+            width: 100%;
         }
 
-        #controls button {
+        button {
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
-        #controls button:hover {
+        button:hover {
             background-color: #0056b3;
         }
 
         canvas {
             max-width: 100%;
-            margin-top: 1rem;
-        }
-
-        #chartContainer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: space-around;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
             margin-top: 2rem;
         }
 
-        footer p {
-            font-size: 0.9rem;
+        p span {
+            font-weight: bold;
+            color: #007bff;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-        </ul>
-    </nav>
     <header>
-        <h1>Homework 8: Caesar Cipher & Modular Transformation</h1>
+        <h1>Caesar Cipher & Frequency Analysis</h1>
     </header>
 
     <main>
-        <section id="caesar-cipher">
-            <h2>Caesar Cipher</h2>
-            <div id="controls">
-                <label for="plaintext">Enter Text:</label>
-                <input type="text" id="plaintext" placeholder="Enter text to encrypt" />
+        <!-- Encryption Section -->
+        <section>
+            <h2>Encrypt Text with Caesar Cipher</h2>
+            <label for="inputText">Enter Text:</label>
+            <textarea id="inputText" rows="4" placeholder="Type your text here..."></textarea>
 
-                <label for="shift">Shift:</label>
-                <input type="number" id="shift" value="3" />
+            <label for="shift">Shift Amount:</label>
+            <input type="number" id="shift" value="3" min="1" max="25">
 
-                <button onclick="applyCaesarCipher()">Encrypt & Analyze</button>
-            </div>
-            <p><strong>Encrypted Text:</strong> <span id="encryptedText">N/A</span></p>
-            <p><strong>Decrypted Text:</strong> <span id="decryptedText">N/A</span></p>
-            <div id="chartContainer">
-                <canvas id="freqChart"></canvas>
-            </div>
+            <button onclick="encryptText()">Encrypt</button>
+
+            <h3>Encrypted Text:</h3>
+            <p id="encryptedText">N/A</p>
         </section>
 
-        <section id="modular-transform">
-            <h2>Modular Transformation</h2>
-            <div id="controls">
-                <label for="modText">Text to Transform:</label>
-                <input type="text" id="modText" placeholder="Enter text" />
+        <!-- Frequency Distribution Chart -->
+        <section>
+            <h2>Letter Frequency Distribution</h2>
+            <canvas id="letterDistributionChart"></canvas>
+        </section>
 
-                <label for="nValue">N:</label>
-                <input type="number" id="nValue" value="5" />
+        <!-- Decryption Section -->
+        <section>
+            <h2>Frequency Analysis Decryption</h2>
+            <button onclick="decryptText()">Attempt Decryption</button>
+            <h3>Decrypted Text:</h3>
+            <p id="decryptedText">N/A</p>
+        </section>
 
-                <label for="kValue">K:</label>
-                <input type="number" id="kValue" value="2" />
-
-                <label for="pValue">P:</label>
-                <input type="number" id="pValue" value="37" />
-
-                <button onclick="applyModularTransform()">Apply Transformation</button>
-            </div>
-            <p><strong>Transformed Values:</strong> <span id="transformedValues">N/A</span></p>
+        <!-- Shannon Entropy -->
+        <section>
+            <h2>Shannon Entropy of Encrypted Text</h2>
+            <p>Entropy measures the randomness or unpredictability of the text. A higher entropy indicates a more uniform distribution of letters.</p>
+            <p>Calculated Entropy: <span id="entropy">N/A</span></p>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2024 Fabio Figara - Homework 8</p>
+        <p style="text-align: center; margin-top: 2rem;">&copy; 2024 Fabio Figara - Caesar Cipher Analysis</p>
     </footer>
 
     <script>
-        function normalizeText(text) {
-            return text.toUpperCase().replace(/[^A-Z]/g, '');
-        }
+        function encryptText() {
+            const text = document.getElementById("inputText").value.toLowerCase();
+            const shift = parseInt(document.getElementById("shift").value);
+            const encryptedTextElement = document.getElementById("encryptedText");
 
-        function calculateFrequencies(text) {
-            const counts = Array(26).fill(0);
-            for (const char of text) {
-                counts[char.charCodeAt(0) - 65]++;
+            let encryptedText = "";
+            const letterCounts = Array(26).fill(0); // Initialize frequency array for letters
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char >= 'a' && char <= 'z') {
+                    const encryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 + shift) % 26) + 97);
+                    encryptedText += encryptedChar;
+
+                    // Update letter frequency
+                    letterCounts[encryptedChar.charCodeAt(0) - 97]++;
+                } else if (char === " ") {
+                    encryptedText += " "; // Preserve spaces
+                }
             }
-            return counts.map(count => count / text.length);
+
+            encryptedTextElement.textContent = encryptedText;
+
+            // Update the chart with the new letter distribution
+            updateChart(letterCounts);
+
+            // Calculate Shannon Entropy
+            calculateEntropy(letterCounts);
         }
 
-        function applyCaesarCipher() {
-            const plaintext = normalizeText(document.getElementById('plaintext').value);
-            const shift = parseInt(document.getElementById('shift').value);
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let chartInstance = null;
 
-            const encrypted = plaintext.split('').map(char => {
-                const index = (alphabet.indexOf(char) + shift) % 26;
-                return alphabet[index];
-            }).join('');
+        function updateChart(letterCounts) {
+            const ctx = document.getElementById("letterDistributionChart").getContext("2d");
+            const labels = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)); // 'a' to 'z'
 
-            document.getElementById('encryptedText').textContent = encrypted;
-
-            const decrypted = encrypted.split('').map(char => {
-                const index = (alphabet.indexOf(char) - shift + 26) % 26;
-                return alphabet[index];
-            }).join('');
-
-            document.getElementById('decryptedText').textContent = decrypted;
-
-            const frequencies = calculateFrequencies(encrypted);
-            drawFrequencyChart(frequencies);
-        }
-
-        function drawFrequencyChart(frequencies) {
-            const ctx = document.getElementById('freqChart').getContext('2d');
-            if (window.freqChart) {
-                window.freqChart.destroy();
+            // Destroy the old chart if it exists
+            if (chartInstance) {
+                chartInstance.destroy();
             }
-            window.freqChart = new Chart(ctx, {
-                type: 'bar',
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+                    labels: labels,
                     datasets: [{
-                        label: 'Frequency',
-                        data: frequencies,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
+                        label: 'Frequency of Letters',
+                        data: letterCounts,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4,
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Letter Frequency Distribution in Encrypted Text'
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Frequency'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Letters'
+                            }
+                        }
                     }
                 }
             });
         }
 
-        function applyModularTransform() {
-            const text = normalizeText(document.getElementById('modText').value);
-            const n = parseInt(document.getElementById('nValue').value);
-            const k = parseInt(document.getElementById('kValue').value);
-            const p = parseInt(document.getElementById('pValue').value);
+        function decryptText() {
+            const encryptedText = document.getElementById("encryptedText").textContent.toLowerCase();
+            const decryptedTextElement = document.getElementById("decryptedText");
+            const letterCounts = Array(26).fill(0);
 
-            const numericValues = text.split('').map(char => char.charCodeAt(0) - 65);
-            const transformed = numericValues.map(num => Math.pow(num, k) % p);
+            for (let i = 0; i < encryptedText.length; i++) {
+                const char = encryptedText[i];
+                if (char >= 'a' && char <= 'z') {
+                    letterCounts[char.charCodeAt(0) - 97]++;
+                }
+            }
 
-            document.getElementById('transformedValues').textContent = transformed.join(', ');
+            // Guess the shift based on the most frequent letter (assuming it's 'e')
+            const mostFrequentIndex = letterCounts.indexOf(Math.max(...letterCounts));
+            const guessedShift = (mostFrequentIndex - ('e'.charCodeAt(0) - 97) + 26) % 26;
+
+            // Decrypt the text
+            let decryptedText = "";
+            for (let i = 0; i < encryptedText.length; i++) {
+                const char = encryptedText[i];
+                if (char >= 'a' && char <= 'z') {
+                    const decryptedChar = String.fromCharCode(((char.charCodeAt(0) - 97 - guessedShift + 26) % 26) + 97);
+                    decryptedText += decryptedChar;
+                } else if (char === " ") {
+                    decryptedText += " "; // Preserve spaces
+                }
+            }
+
+            decryptedTextElement.textContent = decryptedText;
+        }
+
+        function calculateEntropy(letterCounts) {
+            const totalLetters = letterCounts.reduce((sum, count) => sum + count, 0);
+            let entropy = 0;
+
+            letterCounts.forEach(count => {
+                if (count > 0) {
+                    const probability = count / totalLetters;
+                    entropy -= probability * Math.log2(probability);
+                }
+            });
+
+            document.getElementById("entropy").textContent = entropy.toFixed(4);
         }
     </script>
 </body>
