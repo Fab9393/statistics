@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics and Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles can go here */
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Discrete Probability Distribution and Simulations</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Enter Probabilities</h2>
+            <div>
+                <label for="prob1">P1:</label>
+                <input type="number" id="prob1" value="0.2" step="0.01" min="0" max="1">
+                <label for="prob2">P2:</label>
+                <input type="number" id="prob2" value="0.2" step="0.01" min="0" max="1">
+                <label for="prob3">P3:</label>
+                <input type="number" id="prob3" value="0.2" step="0.01" min="0" max="1">
+                <label for="prob4">P4:</label>
+                <input type="number" id="prob4" value="0.2" step="0.01" min="0" max="1">
+                <label for="prob5">P5:</label>
+                <input type="number" id="prob5" value="0.2" step="0.01" min="0" max="1">
+            </div>
+
+            <button onclick="runSimulation()">Run Simulation</button>
+
+            <p id="errorMessage" style="display: none; color: red;">Probabilities must sum to 1. Please adjust them.</p>
+            <p>Sum of Probabilities: <span id="sumDisplay">N/A</span></p>
+        </section>
+
+        <section>
+            <h2>Theoretical and Empirical Statistics</h2>
+            <p>Theoretical Mean: <span id="meant">N/A</span></p>
+            <p>Theoretical Variance: <span id="stdDevt">N/A</span></p>
+            <p>Empirical Mean: <span id="mean">N/A</span></p>
+            <p>Empirical Variance: <span id="stdDev">N/A</span></p>
+        </section>
+
+        <section>
+            <h2>Distribution of Sample Means</h2>
+            <canvas id="distributionChart" width="400" height="200"></canvas>
+        </section>
+
+        <section>
+            <h2>Simulation Settings</h2>
+            <label for="maxSamples">Max Samples:</label>
+            <input type="number" id="maxSamples" value="100" min="1">
+            <label for="sampleSize">Sample Size:</label>
+            <input type="number" id="sampleSize" value="30" min="1">
+        </section>
+
+        <footer>
+            <p>&copy;2024 Fabio Figara - Statistics Blog - Homework</p>
+        </footer>
+    </main>
+
+    <script>
+        let charts = {};
+        const values = [1, 2, 3, 4, 5]; // Numerical values for mean/variance calculation
+        const probabilities = [];
+        let theoreticalMean;
+        let theoreticalVariance;
+
+        function getInputValues() {
+            probabilities.length = 0;
+            for (let i = 1; i <= 5; i++) {
+                probabilities.push(parseFloat(document.getElementById(`prob${i}`).value) || 0);
+            }
+        }
+
+        function updateSum() {
+            let sum = probabilities.reduce((a, b) => a + b, 0);
+            document.getElementById('sumDisplay').textContent = sum.toFixed(4);
+
+            const errorElement = document.getElementById('errorMessage');
+            if (Math.abs(sum - 1) > 0.0001) {
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        function getTheoreticalStats() {
+            theoreticalMean = values.reduce((sum, val, i) => sum + val * probabilities[i], 0);
+            theoreticalVariance = values.reduce((sum, val, i) => sum + probabilities[i] * Math.pow(val - theoreticalMean, 2), 0);
+        }
+
+        function randomizeProbabilities() {
+            const randomNumbers = [];
+            let sum = 0;
+
+            // Generate random numbers
+            for (let i = 0; i < 5; i++) {
+                const rand = Math.random();
+                randomNumbers.push(rand);
+                sum += rand;
+            }
+
+            // Normalize to sum to 1
+            for (let i = 0; i < 5; i++) {
+                const normalizedValue = (randomNumbers[i] / sum).toFixed(4);
+                document.getElementById(`prob${i + 1}`).value = normalizedValue;
+            }
+        }
+
+        function runSimulation() {
+            getInputValues();
+            if (!updateSum()) {
+                return;
+            }
+            getTheoreticalStats();
+            const realizations = [];
+            const sampleVariances = [];
+            const sampleVariancesStats = new Welford();
+
+            const maxSamples = parseInt(document.getElementById('maxSamples').value);
+            const sampleSize = parseInt(document.getElementById('sampleSize').value);
+
+            for (let i = 1; i <= maxSamples; i++) {
+                const statsSample = new Welford();
+                for (let j = 0; j < sampleSize; j++) {
+                    const realization = generateRealization(values, probabilities);
+                    realizations.push(realization);
+
+                    // Update mean and variance using Welford's algorithm
+                    statsSample.add(realization);
+                }
+                sampleVariances.push(statsSample.variance());
+            }
+
+            sampleVariances.forEach(variance => sampleVariancesStats.add(variance));
+
+            udpateStats(theoreticalMean, theoreticalVariance, sampleVariancesStats.mean, sampleVariancesStats.variance());
+            plotDistribution(sampleVariances, maxSamples);
+        }
+
+        function udpateStats(tMean, tVariance, eMean, eVariance) {
+            document.getElementById('mean').textContent = eMean.toFixed(3);
+            document.getElementById('meant').textContent = tMean.toFixed(3);
+            document.getElementById('stdDev').textContent = eVariance.toFixed(3);
+            document.getElementById('stdDevt').textContent = tVariance.toFixed(3);
+        }
+
+        // Function to generate random realization based on a given probability distribution
+        function generateRealization(values, probabilities) {
+            const cumulativeProbabilities = [];
+            probabilities.reduce((acc, prob, i) => {
+                cumulativeProbabilities[i] = acc + prob;
+                return cumulativeProbabilities[i];
+            }, 0);
+
+            const rand = Math.random();
+            return values[cumulativeProbabilities.findIndex(cumProb => rand < cumProb)];
+        }
+
+        // Welford's algorithm for mean and variance computation
+        class Welford {
+            constructor() {
+                this.n = 0;
+                this.mean = 0;
+                this.m2 = 0; // Sum of squares of differences from the current mean
+            }
+
+            add(value) {
+                this.n++;
+                const delta = value - this.mean;
+                this.mean += delta / this.n;
+                this.m2 += delta * (value - this.mean);
+            }
+
+            variance() {
+                return this.n > 1 ? this.m2 / (this.n - 1) : 0;
+            }
+        }
+
+        function plotDistribution(means, samples) {
+            const bins = 30;
+            const min = Math.min(...means);
+            const max = Math.max(...means);
+            const histogram = new Array(bins).fill(0);
+            const binEdges = Array.from({ length: bins + 1 }, (_, i) =>
+                min + (max - min) * i / bins
+            );
+
+            means.forEach(mean => {
+                const binIndex = Math.floor((mean - min) / (max - min) * bins);
+                histogram[Math.min(binIndex, bins - 1)]++;
+            });
+
+            // Destroy previous chart if it exists
+            if (charts['distributionChart']) {
+                charts['distributionChart'].destroy();
+            }
+
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            charts['distributionChart'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: binEdges.slice(0, -1).map(edge => edge.toFixed(2)),
+                    datasets: [{
+                        label: 'Sample Means Distribution',
+                        data: histogram,
+                        backgroundColor: 'rgba(100, 0, 255, 0.6)',
+                        borderColor: 'rgba(100, 0, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { title: { display: true, text: 'Sample Means' } },
+                        y: { title: { display: true, text: 'Frequency' }, ticks: { beginAtZero: true } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
