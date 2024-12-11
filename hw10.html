@@ -4,24 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lebesgue vs Riemann Integration Simulation</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
         nav {
             background-color: #333;
-            padding: 10px 20px;
+            padding: 10px;
         }
 
         nav ul {
             list-style: none;
             padding: 0;
             margin: 0;
-            text-align: center;
         }
 
         nav ul li {
             display: inline;
-            margin: 0 15px;
         }
 
         nav a {
@@ -32,178 +43,171 @@
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s;
-            font-size: 1.2em;
         }
 
         nav a:hover {
             background-color: #0056b3;
         }
 
-        /* General Body and Container Styling */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column; /* Added to arrange elements vertically */
-        }
-
-        /* Main Content Container */
-        .container {
-            width: 80%;
-            max-width: 1000px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        /* Title */
-        h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 2.5em;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        /* Form Inputs and Buttons */
-        label {
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            color: #34495e;
-        }
-
-        input, select {
-            width: 95%;
-            padding: 12px;
-            border: 2px solid #ecf0f1;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 1em;
-            color: #34495e;
-            background-color: #ecf0f1;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-        }
-
-        input:focus, select:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        button {
-            background-color: #3498db;
+        header {
+            background-color: #007bff;
             color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        button:hover {
-            background-color: #2980b9;
+        header h1 {
+            font-size: 2.2rem;
+            margin: 0;
         }
 
-        /* Canvas (Graph) */
-        canvas {
-            width: 100%;
-            height: 400px;
-            margin-top: 30px;
-            border-radius: 6px;
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        /* Result Box Styling */
-        .results {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: #2c3e50;
+        section {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .result-box {
-            background-color: #f1c40f;
-            color: #2c3e50;
-            padding: 10px;
-            border-radius: 6px;
-            margin: 15px 0;
-            font-size: 1.4em;
+        section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: #333;
         }
 
-        /* Select Boxes Styling */
-        .distribution-select {
-            margin-top: 10px;
-            padding: 12px;
-            font-size: 1em;
-            background-color: #ecf0f1;
-            box-sizing: border-box;
-        }
-
-        /* Paragraph Styling */
-        p {
-            font-size: 1rem;
+        label {
+            font-weight: bold;
+            display: block;
             margin-top: 1rem;
             color: #555;
         }
 
-        /* Footer Styling */
+        textarea, input, button, select {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #003f8b;
+        }
+
         footer {
             background-color: #333;
             color: #fff;
             padding: 1rem;
             text-align: center;
             margin-top: 2rem;
-            width: 100%;
         }
 
         footer p {
             font-size: 0.9rem;
-            margin: 0;
         }
+
+        #graphCanvas {
+            width: 100%;
+            height: 400px;
+        }
+
+        .results {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-box {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
     </style>
 </head>
 <body>
-    
-    <div class="container">
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+
+    <header>
         <h1>Lebesgue vs Riemann Integration Simulation</h1>
-        <label for="intervalStart">Start of Interval (a):</label>
-        <input type="number" id="intervalStart" value="0" />
-        
-        <label for="intervalEnd">End of Interval (b):</label>
-        <input type="number" id="intervalEnd" value="1" />
-        
-        <label for="numPoints">Number of Points (n):</label>
-        <input type="number" id="numPoints" value="1000" min="1" />
-        
-        <label for="function">Function (f(x)):</label>
-        <select id="function">
-            <option value="x^2">f(x) = x²</option>
-            <option value="x^3">f(x) = x³</option>
-            <option value="sin(x)">f(x) = sin(x)</option>
-            <option value="exp(x)">f(x) = e^x</option>
-        </select>
+    </header>
 
-        <label for="distribution">Measure (Distribution) Type:</label>
-        <select id="distribution" class="distribution-select">
-            <option value="uniform">Uniform Distribution</option>
-            <option value="normal">Normal Distribution</option>
-        </select>
+    <main>
+        <section>
+            <h2>Input Parameters</h2>
+            <label for="intervalStart">Start of Interval (a):</label>
+            <input type="number" id="intervalStart" value="0" />
 
-        <button id="computeButton">Compute Integrals</button>
+            <label for="intervalEnd">End of Interval (b):</label>
+            <input type="number" id="intervalEnd" value="1" />
 
-        <div id="riemannResult" class="results"></div>
-        <div id="lebesgueResult" class="results"></div>
-        
-        <canvas id="graphCanvas"></canvas>
-    </div>
+            <label for="numPoints">Number of Points (n):</label>
+            <input type="number" id="numPoints" value="1000" min="1" />
+
+            <label for="function">Function (f(x)):</label>
+            <select id="function">
+                <option value="x^2">f(x) = x²</option>
+                <option value="x^3">f(x) = x³</option>
+                <option value="sin(x)">f(x) = sin(x)</option>
+                <option value="exp(x)">f(x) = e^x</option>
+            </select>
+
+            <label for="distribution">Measure (Distribution) Type:</label>
+            <select id="distribution" class="distribution-select">
+                <option value="uniform">Uniform Distribution</option>
+                <option value="normal">Normal Distribution</option>
+            </select>
+
+            <button id="computeButton">Compute Integrals</button>
+        </section>
+
+        <section>
+            <h2>Results</h2>
+            <div id="riemannResult" class="results"></div>
+            <div id="lebesgueResult" class="results"></div>
+        </section>
+
+        <section>
+            <h2>Visualization</h2>
+            <canvas id="graphCanvas"></canvas>
+        </section>
+
+        <footer>
+            <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 9</p>
+        </footer>
+    </main>
 
     <script>
         'use strict';
@@ -306,5 +310,6 @@
             Integration.visualizeGraph(f, a, b, n, riemannIntegral, lebesgueStieltjesIntegral);
         });
     </script>
+
 </body>
 </html>
