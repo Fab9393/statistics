@@ -7,165 +7,173 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <style>
-         nav {
-            background-color: #333;
-            padding: 10px;
-        }
+nav {
+    background-color: #333;
+    padding: 10px 20px;
+}
 
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
 
-        nav ul li {
-            display: inline;
-        }
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
 
-        nav a {
-            display: inline-block;
-            color: white;
-            background-color: #007bff;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+nav a {
+    display: inline-block;
+    color: white;
+    background-color: #007bff;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-size: 1.2em;
+}
 
-        nav a:hover {
-            background-color: #0056b3;
-        }
-         body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f7f7f7;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+nav a:hover {
+    background-color: #0056b3;
+}
 
-    .container {
-        width: 80%;
-        max-width: 1000px;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        text-align: center;
-    }
+/* General Body and Container Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column; /* Added to arrange elements vertically */
+}
 
-    h1 {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        font-size: 2.5em;  /* Aumentata la dimensione del font */
-        color: #2c3e50;  /* Colore più scuro per un buon contrasto */
-        margin-bottom: 20px;  /* Spazio sotto al titolo per separarlo dagli altri elementi */
-        line-height: 1.2;  /* Aumentato l'interlinea per una migliore leggibilità */
-    }
+/* Main Content Container */
+.container {
+    width: 80%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    margin-top: 30px;
+}
 
-    label {
-        font-size: 1.1em;
-        margin-bottom: 5px;
-        color: #34495e;
-    }
+/* Title */
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
 
-    input, select {
-        width: 95%;
-        padding: 12px;
-        border: 2px solid #ecf0f1;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        font-size: 1em;
-        color: #34495e;
-        background-color: #ecf0f1;
-        transition: border-color 0.3s;
-        box-sizing: border-box;
-    }
+/* Form Inputs and Buttons */
+label {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: #34495e;
+}
 
-    input:focus, select:focus {
-        border-color: #3498db;
-        outline: none;
-    }
+input, select {
+    width: 95%;
+    padding: 12px;
+    border: 2px solid #ecf0f1;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 1em;
+    color: #34495e;
+    background-color: #ecf0f1;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
 
-    button {
-        background-color: #3498db;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.1em;
-        transition: background-color 0.3s;
-    }
+input:focus, select:focus {
+    border-color: #3498db;
+    outline: none;
+}
 
-    button:hover {
-        background-color: #2980b9;
-    }
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
 
-    canvas {
-        width: 100%;
-        height: 400px;
-        margin-top: 30px;
-        border-radius: 6px;
-    }
+button:hover {
+    background-color: #2980b9;
+}
 
-    .results {
-        margin-top: 20px;
-        font-size: 1.2em;
-        color: #2c3e50;
-    }
+/* Canvas (Graph) */
+canvas {
+    width: 100%;
+    height: 400px;
+    margin-top: 30px;
+    border-radius: 6px;
+}
 
-    .result-box {
-        background-color: #f1c40f;
-        color: #2c3e50;
-        padding: 10px;
-        border-radius: 6px;
-        margin: 15px 0;
-        font-size: 1.4em;
-    }
+/* Result Box Styling */
+.results {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #2c3e50;
+}
 
-    .distribution-select {
-        margin-top: 10px;
-        padding: 12px;
-        font-size: 1em;
-        background-color: #ecf0f1;
-        box-sizing: border-box;
-    }
+.result-box {
+    background-color: #f1c40f;
+    color: #2c3e50;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-size: 1.4em;
+}
 
-    p {
-            font-size: 1rem;
-            margin-top: 1rem;
-            color: #555;
-        }
+/* Select Boxes Styling */
+.distribution-select {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 1em;
+    background-color: #ecf0f1;
+    box-sizing: border-box;
+}
 
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
+/* Paragraph Styling */
+p {
+    font-size: 1rem;
+    margin-top: 1rem;
+    color: #555;
+}
 
-        footer p {
-            font-size: 0.9rem;
-        }
+/* Footer Styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    margin-top: 2rem;
+    width: 100%;
+}
 
+footer p {
+    font-size: 0.9rem;
+    margin: 0;
+}
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-        </ul>
-    </nav>
-
-    <header>
-        <h1>ebesgue vs Riemann Integration Simulation</h1>
-    </header>
-
+    
     <div class="container">
+        <h1>Lebesgue vs Riemann Integration Simulation</h1>
         <label for="intervalStart">Start of Interval (a):</label>
         <input type="number" id="intervalStart" value="0" />
         
@@ -181,11 +189,7 @@
             <option value="x^3">f(x) = x³</option>
             <option value="sin(x)">f(x) = sin(x)</option>
             <option value="exp(x)">f(x) = e^x</option>
-            <option value="custom">Custom Function</option>
         </select>
-
-        <label for="customFunction">Custom Function (enter in terms of x):</label>
-        <input type="text" id="customFunction" placeholder="e.g., x*x + 1" disabled />
 
         <label for="distribution">Measure (Distribution) Type:</label>
         <select id="distribution" class="distribution-select">
@@ -200,10 +204,6 @@
         
         <canvas id="graphCanvas"></canvas>
     </div>
-
-    <footer>
-        <p>&copy;2024 Fabio Figara - Statistics Blog - Homework 10</p>
-    </footer>
 
     <script>
         'use strict';
@@ -220,14 +220,6 @@
                         return x => Math.sin(x);
                     case "exp(x)":
                         return x => Math.exp(x);
-                    case "custom":
-                        const customFunc = document.getElementById('customFunction').value;
-                        try {
-                            return new Function('x', `return ${customFunc}`);
-                        } catch (e) {
-                            alert("Invalid custom function! Check your syntax.");
-                            return x => 0;
-                        }
                     default:
                         return x => x;
                 }
