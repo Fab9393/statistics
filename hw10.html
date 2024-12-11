@@ -26,6 +26,26 @@
             margin: auto;
         }
 
+        .form-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-container input[type="text"] {
+            padding: 0.5rem;
+            width: 300px;
+            margin-right: 0.5rem;
+        }
+
+        .form-container button {
+            padding: 0.5rem 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
         .chart-container {
             display: flex;
             flex-wrap: wrap;
@@ -63,8 +83,15 @@
     </header>
     <main>
         <section>
+            <div class="form-container">
+                <input id="domainInput" type="text" placeholder="Enter domains (comma-separated)">
+                <button onclick="handleDomainSubmit()">Analyze</button>
+            </div>
+        </section>
+
+        <section>
             <h2>Overview</h2>
-            <p>This page analyzes SSL/TLS certificates from various domains and presents the findings using visualizations. Insights include:</p>
+            <p>This page analyzes SSL/TLS certificates from specified domains and presents the findings using visualizations. Insights include:</p>
             <ul>
                 <li>Certificate issuer distribution (Pie Chart)</li>
                 <li>Key length distribution (Bar Chart)</li>
@@ -86,7 +113,7 @@
 
         <section>
             <h2>Statistics</h2>
-            <p id="averageValidity">Loading average validity...</p>
+            <p id="averageValidity">Average Certificate Validity: N/A</p>
         </section>
     </main>
     <footer>
@@ -163,11 +190,12 @@
             });
         }
 
-        async function initialize() {
-            try {
-                const domains = ['google.com', 'microsoft.com', 'github.com'];
-                let allCertificates = [];
+        async function handleDomainSubmit() {
+            const domainInput = document.getElementById('domainInput').value;
+            const domains = domainInput.split(',').map(domain => domain.trim());
+            let allCertificates = [];
 
+            try {
                 for (const domain of domains) {
                     const certificates = await fetchCertificateData(domain);
                     allCertificates = allCertificates.concat(certificates);
@@ -175,10 +203,10 @@
 
                 const analysis = analyzeCertificates(allCertificates);
 
-                // Populate average validity
+                // Update statistics
                 document.getElementById('averageValidity').textContent = `Average Certificate Validity: ${analysis.averageValidity.toFixed(2)} days`;
 
-                // Create charts
+                // Update charts
                 const issuerCtx = document.getElementById('issuerPieChart').getContext('2d');
                 createPieChart(issuerCtx, Object.values(analysis.issuerCounts), Object.keys(analysis.issuerCounts));
 
@@ -188,8 +216,6 @@
                 console.error(error);
             }
         }
-
-        initialize();
     </script>
 </body>
 </html>
