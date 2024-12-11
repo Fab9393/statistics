@@ -1,219 +1,232 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 10 - SSL/TLS Certificate Analysis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        main {
-            padding: 2rem;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .form-container {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .form-container input[type="text"] {
-            padding: 0.5rem;
-            width: 300px;
-            margin-right: 0.5rem;
-        }
-
-        .form-container button {
-            padding: 0.5rem 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .chart-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin-top: 2rem;
-        }
-
-        .chart {
-            flex: 1 1 300px;
-            max-width: 45%;
-            margin: 1rem;
-            background-color: white;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #ddd;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <header>
-        <h1>SSL/TLS Certificate Analysis</h1>
-    </header>
-    <main>
-        <section>
-            <div class="form-container">
-                <input id="domainInput" type="text" placeholder="Enter domains (comma-separated)">
-                <button onclick="handleDomainSubmit()">Analyze</button>
-            </div>
-        </section>
-
-        <section>
-            <h2>Overview</h2>
-            <p>This page analyzes SSL/TLS certificates from specified domains and presents the findings using visualizations. Insights include:</p>
-            <ul>
-                <li>Certificate issuer distribution (Pie Chart)</li>
-                <li>Key length distribution (Bar Chart)</li>
-                <li>Average validity duration</li>
-            </ul>
-        </section>
-
-        <section class="chart-container">
-            <div class="chart">
-                <h3>Issuer Distribution</h3>
-                <canvas id="issuerPieChart"></canvas>
-            </div>
-
-            <div class="chart">
-                <h3>Key Length Distribution</h3>
-                <canvas id="keyBarChart"></canvas>
-            </div>
-        </section>
-
-        <section>
-            <h2>Statistics</h2>
-            <p id="averageValidity">Average Certificate Validity: N/A</p>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Homework 10 Analysis</p>
-    </footer>
-
-    <script>
-        async function fetchCertificateData(domain) {
-            const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-            const API_ENDPOINT = `https://crt.sh/?q=${domain}&output=json`;
-            const response = await fetch(PROXY_URL + API_ENDPOINT);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch data for ${domain}`);
+<div jsname="jkaScf" jscontroller="szRU7e" class="w536ob" data-enable-interaction="true" data-url="https://1180330142-atari-embeds.googleusercontent.com/embeds/16cb204cf3a9d4d223a0a3fd8b0eec5d/inner-frame-minified.html?jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.it.MNNf6SxnatU.O%2Fam%3DAAAg%2Fd%3D1%2Frs%3DAHpOoo8Bca_tiyfqNORkSZxdrMsVFBmWVQ%2Fm%3D__features__" data-code="<!DOCTYPE html>
+    <html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>Lebesgue vs Riemann Integration Simulation</title>
+        <script src='https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js'></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
             }
-            return await response.json();
-        }
-
-        function analyzeCertificates(certificates) {
-            const issuerCounts = {};
-            const keyLengths = {};
-            let totalValidityDays = 0;
-
-            certificates.forEach(cert => {
-                const issuer = cert.issuer_name;
-                issuerCounts[issuer] = (issuerCounts[issuer] || 0) + 1;
-
-                const keyLength = cert.pubkey_size;
-                keyLengths[keyLength] = (keyLengths[keyLength] || 0) + 1;
-
-                const validityDays = (new Date(cert.not_after) - new Date(cert.not_before)) / (1000 * 60 * 60 * 24);
-                totalValidityDays += validityDays;
-            });
-
-            return {
-                issuerCounts,
-                keyLengths,
-                averageValidity: totalValidityDays / certificates.length
-            };
-        }
-
-        function createPieChart(ctx, data, labels) {
-            return new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels,
-                    datasets: [{
-                        data,
-                        backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#F44336', '#9C27B0'],
-                    }]
-                },
-            });
-        }
-
-        function createBarChart(ctx, data, labels) {
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Key Lengths',
-                        data,
-                        backgroundColor: '#4CAF50',
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+    
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            h1 {
+                text-align: center;
+            }
+    
+            label {
+                display: block;
+                margin: 10px 0 5px;
+            }
+    
+            input, select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+    
+            button {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                display: block;
+                margin: 20px auto;
+                width: 200px;
+            }
+    
+            button:hover {
+                background-color: #218838;
+            }
+    
+            canvas {
+                max-width: 100%;
+                height: auto;
+                margin-top: 20px;
+            }
+    
+            .results {
+                text-align: center;
+                margin-top: 20px;
+                font-size: 1.2em;
+            }
+    
+            #riemannResult, #lebesgueResult {
+                background-color: #e2f0d9;
+                color: #3c763d;
+                border: 1px solid #d6e9c6;
+                border-radius: 4px;
+                padding: 10px;
+                margin: 10px 0;
+                font-size: 1.5em;
+                font-weight: bold;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Lebesgue vs Riemann Integration Simulation</h1>
+    
+            <label for="intervalStart">Interval Start (a):</label>
+            <input type="number" id="intervalStart" value="0" />
+    
+            <label for="intervalEnd">Interval End (b):</label>
+            <input type="number" id="intervalEnd" value="1" />
+    
+            <label for="numPoints">Number of Points (n):</label>
+            <input type="number" id="numPoints" value="1000" min="1" />
+    
+            <label for="function">Function (f(x)):</label>
+            <select id="function">
+                <option value="x^2">f(x) = x²</option>
+                <option value="x^3">f(x) = x³</option>
+                <option value="sin(x)">f(x) = sin(x)</option>
+                <option value="exp(x)">f(x) = e^x</option>
+                <option value="custom">Custom Function</option>
+            </select>
+    
+            <label for="customFunction">Custom Function (use x as the variable):</label>
+            <input type="text" id="customFunction" placeholder="Enter function in terms of x" disabled />
+    
+            <label for="distribution">Measure (Distribution) Type:</label>
+            <select id="distribution">
+                <option value="uniform">Uniform Distribution</option>
+                <option value="normal">Normal Distribution</option>
+            </select>
+    
+            <button id="computeButton">Compute Integrals</button>
+    
+            <div id="riemannResult"></div>
+            <div id="lebesgueResult"></div>
+            <canvas id="graphCanvas" width="600" height="400"></canvas>
+        </div>
+    
+        <script>
+            'use strict';
+    
+            class Integration {
+                static parseFunction(funcStr) {
+                    switch (funcStr) {
+                        case "x^2":
+                            return x => Math.pow(x, 2);
+                        case "x^3":
+                            return x => Math.pow(x, 3);
+                        case "sin(x)":
+                            return x => Math.sin(x);
+                        case "exp(x)":
+                            return x => Math.exp(x);
+                        case "custom":
+                            const customFunc = document.getElementById('customFunction').value;
+                            try {
+                                return new Function('x', `return ${customFunc}`);
+                            } catch (e) {
+                                alert("Invalid custom function! Check syntax.");
+                                return x => 0;
+                            }
+                        default:
+                            return x => x;
                     }
                 }
-            });
-        }
-
-        async function handleDomainSubmit() {
-            const domainInput = document.getElementById('domainInput').value;
-            const domains = domainInput.split(',').map(domain => domain.trim());
-            let allCertificates = [];
-
-            try {
-                for (const domain of domains) {
-                    const certificates = await fetchCertificateData(domain);
-                    allCertificates = allCertificates.concat(certificates);
+    
+                static computeRiemann(f, a, b, n) {
+                    const dx = (b - a) / n;
+                    let riemannSum = 0;
+                    for (let i = 0; i < n; i++) {
+                        const midPoint = a + (i + 0.5) * dx;
+                        riemannSum += f(midPoint);
+                    }
+                    return riemannSum * dx;
                 }
-
-                const analysis = analyzeCertificates(allCertificates);
-
-                // Update statistics
-                document.getElementById('averageValidity').textContent = `Average Certificate Validity: ${analysis.averageValidity.toFixed(2)} days`;
-
-                // Update charts
-                const issuerCtx = document.getElementById('issuerPieChart').getContext('2d');
-                createPieChart(issuerCtx, Object.values(analysis.issuerCounts), Object.keys(analysis.issuerCounts));
-
-                const keyCtx = document.getElementById('keyBarChart').getContext('2d');
-                createBarChart(keyCtx, Object.values(analysis.keyLengths), Object.keys(analysis.keyLengths));
-            } catch (error) {
-                console.error(error);
+    
+                static computeLebesgueStieltjes(f, a, b, n, measure) {
+                    const dx = (b - a) / n;
+                    const xValues = Array.from({ length: n }, (_, i) => a + i * dx);
+                    const yValues = xValues.map(f);
+    
+                    let lebSum = 0;
+                    for (let i = 0; i < n - 1; i++) {
+                        let weight = 1;
+                        if (measure === "uniform") {
+                            weight = 1 / (b - a);
+                        } else if (measure === "normal") {
+                            const mean = (a + b) / 2;
+                            const stdDev = (b - a) / 6;
+                            const normalWeight = Math.exp(-0.5 * Math.pow((xValues[i] - mean) / stdDev, 2)) / (stdDev * Math.sqrt(2 * Math.PI));
+                            weight = normalWeight;
+                        }
+    
+                        lebSum += f(xValues[i]) * weight * (xValues[i + 1] - xValues[i]);
+                    }
+                    return lebSum;
+                }
+    
+                static visualizeGraph(f, a, b, n, riemannIntegral, lebesgueStieltjesIntegral) {
+                    const canvas = document.getElementById('graphCanvas');
+                    const ctx = canvas.getContext('2d');
+                    const dx = (b - a) / n;
+                    const scaleX = canvas.width / (b - a);
+                    const scaleY = 100;
+    
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.moveTo((a - a) * scaleX, canvas.height - f(a) * scaleY);
+    
+                    for (let i = 0; i <= n; i++) {
+                        const x = a + i * dx;
+                        ctx.lineTo((x - a) * scaleX, canvas.height - f(x) * scaleY);
+                    }
+    
+                    ctx.strokeStyle = 'blue';
+                    ctx.stroke();
+    
+                    ctx.fillStyle = 'rgba(0, 123, 255, 0.3)';
+                    for (let i = 0; i < n; i++) {
+                        const midPoint = a + (i + 0.5) * dx;
+                        const height = f(midPoint);
+                        ctx.fillRect((midPoint - a) * scaleX, canvas.height - height * scaleY, dx * scaleX, height * scaleY);
+                    }
+    
+                    ctx.fillStyle = 'black';
+                    ctx.fillText(`Riemann Integral: ${riemannIntegral.toFixed(5)}`, 10, canvas.height - 10);
+                    ctx.fillText(`Lebesgue Stieltjes Integral: ${lebesgueStieltjesIntegral.toFixed(5)}`, 10, canvas.height - 30);
+                }
             }
-        }
-    </script>
-</body>
-</html>
+    
+            document.getElementById('computeButton').addEventListener('click', () => {
+                const a = parseFloat(document.getElementById('intervalStart').value);
+                const b = parseFloat(document.getElementById('intervalEnd').value);
+                const n = parseInt(document.getElementById('numPoints').value);
+                const funcStr = document.getElementById('function').value;
+                const measure = document.getElementById('distribution').value;
+    
+                const f = Integration.parseFunction(funcStr);
+    
+                const riemannIntegral = Integration.computeRiemann(f, a, b, n);
+                const lebesgueStieltjesIntegral = Integration.computeLebesgueStieltjes(f, a, b, n, measure);
+    
+                document.getElementById('riemannResult').innerHTML = `<strong>Riemann Integral:</strong> ${riemannIntegral.toFixed(5)}`;
+                document.getElementById('lebesgueResult').innerHTML = `<strong>Lebesgue Stieltjes Integral:</strong> ${lebesgueStieltjesIntegral.toFixed(5)}`;
+    
+                Integration.visualizeGraph(f, a, b, n, riemannIntegral, lebesgueStieltjesIntegral);
+            });
+        </script>
+    </body>
+    </html>
+    </div>
+    
