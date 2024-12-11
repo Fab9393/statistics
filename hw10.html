@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 10 - SSL/TLS Certificate Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 2rem;
+        }
+
+        .chart {
+            flex: 1 1 300px;
+            max-width: 45%;
+            margin: 1rem;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #ddd;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>SSL/TLS Certificate Analysis</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Overview</h2>
+            <p>This page analyzes SSL/TLS certificates from various domains and presents the findings using visualizations. Insights include:</p>
+            <ul>
+                <li>Certificate issuer distribution (Pie Chart)</li>
+                <li>Key length distribution (Bar Chart)</li>
+                <li>Average validity duration</li>
+            </ul>
+        </section>
+
+        <section class="chart-container">
+            <div class="chart">
+                <h3>Issuer Distribution</h3>
+                <canvas id="issuerPieChart"></canvas>
+            </div>
+
+            <div class="chart">
+                <h3>Key Length Distribution</h3>
+                <canvas id="keyBarChart"></canvas>
+            </div>
+        </section>
+
+        <section>
+            <h2>Statistics</h2>
+            <p id="averageValidity">Loading average validity...</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Homework 10 Analysis</p>
+    </footer>
+
+    <script>
+        async function fetchCertificateData(domain) {
+            const API_ENDPOINT = `https://crt.sh/?q=${domain}&output=json`;
+            const response = await fetch(API_ENDPOINT);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data for ${domain}`);
+            }
+            return await response.json();
+        }
+
+        function analyzeCertificates(certificates) {
+            const issuerCounts = {};
+            const keyLengths = {};
+            let totalValidityDays = 0;
+
+            certificates.forEach(cert => {
+                // Issuer distribution
+                const issuer = cert.issuer_name;
+                issuerCounts[issuer] = (issuerCounts[issuer] || 0) + 1;
+
+                // Key length distribution
+                const keyLength = cert.pubkey_size;
+                keyLengths[keyLength] = (keyLengths[keyLength] || 0) + 1;
+
+                // Validity period
+                const validityDays = (new Date(cert.not_after) - new Date(cert.not_before)) / (1000 * 60 * 60 * 24);
+                totalValidityDays += validityDays;
+            });
+
+            return {
+                issuerCounts,
+                keyLengths,
+                averageValidity: totalValidityDays / certificates.length
+            };
+        }
+
+        function createPieChart(ctx, data, labels) {
+            return new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#F44336', '#9C27B0'],
+                    }]
+                },
+            });
+        }
+
+        function createBarChart(ctx, data, labels) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Key Lengths',
+                        data,
+                        backgroundColor: '#4CAF50',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function initialize() {
+            try {
+                const domains = ['google.com', 'microsoft.com', 'github.com'];
+                let allCertificates = [];
+
+                for (const domain of domains) {
+                    const certificates = await fetchCertificateData(domain);
+                    allCertificates = allCertificates.concat(certificates);
+                }
+
+                const analysis = analyzeCertificates(allCertificates);
+
+                // Populate average validity
+                document.getElementById('averageValidity').textContent = `Average Certificate Validity: ${analysis.averageValidity.toFixed(2)} days`;
+
+                // Create charts
+                const issuerCtx = document.getElementById('issuerPieChart').getContext('2d');
+                createPieChart(issuerCtx, Object.values(analysis.issuerCounts), Object.keys(analysis.issuerCounts));
+
+                const keyCtx = document.getElementById('keyBarChart').getContext('2d');
+                createBarChart(keyCtx, Object.values(analysis.keyLengths), Object.keys(analysis.keyLengths));
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
