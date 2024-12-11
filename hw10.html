@@ -122,8 +122,9 @@
 
     <script>
         async function fetchCertificateData(domain) {
+            const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
             const API_ENDPOINT = `https://crt.sh/?q=${domain}&output=json`;
-            const response = await fetch(API_ENDPOINT);
+            const response = await fetch(PROXY_URL + API_ENDPOINT);
             if (!response.ok) {
                 throw new Error(`Failed to fetch data for ${domain}`);
             }
@@ -136,15 +137,12 @@
             let totalValidityDays = 0;
 
             certificates.forEach(cert => {
-                // Issuer distribution
                 const issuer = cert.issuer_name;
                 issuerCounts[issuer] = (issuerCounts[issuer] || 0) + 1;
 
-                // Key length distribution
                 const keyLength = cert.pubkey_size;
                 keyLengths[keyLength] = (keyLengths[keyLength] || 0) + 1;
 
-                // Validity period
                 const validityDays = (new Date(cert.not_after) - new Date(cert.not_before)) / (1000 * 60 * 60 * 24);
                 totalValidityDays += validityDays;
             });
